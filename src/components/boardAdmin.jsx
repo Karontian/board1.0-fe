@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 
 import './boardAdmin.css'
@@ -62,7 +62,8 @@ const BoardAdmin  = () =>{
 
     }
     
-    const onCompanySubmit = async() =>{
+    const onCompanySubmit = async(e) =>{
+        e.preventDefault()
         console.log('COMPANY ADD')
         try{
             const newCompany = {
@@ -82,7 +83,7 @@ const BoardAdmin  = () =>{
         }catch(err){
             console.log(err)
         }
-        
+        e.target.reset()
 
     }
 
@@ -96,14 +97,13 @@ const BoardAdmin  = () =>{
             console.log(error)
         }
     }
-
-  console.log(currentClients)
+    
 
 
     return (
         <div className="mainContent-boardAdmin">
             <div className="newCompanyForm-boardAdmin">
-                <form >
+                <form onSubmit={(e)=>onCompanySubmit(e)}>
                 <h1>New Company Add:</h1>
 
                     <label htmlFor="companyName">Company Name: </label>
@@ -130,33 +130,76 @@ const BoardAdmin  = () =>{
                     <label htmlFor="address">Address: </label>
                     <input type="text" name="address" onChange={onChange} />
 
-                    <button type="button" onClick={onCompanySubmit}>Add</button>
+                    <button type="submit">Add</button>
                     
                 </form>
             </div>
             <div className='companyBoard-boardAdmin'>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Company Name</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {Array.from(currentClients).map((company, index) => {
-                        return (
-                            <tr key={index}>
-                                <td>{company.companyName}</td>
-                            </tr>
-                        );
-                    })}
-                </tbody>
-                <tfoot></tfoot>
-             </table>
-                
-                {/* {Array.from(currentClients).map((company, index)=>{
-                    return <span>{company.companyName}</span>
-                })} */}
+                <h1>Current Companies</h1>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Company Name</th>
+                            <th>Company Phone#</th>
+                            <th>Owner Name</th>
+                            <th>Owner Phone#</th>
+                            <th>Address</th>
+                            <th>MC#</th>
+                            <th>DOT#</th>
+                            <th>EIN#</th>
+                            <th>Actions</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                   
+                        {Array.from(currentClients).map((company, index) => {
+                            return (
+                                <React.Fragment key={index} >
+                                    <tr className="companyRow">
+                                        <td>{company.companyName}</td>
+                                        <td>{company.companyPhoneNumber}</td>
+                                        <td>{company.ownerName}</td>
+                                        <td>{company.ownerPhoneNumber}</td>
+                                        <td>{company.address}</td>
+                                        <td>{company.mcNumber}</td>
+                                        <td>{company.dotNumber}</td>
+                                        <td>{company.einNumber}</td>
+                                        <td>
+                                            <button type='button'>Add Driver</button>
+                                            <button>Edit Cpmpany</button>
+                                            <button>Delete Company</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colSpan="10">
+                                            <table className='driverTable'>
+                                              
+                                                <thead>
+                                             
+                                                    <tr>
+                                                        <th>Driver Name</th>
+                                                        <th>Driver Phone#</th>
+                                                        <th>Trailer Type</th>
+                                                        <th>Current Location</th>
+                                                        <th>Next Load Needed</th>
+                                                        <th>Assigned Dispatcher</th>
+                                                        <th>Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </React.Fragment>
+                            );
+                        })}
+                    </tbody>
+                    <tfoot></tfoot>
+                </table>
             </div>
+        
         </div>
     
     )

@@ -1,3 +1,12 @@
+table,
+th,
+td {
+    border: 1px solid #ddd; /* lighter color */
+    padding: 3px;
+    overflow: auto;
+    margin-left: 150px;
+}
+
 form {
     display: flex;
     flex-direction: column;
@@ -8,4 +17,25 @@ form {
 
 form label, form input, form button {
     margin-bottom: 10px;
+}
+
+.companyBoard-boardAdmin h1 {
+    text-align: center;
+}
+
+.companyBoard-driverAddition{
+    text-align: center;
+}
+
+.driverTable {
+    background-color: red;
+    border: 1px solid ;
+    margin: 0px;
+}
+
+.driverTable td {
+    background-color: green;
+    display: block;
+    margin-left: 0px;
+    
 }
