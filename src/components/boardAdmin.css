@@ -1,3 +1,4 @@
+
 table,
 th,
 td {
@@ -38,4 +39,35 @@ form label, form input, form button {
     display: block;
     margin-left: 0px;
     
+}
+
+
+.equipmentOption-trailerType{
+    max-width: 10px;
+    margin-left: 10px;
+}
+
+.other-trailerType{
+    max-width: 30px;
+}
+
+.newDriverForm-equipmentForm{
+    display: inline-flex
+}
+
+.equipment-tarps8ft,
+.equipment-tarps6ft,
+.equipment-tarps4ft,
+.equipment-chains,
+.equipment-binders,
+.equipment-pipeStakes,
+.equipment-dunnage {
+    max-width: 30px;
+    margin-left: 20px;
+    
+}
+
+.equipment-sec,
+.equipment-tarps {
+    margin-left: 50px;
 }
