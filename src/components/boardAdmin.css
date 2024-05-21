@@ -46,9 +46,25 @@ form label, form input, form button {
     max-width: 10px;
     margin-left: 10px;
 }
+.equipmentOption-trailerType-other{
+    max-width: 50px;
+}
 
 .other-trailerType{
-    max-width: 30px;
+    border: 1px solid #333;
+    padding: 10px;
+}
+
+.other-trailerType-type{
+    max-width: 50px;
+}
+
+.other-trailerType-amount{
+    max-width: 10px;
+}
+
+.other-trailerType-length{
+    max-width: 15px;
 }
 
 .newDriverForm-equipmentForm{
