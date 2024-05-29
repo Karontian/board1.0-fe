@@ -146,13 +146,14 @@ const BoardAdmin  = () =>{
             const reefer53Checked = e.target.elements['default-reefer53'].checked;
         
             let newTrailerArray = [...otherTypeTrailerArray, 
-                { amount: fb48Amount, type: 'flatbed', length: '48', defaultTrailer: fb48Checked },
-                { amount: fb53Amount, type: 'flatbed', length: '53', defaultTrailer: fb53Checked },
-                { amount: van48Amount, type: 'van', length: '48', defaultTrailer: van48Checked },
-                { amount: van53Amount, type: 'van', length: '53', defaultTrailer: van53Checked },
-                { amount: reefer48Amount, type: 'reefer', length: '48', defaultTrailer: reefer48Checked },
-                { amount: reefer53Amount, type: 'reefer', length: '53', defaultTrailer: reefer53Checked }
-            ];
+                { Ammount: fb48Amount, type: 'flatbed', length: '48', def: fb48Checked },
+                { Ammount: fb53Amount, type: 'flatbed', length: '53', def: fb53Checked },
+                { Ammount: van48Amount, type: 'van', length: '48', def: van48Checked },
+                { Ammount: van53Amount, type: 'van', length: '53', def: van53Checked },
+                { Ammount: reefer48Amount, type: 'reefer', length: '48', def: reefer48Checked },
+                { Ammount: reefer53Amount, type: 'reefer', length: '53', def: reefer53Checked }
+            ];           
+            
             
             // setTrailerArray(prev => [...prev, ...newTrailerArray]);           
             const newSelectedEquipment = {
@@ -164,15 +165,41 @@ const BoardAdmin  = () =>{
                 chains: chains,
                 binders: binders
             };
+            const newSelectedEquipmentArray = Object.entries(newSelectedEquipment).map(([key, value]) => ({
+                type: key,
+                qty: value
+            }));
             // setSelectedEquipment(newSelectedEquipment);
     
-    
-            const additionCall = await axios.post('http://localhost:3001/driverAdd',{
-                driverInfo: [driverName, driverPhone, selectedCompany],
-                equipmentInfo: [newSelectedEquipment],
-                trailerInfo: [...newTrailerArray]
-            })
-            console.log(additionCall)
+            console.log('trailer array:',newTrailerArray, 'equipmentSelected', newSelectedEquipment)
+
+            // const additionCall = await axios.post('http://localhost:3001/driverAdd', {
+            //             driverInfo: {driverName: driverName, driverPhoneNumber: driverPhone, driverCompany: selectedCompany},
+            //             selectedEquipment: newSelectedEquipment,
+            //             trailerInfo: newTrailerArray
+            //         }, {
+            //             headers: {
+            //                 'Content-Type': 'application/json'
+            //             }
+            //         })
+
+            const dataToSend = {
+                driverInfo: {
+                    driverName: driverName, 
+                    driverPhoneNumber: driverPhone, 
+                    driverCompany: selectedCompany
+                },
+                selectedEquipment: newSelectedEquipmentArray,
+                trailerInfo: newTrailerArray
+            };
+            
+            const additionCall = await axios.post('http://localhost:3001/driverAdd', dataToSend, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            console.log(additionCall);
 
             timeoutRef.current = setTimeout(() => {//RESETS all arrays 1sec after addition
                 setTrailerArray([])
@@ -247,7 +274,7 @@ const BoardAdmin  = () =>{
         setEditingIndex(false)
     }
 
-    const onCancelOtherTrailers = async(e,index)=>{
+    const onCancelOtherTrailers = async(e,index)=>{//TOGGLE control for cancel action
         setOtherTypeOfTrailerSelected(false)
     }
 
