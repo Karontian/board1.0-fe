@@ -28,8 +28,16 @@ const BoardAdmin  = () =>{
     const [reefer48Amount, setReefer48Amount] = useState("");
     const [reefer53Checked, setReefer53Checked] = useState(false);
     const [reefer53Amount, setReefer53Amount] = useState("");
-    const [otherTypeOfTrailerSelected, setOtherTypeOfTrailerSelected] = useState(false)//Selection of other Trailer type
     const [trailerArray, setTrailerArray] = useState([])
+
+    //OTHER-TYPE TRAILER STATE AND CRUD
+    const [otherTypeOfTrailerSelected, setOtherTypeOfTrailerSelected] = useState(false)//Selection of other Trailer type
+    const [otherTypeTrailerArray, setOtherTypeTrailerArray] = useState([])
+    const [editingIndex, setEditingIndex] = useState(false)
+    const [ottEditingType, setOttEditingType] = useState('')//hold the type value on edition
+    const [ottEditingAmount, setOttEditingAmount] = useState('')//holds the amount value on edition
+    const [ottEditingLenght, setOttEditingLenght] = useState('')// lenght value
+    const [ottEditingDefault, setOttEditingDefault] = useState('')//default value
 
     
 
@@ -46,66 +54,53 @@ const BoardAdmin  = () =>{
     const [selectedCompany, setSelectedCompany] = useState('')
     const [driverName, setDriverName] = useState('')
     const [driverPhone, setDriverPhone] = useState('')
-    // const [addAnotherDriver, setAddAnotherDriver] = useState(false)//flag to reset the trailer and equipment arrays for a new driver add
     const [selectedEquipment, setSelectedEquipment] = useState([])
 
     //DATA REFS
-            ///OTHER TRAILER TYPE DATA HOLDERS
-        const amountRef = useRef();
-        const typeRef = useRef();
-        const lengthRef = useRef();
-        const defaultRef = useRef();
-        const formRef = useRef(); //CONTROLS THE FORM TO ADD NEW DRIVER INFO
+        ///OTHER TRAILER TYPE DATA HOLDERS
+    const amountRef = useRef();
+    const typeRef = useRef();
+    const lengthRef = useRef();
+    const defaultRef = useRef();
+    const formRef = useRef(); //CONTROLS THE FORM TO ADD NEW DRIVER INFO
+    const timeoutRef = useRef();/// CONTROLS THE TIMEOUT CLEAN OF ARRAYS AFTER DRIVER ADD
 
 
 
-    useEffect(() => { //SERVER SIDE EFFECT pull from DB to feed current clients dropdown
+    useEffect(() => {//MONITORS Server changes && OtherTypeTrailer array
         getClients()
         const eventSource = new EventSource('http://localhost:3001/');
     
-        eventSource.onmessage = (event) => {
+        eventSource.onmessage = (event) => { //SERVER SIDE EFFECT pull from DB to feed current clients dropdown
             const clients = JSON.parse(event.data);
             setCurrentClients(clients)
         };
+        if (otherTypeTrailerArray.length === 0) {// RESETS the addDriver form on change to 0 of otherTrypeTrailer array
+            formRef.current.reset();
+            
+        }
     
         return () => {
             eventSource.close();
         };
-    }, []);
+    }, [otherTypeTrailerArray]);
 
 
-    const onChange = (event) =>{
-        const {name, value} = event.target
-        console.log(name, value)
-        switch(name){
-            case 'companyName':
-                setCompanyName(value)
-                break
-            case 'companyPhoneNumber':
-                setCompanyPhoneNumber(value)
-                break
-            case 'ownerName':
-                setOwnerName(value)  
-                break
-            case 'ownerPhoneNumber':
-                setOwnwerPhoneNumber(value)
-                break
-            case 'address':
-                setAddress(value)    
-                break
-            case 'mcNumber':
-                setMcNumber(value)
-                break
-            case 'dotNumber':
-                setDotNumber(value)
-                break
-            case 'einNumber':
-                setEinNumber(value)                     
+
+    const getClients = async()=>{//FETCH added clients
+        try {
+            let response =  await axios.get('http://localhost:3001/getClients')
+            let clients = response.data.clients
+            setCurrentClients(clients)
+
+        } catch (error) {
+            console.log(error)
         }
+    }
 
-    }   
-    
-    const onCompanySubmit = async(e) =>{
+
+    //COMPANY  AND DRIVER ADD CONTROLS
+    const onCompanySubmit = async(e) =>{//ADDS A COMPANY
         e.preventDefault()
         console.log('COMPANY ADD')
         try{
@@ -130,21 +125,11 @@ const BoardAdmin  = () =>{
 
     }
 
-    const getClients = async()=>{
-        try {
-            let response =  await axios.get('http://localhost:3001/getClients')
-            let clients = response.data.clients
-            setCurrentClients(clients)
-
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
-    const onDriverAdd = async(e) =>{
+    const onDriverAdd = async(e) =>{ //ADDS A DRIVER, includes: Company Info, Driver info and Equipment info
         try {
             console.log('ADDING DRIVER', e.target)
             e.preventDefault();
+            clearTimeout(timeoutRef.current);
             const fb48Amount = e.target.elements['fb48-ammount'].value;
             const fb48Checked = e.target.elements['default-fb48'].checked;
             const fb53Amount = e.target.elements['fb53-ammount'].value;
@@ -160,17 +145,17 @@ const BoardAdmin  = () =>{
             const reefer53Amount = e.target.elements['reefer53-default'].value;
             const reefer53Checked = e.target.elements['default-reefer53'].checked;
         
-            setTrailerArray(prev => [...prev, 
+            let newTrailerArray = [...otherTypeTrailerArray, 
                 { amount: fb48Amount, type: 'flatbed', length: '48', defaultTrailer: fb48Checked },
                 { amount: fb53Amount, type: 'flatbed', length: '53', defaultTrailer: fb53Checked },
                 { amount: van48Amount, type: 'van', length: '48', defaultTrailer: van48Checked },
                 { amount: van53Amount, type: 'van', length: '53', defaultTrailer: van53Checked },
                 { amount: reefer48Amount, type: 'reefer', length: '48', defaultTrailer: reefer48Checked },
                 { amount: reefer53Amount, type: 'reefer', length: '53', defaultTrailer: reefer53Checked }
-    
-            ]);    
-    
-            setSelectedEquipment({
+            ];
+            
+            // setTrailerArray(prev => [...prev, ...newTrailerArray]);           
+            const newSelectedEquipment = {
                 tarps8ft: tarps8ft,
                 tarps6ft: tarps6ft,
                 tarps4ft: tarps4ft,
@@ -178,41 +163,95 @@ const BoardAdmin  = () =>{
                 dunnage: dunnage,
                 chains: chains,
                 binders: binders
+            };
+            // setSelectedEquipment(newSelectedEquipment);
+    
+    
+            const additionCall = await axios.post('http://localhost:3001/driverAdd',{
+                driverInfo: [driverName, driverPhone, selectedCompany],
+                equipmentInfo: [newSelectedEquipment],
+                trailerInfo: [...newTrailerArray]
             })
-            
-            
-            // console.log('EQUIPMENT SELECTION', 
-            // { '8ft tarps': tarps8ft, '6ft tarps': tarps6ft, '4ft tarps': tarps4ft,
-            //   'pipeStkes': pipeStakes, 'dunnage': dunnage, 'chains': chains, 'binders': binders }
-            // );
-            formRef.current.reset();
+            console.log(additionCall)
 
-    
-    
+            timeoutRef.current = setTimeout(() => {//RESETS all arrays 1sec after addition
+                setTrailerArray([])
+                setOtherTypeTrailerArray([]);
+                setSelectedEquipment([]);
+                setSelectedCompany('');
+                setDriverName('');
+                setDriverPhone('');
+            }, 1000);
+            
         } catch (err) {
             console.log(err)
         }
 
     }
 
-    const onSaveOtherTypeTrailer = async(e)=>{
+    //OTHER TYPE TRAILER LOCAL CRUD CONTROLS
+    const onSaveOtherTypeTrailer = async(e)=>{//TOGGLE control for other Type trailer && otherTypeTrailer array ADDITION
         try {
             let amount = amountRef.current.value
             let type = typeRef.current.value
             let length = lengthRef.current.value
             let defaultTrailer = defaultRef.current.checked
-            setTrailerArray(prev => [...prev, { amount, type, length, defaultTrailer }]);
-    
+            console.log('DEFAULT T', defaultTrailer)
+            setOtherTypeTrailerArray(prev => [...prev, { amount, type, length, defaultTrailer }]);                
             setOtherTypeOfTrailerSelected(false)
-    
+            setOttEditingAmount(amount)
+            setOttEditingLenght(length)
+            setOttEditingType(type)
+            setOttEditingDefault(defaultTrailer)
         } catch (err) {
             console.log(err)
         }
         
     }
 
+    const onOtherTrailerDelete = async(e, index)=>{//DELETE control for otherTypeTrailers
+        console.log('DELETE OOTHER-TYPE TRAILER', e.target, index)
+        setOtherTypeTrailerArray(prevState =>{
+            let arrayCopy= [...prevState]
+            arrayCopy.splice(index, 1)
+            return arrayCopy
+        })
 
-    console.log( 'Company:', selectedCompany, 'Driver Name: ', driverName, 'DriverPhne#', driverPhone,'Trailers: ',trailerArray, 'Equipment', selectedEquipment)
+    }
+
+    const onOtherTrailerEdit = async(e,index)=>{//TOGGLE control to add other type trailers
+        console.log('ON OTHER  TRAILER EDIT', e, index)
+        setEditingIndex(true)
+        const item = otherTypeTrailerArray[index];
+        console.log(item.defaultTrailer)
+        setOttEditingAmount(item.amount);
+        setOttEditingType(item.type);
+        setOttEditingLenght(item.length);
+        setOttEditingDefault(item.defaultTrailer);
+        setEditingIndex(index);  // Set the editing index here
+
+    
+    }
+
+    const onOtherTrailerEditSave = async(e,index)=>{//TOGGLE control for other Type trailer && otherTypeTrailer array EDDITION
+        console.log('ON SAVE')
+        const newOtherTypeTrailerArray = [...otherTypeTrailerArray]
+        newOtherTypeTrailerArray[index] = {
+            ...newOtherTypeTrailerArray[index],
+            amount: ottEditingAmount,
+            type: ottEditingType,
+            length: ottEditingLenght,
+            defaultTrailer: ottEditingDefault
+        }
+        setOtherTypeTrailerArray(newOtherTypeTrailerArray)
+        setEditingIndex(false)
+    }
+
+    const onCancelOtherTrailers = async(e,index)=>{
+        setOtherTypeOfTrailerSelected(false)
+    }
+
+        console.log(trailerArray)
 
     return (
         <div className="mainContent-boardAdmin">
@@ -221,28 +260,28 @@ const BoardAdmin  = () =>{
                 <h1>Add a new copany:</h1>
 
                     <label htmlFor="companyName">Company Name: </label>
-                    <input type="text" name="companyName" onChange={onChange}/>
+                    <input type="text" name="companyName" onChange={(e)=>setCompanyName(e.target.value)}/>
                     
                     <label htmlFor="companyPhoneNumber">Company Phone#: </label>
-                    <input type="text" name="companyPhoneNumber"onChange={onChange} />
+                    <input type="text" name="companyPhoneNumber"onChange={(e)=>setCompanyPhoneNumber(e.target.value)} />
 
                     <label htmlFor="mcNumber">MC#: </label>
-                    <input type="text" name="mcNumber" onChange={onChange}/>
+                    <input type="text" name="mcNumber" onChange={(e)=>setMcNumber(e.target.value)}/>
                     
                     <label htmlFor="dotNumber">DOT#: </label>
-                    <input type="text" name="dotNumber" onChange={onChange} />
+                    <input type="text" name="dotNumber" onChange={(e)=>setDotNumber(e.target.value)} />
 
                     <label htmlFor="einNumber">EIN#: </label>
-                    <input type="text" name="einNumber" onChange={onChange}/>
+                    <input type="text" name="einNumber" onChange={(e)=>setEinNumber(e.target.value)}/>
 
                     <label htmlFor="ownerName">Company Owner: </label>
-                    <input type="text" name="ownerName"onChange={onChange} />
+                    <input type="text" name="ownerName"onChange={(e)=>setOwnerName(e.target.value)} />
 
                     <label htmlFor="ownerPhoneNumber">Owner Phone#: </label>
-                    <input type="text" name="ownerPhoneNumber"onChange={onChange} />
+                    <input type="text" name="ownerPhoneNumber"onChange={(e)=>setOwnwerPhoneNumber(e.target.value)} />
 
                     <label htmlFor="address">Address: </label>
-                    <input type="text" name="address" onChange={onChange} />
+                    <input type="text" name="address" onChange={(e)=>setAddress(e.target.value)} />
 
                     <button type="submit">Add</button>
                     
@@ -302,30 +341,149 @@ const BoardAdmin  = () =>{
                                 </div>
                                 <br />
                                 <div className='trailerType-other'>
-                                    <button type='button' onClick={() => setOtherTypeOfTrailerSelected(true)} disabled={otherTypeOfTrailerSelected === true}>+Other Type Trailer</button>                                </div>      
-                                    {otherTypeOfTrailerSelected === true && 
-                                            <div  className='other-trailerType'>
+                                    <button type='button' onClick={() => setOtherTypeOfTrailerSelected(true)} disabled={otherTypeOfTrailerSelected === true}>+Other Type Trailer</button>                                
 
-                                                <h5>Add a new Other-Type trailer:</h5>
-                                                
-                                                 <input type="text" name='amount'className='other-trailerType-amount'ref={amountRef}/>
-                                                 <label htmlFor="amount">x  </label>
+                                            <div className='trailerType-other-form'>
+                                                {otherTypeOfTrailerSelected === true && 
+                                                    <div  className='other-trailerType'>
+
+                                                    <h5>Add a new Other-Type trailer:</h5>
+                                                    
+                                                    <input type="text" name='amount'className='other-trailerType-amount'ref={amountRef}/>
+                                                    <label htmlFor="amount">x  </label>
 
 
-                                                 <label htmlFor="type">Type</label>
-                                                 <input type="text" name='type' className='other-trailerType-type'ref={typeRef}/>
-                                                 <br />
+                                                    <label htmlFor="type">Type</label>
+                                                    <input type="text" name='type' className='other-trailerType-type'ref={typeRef}/>
+                                                    <br />
 
-                                                 <label htmlFor="length">Length</label>
-                                                 <input type="text" name='length'className='other-trailerType-length'ref={lengthRef}/>
-                                                 <span>ft    </span>
+                                                    <label htmlFor="length">Length</label>
+                                                    <input type="text" name='length'className='other-trailerType-length'ref={lengthRef}/>
+                                                    <span>ft    </span>
 
-                                                 <label htmlFor="default">Default?</label>
-                                                 <input type="checkbox" name='default' className='other-trailerType' ref={defaultRef}/>
+                                                    <label htmlFor="default">Default?</label>
+                                                    <input type="checkbox" name='default' className='other-trailerType' ref={defaultRef}/>
 
-                                                 <button type='button'  onClick={(e)=>onSaveOtherTypeTrailer(e)}>Save Trailers</button>                                                        
-                                            </div>}
-                                <div>                            
+                                                    <button type='button'  onClick={(e)=>onSaveOtherTypeTrailer(e)}>Save Trailers</button>    
+                                                    <button type='button'  onClick={(e)=>onCancelOtherTrailers(e)}>Cancel</button>                                                        
+                                                    
+                                                </div>}
+                                            </div>
+                                            <div className='trailerType-other-grid'>
+                                                <h3>Other-Type Trailers added:</h3>
+                                                <table>
+                                                    <thead>
+                                                        <tr>    
+                                                            <th>Ammount</th>
+                                                            <th>Trailer Type</th>
+                                                            <th>Trailer Length</th>
+                                                            <th>Default? </th>
+                                                            <th>Actions </th>
+                                                        </tr>    
+                                                    </thead>
+                                                    <tbody>
+                                                        {otherTypeTrailerArray.map((item, index) => (
+                                                            editingIndex === index ? (
+                                                                <tr key={index}>
+                                                                    <td>
+                                                                        <label htmlFor="editedAmount"></label>
+                                                                        <input type="text" name='editedAmount' value={ottEditingAmount} onChange={(e) => setOttEditingAmount(e.target.value)}  />
+                                                                    </td>
+                                                                    <td>
+                                                                        <label htmlFor="editedType"></label>
+                                                                        <input type="text" name='editedType' value={ottEditingType} onChange={(e) => setOttEditingType(e.target.value)}/>
+                                                                    </td>
+                                                                    <td>
+                                                                        <label htmlFor="editedLenght"></label>
+                                                                        <input type="text" name='editedLenght' value={ottEditingLenght} onChange={(e) => setOttEditingLenght(e.target.value)} />
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="checkBox" name='editedDefault' checked={ottEditingDefault} onChange={(e)=>setOttEditingDefault(e.target.checked)} />
+                                                                    </td>
+                                                                    <td>
+                                                                        <button type='button' onClick={(e)=>onOtherTrailerEditSave(e, index)}>Save</button>
+                                                                        <button type='button'>Cancel</button>
+                                                                    </td>
+
+                                                                </tr>
+                                                            ) :
+                                                            (<tr key={index}>
+                                                                <td>{item.amount}</td>
+                                                                <td>{item.type}</td>
+                                                                <td>{item.length}</td>
+                                                                <td>
+                                                                    {/* {item.defaultTrailer ? 'Yes' : 'No'} */}
+                                                                    <label htmlFor="defaultTrailer"></label>
+                                                                    <input type="checkBox"  name='defaultTrailer' checked={item.defaultTrailer} readOnly/>
+
+
+                                                                </td>
+                                                                <td>
+                                                                    <button type='button' onClick={(e)=>onOtherTrailerDelete(e, index)}>Delete</button>
+                                                                    <button type='button' onClick={(e)=>onOtherTrailerEdit(e, index)}>Edit</button>
+                                                                </td>
+                                                            </tr>)
+                                                        ))}
+                                                        {otherTypeTrailerArray.map((item, index)=>{
+                                                            <tr key={index}>
+                                                                {editingIndex === index ? 
+                                                                (
+                                                                    <>
+                                                                        <td>
+                                                                            <label htmlFor="editedAmount"></label>
+                                                                            <input type="text" name='editedAmount' value={ottEditingAmount} onChange={(e) => setOttEditingAmount(e.target.value)}  />
+                                                                        </td>
+                                                                        <td>
+                                                                            <label htmlFor="editedType"></label>
+                                                                            <input type="text" name='editedType' value={ottEditingType} onChange={(e) => setOttEditingType(e.target.value)}/>
+                                                                        </td>
+                                                                        <td>
+                                                                            <label htmlFor="editedLenght"></label>
+                                                                            <input type="text" name='editedLenght' value={ottEditingLenght} onChange={(e) => setOttEditingLenght(e.target.value)} />
+                                                                        </td>
+                                                                        <td>
+                                                                            <input type="checkBox" name='editedDefault' checked={ottEditingDefault} onChange={(e)=>setOttEditingDefault(e.target.checked)} />
+                                                                        </td>
+                                                                        <td>
+                                                                            <button type='button' onClick={(e)=>onOtherTrailerEditSave(e, index)}>Save</button>
+                                                                            
+                                                                            <button type='button'>Cancel</button>
+                                                                        </td>
+                                                                    
+                                                                    </>
+                                                                )
+                                                                
+                                                                :
+                                                                
+                                                                (
+                                                                <>
+                                                                    <td>{item.amount}</td>
+                                                                    <td>{item.type}</td>
+                                                                    <td>{item.length}</td>
+                                                                    <td>
+                                                                        {/* {item.defaultTrailer ? 'Yes' : 'No'} */}
+                                                                        <label htmlFor="defaultTrailer"></label>
+                                                                        <input type="checkBox"  name='defaultTrailer' checked={item.defaultTrailer} readOnly/>
+
+
+                                                                    </td>
+                                                                    <td>
+                                                                        <button type='button' onClick={(e)=>onOtherTrailerDelete(e, index)}>Delete</button>
+                                                                        <button type='button' onClick={(e)=>onOtherTrailerEdit(e, index)}>Edit</button>
+                                                                    </td>
+                                                                </>
+                                                                )
+                                                                }
+                                                            </tr>
+                                                        })}
+
+                                                    </tbody>
+                                                    <tfoot>
+                                                    </tfoot>
+                                                </table>
+                                            </div>
+                                      <div>  
+                                </div>                                                                      
                             </div>               
 
                         </div>
@@ -453,10 +611,7 @@ const BoardAdmin  = () =>{
                 </table>
        
             </div>
-           
-        
         </div>
-    
     )
 }
 

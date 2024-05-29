@@ -87,3 +87,9 @@ form label, form input, form button {
 .equipment-tarps {
     margin-left: 50px;
 }
+
+
+.trailerType-other-grid{
+    background-color: red;
+    margin-left: -35px;
+}
