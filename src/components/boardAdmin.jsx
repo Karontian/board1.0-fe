@@ -55,6 +55,7 @@ const BoardAdmin  = () =>{
     const [driverName, setDriverName] = useState('')
     const [driverPhone, setDriverPhone] = useState('')
     const [selectedEquipment, setSelectedEquipment] = useState([])
+    const [currentDrivers,  setCurrentDrivers] = useState([])
 
     //DATA REFS
         ///OTHER TRAILER TYPE DATA HOLDERS
@@ -69,19 +70,28 @@ const BoardAdmin  = () =>{
 
     useEffect(() => {//MONITORS Server changes && OtherTypeTrailer array
         getClients()
-        const eventSource = new EventSource('http://localhost:3001/');
-    
-        eventSource.onmessage = (event) => { //SERVER SIDE EFFECT pull from DB to feed current clients dropdown
+        getDrivers()
+        const driverEventSource = new EventSource('http://localhost:3001/driverUpdates');
+        const clientEventSource = new EventSource('http://localhost:3001/clientUpdates');
+            
+        driverEventSource.onmessage = (event) => {
+            const drivers = JSON.parse(event.data);
+            setCurrentDrivers(drivers)
+        };
+        
+        clientEventSource.onmessage = (event) => {
             const clients = JSON.parse(event.data);
             setCurrentClients(clients)
         };
+
         if (otherTypeTrailerArray.length === 0) {// RESETS the addDriver form on change to 0 of otherTrypeTrailer array
             formRef.current.reset();
             
         }
     
         return () => {
-            eventSource.close();
+            driverEventSource.close();
+            clientEventSource.close();
         };
     }, [otherTypeTrailerArray]);
 
@@ -97,6 +107,14 @@ const BoardAdmin  = () =>{
             console.log(error)
         }
     }
+    const getDrivers = async()=>{
+        try {
+            let response = await axios.get(`http://localhost:3001/getDrivers`)
+            setCurrentDrivers(response.data.drivers)
+        } catch (err) {
+            console.log(err)
+        }
+    }//FETCH added drivers
 
 
     //COMPANY  AND DRIVER ADD CONTROLS
@@ -155,7 +173,6 @@ const BoardAdmin  = () =>{
             ];           
             
             
-            // setTrailerArray(prev => [...prev, ...newTrailerArray]);           
             const newSelectedEquipment = {
                 tarps8ft: tarps8ft,
                 tarps6ft: tarps6ft,
@@ -169,19 +186,8 @@ const BoardAdmin  = () =>{
                 type: key,
                 qty: value
             }));
-            // setSelectedEquipment(newSelectedEquipment);
     
             console.log('trailer array:',newTrailerArray, 'equipmentSelected', newSelectedEquipment)
-
-            // const additionCall = await axios.post('http://localhost:3001/driverAdd', {
-            //             driverInfo: {driverName: driverName, driverPhoneNumber: driverPhone, driverCompany: selectedCompany},
-            //             selectedEquipment: newSelectedEquipment,
-            //             trailerInfo: newTrailerArray
-            //         }, {
-            //             headers: {
-            //                 'Content-Type': 'application/json'
-            //             }
-            //         })
 
             const dataToSend = {
                 driverInfo: {
@@ -278,7 +284,7 @@ const BoardAdmin  = () =>{
         setOtherTypeOfTrailerSelected(false)
     }
 
-        console.log(trailerArray)
+    console.log(currentDrivers)
 
     return (
         <div className="mainContent-boardAdmin">
@@ -623,9 +629,19 @@ const BoardAdmin  = () =>{
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr>
-                                                        <td>Driver elements here</td>
+                                                {currentDrivers.filter(driver => driver.selectedCompany === company.companyName).map((driver, index) => (
+                                                    <tr key={index}>
+                                                        <td>{driver.driverName}</td>
+                                                        <td>{driver.driverPhoneNumber}</td>
+                                                        <td>{driver.trailerType}</td>
+                                                        <td>{driver.currentLocation}</td>
+                                                        <td>{driver.nextLoadNeeded}</td>
+                                                        <td>{driver.assignedDispatcher}</td>
+
+                                                        {/* ... */}
                                                     </tr>
+                                                ))}
+                                                  
                                                 </tbody>
                                             </table>
                                         </td>
