@@ -56,6 +56,8 @@ const BoardAdmin  = () =>{
     const [driverPhone, setDriverPhone] = useState('')
     const [selectedEquipment, setSelectedEquipment] = useState([])
     const [currentDrivers,  setCurrentDrivers] = useState([])
+    const [currentLocation, setCurrentLocation] = useState('')
+    const [availableDate, setAvailableDate] = useState('')
 
     //DATA REFS
         ///OTHER TRAILER TYPE DATA HOLDERS
@@ -110,6 +112,7 @@ const BoardAdmin  = () =>{
     const getDrivers = async()=>{
         try {
             let response = await axios.get(`http://localhost:3001/getDrivers`)
+            console.log('RESPONSE', response)
             setCurrentDrivers(response.data.drivers)
         } catch (err) {
             console.log(err)
@@ -170,10 +173,10 @@ const BoardAdmin  = () =>{
                 { Ammount: van53Amount, type: 'van', length: '53', def: van53Checked },
                 { Ammount: reefer48Amount, type: 'reefer', length: '48', def: reefer48Checked },
                 { Ammount: reefer53Amount, type: 'reefer', length: '53', def: reefer53Checked }
-            ];           
+            ];//collects all trailer info           
+            console.log('ALL TRAILERS', newTrailerArray)
             
-            
-            const newSelectedEquipment = {
+            const newSelectedEquipment = {//collects all the equipment info
                 tarps8ft: tarps8ft,
                 tarps6ft: tarps6ft,
                 tarps4ft: tarps4ft,
@@ -185,15 +188,17 @@ const BoardAdmin  = () =>{
             const newSelectedEquipmentArray = Object.entries(newSelectedEquipment).map(([key, value]) => ({
                 type: key,
                 qty: value
-            }));
+            })); //convets equipment info into an array to be received by backed
     
-            console.log('trailer array:',newTrailerArray, 'equipmentSelected', newSelectedEquipment)
+            console.log('trailer array:',newTrailerArray, 'equipmentSelected', newSelectedEquipmentArray)
 
             const dataToSend = {
                 driverInfo: {
                     driverName: driverName, 
                     driverPhoneNumber: driverPhone, 
-                    driverCompany: selectedCompany
+                    driverCompany: selectedCompany,
+                    currentLocation: currentLocation,
+                    availableDate: availableDate,
                 },
                 selectedEquipment: newSelectedEquipmentArray,
                 trailerInfo: newTrailerArray
@@ -225,17 +230,17 @@ const BoardAdmin  = () =>{
     //OTHER TYPE TRAILER LOCAL CRUD CONTROLS
     const onSaveOtherTypeTrailer = async(e)=>{//TOGGLE control for other Type trailer && otherTypeTrailer array ADDITION
         try {
-            let amount = amountRef.current.value
+            let Ammount = amountRef.current.value
             let type = typeRef.current.value
             let length = lengthRef.current.value
-            let defaultTrailer = defaultRef.current.checked
-            console.log('DEFAULT T', defaultTrailer)
-            setOtherTypeTrailerArray(prev => [...prev, { amount, type, length, defaultTrailer }]);                
+            let def = defaultRef.current.checked
+            console.log('DEFAULT T', def)
+            setOtherTypeTrailerArray(prev => [...prev, { Ammount, type, length, def }]);                
             setOtherTypeOfTrailerSelected(false)
-            setOttEditingAmount(amount)
+            setOttEditingAmount(Ammount)
             setOttEditingLenght(length)
             setOttEditingType(type)
-            setOttEditingDefault(defaultTrailer)
+            setOttEditingDefault(def)
         } catch (err) {
             console.log(err)
         }
@@ -267,24 +272,26 @@ const BoardAdmin  = () =>{
     }
 
     const onOtherTrailerEditSave = async(e,index)=>{//TOGGLE control for other Type trailer && otherTypeTrailer array EDDITION
-        console.log('ON SAVE')
         const newOtherTypeTrailerArray = [...otherTypeTrailerArray]
         newOtherTypeTrailerArray[index] = {
             ...newOtherTypeTrailerArray[index],
-            amount: ottEditingAmount,
+            Amount: ottEditingAmount,
             type: ottEditingType,
             length: ottEditingLenght,
             defaultTrailer: ottEditingDefault
         }
         setOtherTypeTrailerArray(newOtherTypeTrailerArray)
         setEditingIndex(false)
+        console.log('OTT')
+        console.log('ON SAVE OTT', newOtherTypeTrailerArray)
+
     }
 
     const onCancelOtherTrailers = async(e,index)=>{//TOGGLE control for cancel action
         setOtherTypeOfTrailerSelected(false)
     }
 
-    console.log(currentDrivers)
+    console.log('CURRENT DRIVERS',currentDrivers)
 
     return (
         <div className="mainContent-boardAdmin">
@@ -382,7 +389,7 @@ const BoardAdmin  = () =>{
 
                                                     <h5>Add a new Other-Type trailer:</h5>
                                                     
-                                                    <input type="text" name='amount'className='other-trailerType-amount'ref={amountRef}/>
+                                                    <input type="text" name='amount' className='other-trailerType-amount'ref={amountRef}/>
                                                     <label htmlFor="amount">x  </label>
 
 
@@ -407,7 +414,7 @@ const BoardAdmin  = () =>{
                                                 <table>
                                                     <thead>
                                                         <tr>    
-                                                            <th>Ammount</th>
+                                                            <th>Amount</th>
                                                             <th>Trailer Type</th>
                                                             <th>Trailer Length</th>
                                                             <th>Default? </th>
@@ -569,6 +576,12 @@ const BoardAdmin  = () =>{
                             <label htmlFor="driverPhoneNumber">Driver Phone#:</label>
                             <input type="text" name='driverPhoneNumber' onChange={e =>setDriverPhone(e.target.value)} />
                             
+                            <label htmlFor="currentLocation">Current Location:</label>
+                            <input type="text" name='currentLocation' onChange={e => setCurrentLocation(e.target.value)} />
+
+                            <label htmlFor="availableDate">Available Date:</label>                                                        
+                            <input type="date" name="availableDate" id="" onChange={e => setAvailableDate(e.target.value)} />
+
                             <button type='submit' >Add+</button>
                             {/* <button type='button' onClick={(e)=>onAddAnotherDriver(e)} disabled={addAnotherDriver === false}> Add another Driver</button> */}
 
@@ -621,10 +634,10 @@ const BoardAdmin  = () =>{
                                                     <tr>
                                                         <th>Driver Name</th>
                                                         <th>Driver Phone#</th>
-                                                        <th>Trailer Type</th>
-                                                        <th>Current Location</th>
-                                                        <th>Next Load Needed</th>
-                                                        <th>Assigned Dispatcher</th>
+                                                        <th>Available Date</th>
+                                                        <th>Location</th>
+                                                        <th>Available Equipment</th>
+                                                        <th>Available Trailers</th>
                                                         <th>Actions</th>
                                                     </tr>
                                                 </thead>
@@ -633,12 +646,23 @@ const BoardAdmin  = () =>{
                                                     <tr key={index}>
                                                         <td>{driver.driverName}</td>
                                                         <td>{driver.driverPhoneNumber}</td>
-                                                        <td>{driver.trailerType}</td>
+                                                        <td>{driver.availableDate}</td>
                                                         <td>{driver.currentLocation}</td>
-                                                        <td>{driver.nextLoadNeeded}</td>
-                                                        <td>{driver.assignedDispatcher}</td>
+                                                        <td>
+                                                            {driver.equipment && Object.entries(driver.equipment).map(([key, value], index) => (
+                                                                <div key={index}>
+                                                                {key}: {value}
+                                                                </div>
+                                                            ))}
+                                                        </td>
+                                                        <td>
+                                                            {driver.trailers.map((item, index) => (
+                                                                <div key={index}>
+                                                                {item.type}, {item.Ammount}
+                                                                </div>
+                                                            ))}
+                                                        </td>
 
-                                                        {/* ... */}
                                                     </tr>
                                                 ))}
                                                   
