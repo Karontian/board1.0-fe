@@ -103,8 +103,8 @@ const BoardAdmin  = () =>{
         try {
             let response =  await axios.get('http://localhost:3001/getClients')
             let clients = response.data.clients
+            console.log('GET CLIENTS RESPONSE', clients)
             setCurrentClients(clients)
-
         } catch (error) {
             console.log(error)
         }
@@ -112,7 +112,7 @@ const BoardAdmin  = () =>{
     const getDrivers = async()=>{
         try {
             let response = await axios.get(`http://localhost:3001/getDrivers`)
-            console.log('RESPONSE', response)
+            console.log('GET DRIVERS RESPONSE', response)
             setCurrentDrivers(response.data.drivers)
         } catch (err) {
             console.log(err)
@@ -123,7 +123,7 @@ const BoardAdmin  = () =>{
     //COMPANY  AND DRIVER ADD CONTROLS
     const onCompanySubmit = async(e) =>{//ADDS A COMPANY
         e.preventDefault()
-        console.log('COMPANY ADD')
+        // console.log('COMPANY ADD')
         try{
             const newCompany = {
                 companyName: companyName,
@@ -137,7 +137,7 @@ const BoardAdmin  = () =>{
             
             }
             const addition = await axios.post('http://localhost:3001/newCompany', newCompany)
-            console.log(addition)
+            // console.log(addition)
 
         }catch(err){
             console.log(err)
@@ -167,14 +167,14 @@ const BoardAdmin  = () =>{
             const reefer53Checked = e.target.elements['default-reefer53'].checked;
         
             let newTrailerArray = [...otherTypeTrailerArray, 
-                { Ammount: fb48Amount, type: 'flatbed', length: '48', def: fb48Checked },
-                { Ammount: fb53Amount, type: 'flatbed', length: '53', def: fb53Checked },
-                { Ammount: van48Amount, type: 'van', length: '48', def: van48Checked },
-                { Ammount: van53Amount, type: 'van', length: '53', def: van53Checked },
-                { Ammount: reefer48Amount, type: 'reefer', length: '48', def: reefer48Checked },
-                { Ammount: reefer53Amount, type: 'reefer', length: '53', def: reefer53Checked }
+                { amount: fb48Amount, type: 'flatbed', length: '48', def: fb48Checked },
+                { amount: fb53Amount, type: 'flatbed', length: '53', def: fb53Checked },
+                { amount: van48Amount, type: 'van', length: '48', def: van48Checked },
+                { amount: van53Amount, type: 'van', length: '53', def: van53Checked },
+                { amount: reefer48Amount, type: 'reefer', length: '48', def: reefer48Checked },
+                { amount: reefer53Amount, type: 'reefer', length: '53', def: reefer53Checked }
             ];//collects all trailer info           
-            console.log('ALL TRAILERS', newTrailerArray)
+            // console.log('ALL TRAILERS', newTrailerArray)
             
             const newSelectedEquipment = {//collects all the equipment info
                 tarps8ft: tarps8ft,
@@ -190,7 +190,7 @@ const BoardAdmin  = () =>{
                 qty: value
             })); //convets equipment info into an array to be received by backed
     
-            console.log('trailer array:',newTrailerArray, 'equipmentSelected', newSelectedEquipmentArray)
+            // console.log('trailer array:',newTrailerArray, 'equipmentSelected', newSelectedEquipmentArray)
 
             const dataToSend = {
                 driverInfo: {
@@ -210,7 +210,7 @@ const BoardAdmin  = () =>{
                 }
             });
 
-            console.log(additionCall);
+            console.log('ADDITION CALL',additionCall);
 
             timeoutRef.current = setTimeout(() => {//RESETS all arrays 1sec after addition
                 setTrailerArray([])
@@ -230,14 +230,14 @@ const BoardAdmin  = () =>{
     //OTHER TYPE TRAILER LOCAL CRUD CONTROLS
     const onSaveOtherTypeTrailer = async(e)=>{//TOGGLE control for other Type trailer && otherTypeTrailer array ADDITION
         try {
-            let Ammount = amountRef.current.value
+            let amount = amountRef.current.value
             let type = typeRef.current.value
             let length = lengthRef.current.value
             let def = defaultRef.current.checked
             console.log('DEFAULT T', def)
-            setOtherTypeTrailerArray(prev => [...prev, { Ammount, type, length, def }]);                
+            setOtherTypeTrailerArray(prev => [...prev, { amount, type, length, def }]);                
             setOtherTypeOfTrailerSelected(false)
-            setOttEditingAmount(Ammount)
+            setOttEditingAmount(amount)
             setOttEditingLenght(length)
             setOttEditingType(type)
             setOttEditingDefault(def)
@@ -291,7 +291,7 @@ const BoardAdmin  = () =>{
         setOtherTypeOfTrailerSelected(false)
     }
 
-    console.log('CURRENT DRIVERS',currentDrivers)
+    console.log('CURRENT DRIVERS',currentDrivers, 'CURRENT CLIENTS', currentClients)
 
     return (
         <div className="mainContent-boardAdmin">
@@ -341,134 +341,90 @@ const BoardAdmin  = () =>{
                          </select>
                         <div className='newDriverForm-equipmentForm'>
                             <div className='equipmentForm-trailerType'>
-                                <strong>Trailer Type:</strong>
+                                    <strong>Trailer Type:</strong>
 
-                                <div className='trailerType-fb'>
-                                    <input type="text" className='equipmentOption-trailerType' name='fb48-ammount'  onChange={e => setFb48Amount(e.target.value)} />
-                                    <label htmlFor="fb48-ammount">xFB48 default?</label>
-                                    <input type="checkBox" id='fb48' name='default-fb48' onChange={e => setFb48Checked(e.target.checked)} />
+                                    <div className='trailerType-fb'>
+                                        <input type="text" className='equipmentOption-trailerType' name='fb48-ammount'  onChange={e => setFb48Amount(e.target.value)} />
+                                        <label htmlFor="fb48-ammount">xFB48 default?</label>
+                                        <input type="checkBox" id='fb48' name='default-fb48' onChange={e => setFb48Checked(e.target.checked)} />
 
 
-                                    <input type="text" className='equipmentOption-trailerType' name='fb53-ammount'  onChange={e => setFb53Amount(e.target.value)} />
-                                    <label htmlFor="fb53-ammount">xFB53 default?</label>
-                                    <input type="checkBox" id='fb53' name='default-fb53'  onChange={e => setFb53Checked(e.target.checked)} />
+                                        <input type="text" className='equipmentOption-trailerType' name='fb53-ammount'  onChange={e => setFb53Amount(e.target.value)} />
+                                        <label htmlFor="fb53-ammount">xFB53 default?</label>
+                                        <input type="checkBox" id='fb53' name='default-fb53'  onChange={e => setFb53Checked(e.target.checked)} />
 
-                                </div>
-                                <div className='trailerType-van'>
+                                    </div>
+                                    <div className='trailerType-van'>
 
-                                    <input type="text" className='equipmentOption-trailerType' name='van48-ammount'onChange={e => setVan48Amount(e.target.value)} />
-                                    <label htmlFor="van48-ammount">xV48 default?</label>
-                                    <input type="checkBox" id='van48' name='default-van48'  onChange={e => setVan48Checked(e.target.checked)} />
+                                        <input type="text" className='equipmentOption-trailerType' name='van48-ammount'onChange={e => setVan48Amount(e.target.value)} />
+                                        <label htmlFor="van48-ammount">xV48 default?</label>
+                                        <input type="checkBox" id='van48' name='default-van48'  onChange={e => setVan48Checked(e.target.checked)} />
 
+                                        
+                                        <input type="text" className='equipmentOption-trailerType' name='van53-ammount' onChange={e => setVan53Amount(e.target.value)} />
+                                        <label htmlFor="van53-ammount">xV53 default?</label>
+                                        <input type="checkBox" id='van53' name='default-van53'  onChange={e => setVan53Checked(e.target.checked)} />
+
+
+                                    </div>
+                                    <div className='trailerType-reefer'>
                                     
-                                    <input type="text" className='equipmentOption-trailerType' name='van53-ammount' onChange={e => setVan53Amount(e.target.value)} />
-                                    <label htmlFor="van53-ammount">xV53 default?</label>
-                                    <input type="checkBox" id='van53' name='default-van53'  onChange={e => setVan53Checked(e.target.checked)} />
+                                        <input type="text" className='equipmentOption-trailerType' name='reefer48-ammount'  onChange={e => setReefer48Amount(e.target.value)} />
+                                        <label htmlFor="reefer48-ammount">xR48 default?</label>
+                                        <input type="checkBox" id='reefer48' name='default-reefer48'  onChange={e => setReefer48Checked(e.target.checked)} />
+
+                                        <input type="text" className='equipmentOption-trailerType' name='reefer53-default'  onChange={e => setReefer53Amount(e.target.value)} />
+                                        <label htmlFor="reefer53-ammount">xR53 default?</label>
+                                        <input type="checkBox" id='reefer53' name='default-reefer53'  onChange={e => setReefer53Checked(e.target.checked)} />
 
 
-                                </div>
-                                <div className='trailerType-reefer'>
-                                
-                                    <input type="text" className='equipmentOption-trailerType' name='reefer48-ammount'  onChange={e => setReefer48Amount(e.target.value)} />
-                                    <label htmlFor="reefer48-ammount">xR48 default?</label>
-                                    <input type="checkBox" id='reefer48' name='default-reefer48'  onChange={e => setReefer48Checked(e.target.checked)} />
+                                    </div>
+                                    <br />
+                                    <div className='trailerType-other'>
+                                        <button type='button' onClick={() => setOtherTypeOfTrailerSelected(true)} disabled={otherTypeOfTrailerSelected === true}>+Other Type Trailer</button>                                
 
-                                    <input type="text" className='equipmentOption-trailerType' name='reefer53-default'  onChange={e => setReefer53Amount(e.target.value)} />
-                                    <label htmlFor="reefer53-ammount">xR53 default?</label>
-                                    <input type="checkBox" id='reefer53' name='default-reefer53'  onChange={e => setReefer53Checked(e.target.checked)} />
+                                                <div className='trailerType-other-form'>
+                                                    {otherTypeOfTrailerSelected === true && 
+                                                        <div  className='other-trailerType'>
 
-
-                                </div>
-                                <br />
-                                <div className='trailerType-other'>
-                                    <button type='button' onClick={() => setOtherTypeOfTrailerSelected(true)} disabled={otherTypeOfTrailerSelected === true}>+Other Type Trailer</button>                                
-
-                                            <div className='trailerType-other-form'>
-                                                {otherTypeOfTrailerSelected === true && 
-                                                    <div  className='other-trailerType'>
-
-                                                    <h5>Add a new Other-Type trailer:</h5>
-                                                    
-                                                    <input type="text" name='amount' className='other-trailerType-amount'ref={amountRef}/>
-                                                    <label htmlFor="amount">x  </label>
+                                                        <h5>Add a new Other-Type trailer:</h5>
+                                                        
+                                                        <input type="text" name='amount' className='other-trailerType-amount'ref={amountRef}/>
+                                                        <label htmlFor="amount">x  </label>
 
 
-                                                    <label htmlFor="type">Type</label>
-                                                    <input type="text" name='type' className='other-trailerType-type'ref={typeRef}/>
-                                                    <br />
+                                                        <label htmlFor="type">Type</label>
+                                                        <input type="text" name='type' className='other-trailerType-type'ref={typeRef}/>
+                                                        <br />
 
-                                                    <label htmlFor="length">Length</label>
-                                                    <input type="text" name='length'className='other-trailerType-length'ref={lengthRef}/>
-                                                    <span>ft    </span>
+                                                        <label htmlFor="length">Length</label>
+                                                        <input type="text" name='length'className='other-trailerType-length'ref={lengthRef}/>
+                                                        <span>ft    </span>
 
-                                                    <label htmlFor="default">Default?</label>
-                                                    <input type="checkbox" name='default' className='other-trailerType' ref={defaultRef}/>
+                                                        <label htmlFor="default">Default?</label>
+                                                        <input type="checkbox" name='default' className='other-trailerType' ref={defaultRef}/>
 
-                                                    <button type='button'  onClick={(e)=>onSaveOtherTypeTrailer(e)}>Save Trailers</button>    
-                                                    <button type='button'  onClick={(e)=>onCancelOtherTrailers(e)}>Cancel</button>                                                        
-                                                    
-                                                </div>}
-                                            </div>
-                                            <div className='trailerType-other-grid'>
-                                                <h3>Other-Type Trailers added:</h3>
-                                                <table>
-                                                    <thead>
-                                                        <tr>    
-                                                            <th>Amount</th>
-                                                            <th>Trailer Type</th>
-                                                            <th>Trailer Length</th>
-                                                            <th>Default? </th>
-                                                            <th>Actions </th>
-                                                        </tr>    
-                                                    </thead>
-                                                    <tbody>
-                                                        {otherTypeTrailerArray.map((item, index) => (
-                                                            editingIndex === index ? (
-                                                                <tr key={index}>
-                                                                    <td>
-                                                                        <label htmlFor="editedAmount"></label>
-                                                                        <input type="text" name='editedAmount' value={ottEditingAmount} onChange={(e) => setOttEditingAmount(e.target.value)}  />
-                                                                    </td>
-                                                                    <td>
-                                                                        <label htmlFor="editedType"></label>
-                                                                        <input type="text" name='editedType' value={ottEditingType} onChange={(e) => setOttEditingType(e.target.value)}/>
-                                                                    </td>
-                                                                    <td>
-                                                                        <label htmlFor="editedLenght"></label>
-                                                                        <input type="text" name='editedLenght' value={ottEditingLenght} onChange={(e) => setOttEditingLenght(e.target.value)} />
-                                                                    </td>
-                                                                    <td>
-                                                                        <input type="checkBox" name='editedDefault' checked={ottEditingDefault} onChange={(e)=>setOttEditingDefault(e.target.checked)} />
-                                                                    </td>
-                                                                    <td>
-                                                                        <button type='button' onClick={(e)=>onOtherTrailerEditSave(e, index)}>Save</button>
-                                                                        <button type='button'>Cancel</button>
-                                                                    </td>
-
-                                                                </tr>
-                                                            ) :
-                                                            (<tr key={index}>
-                                                                <td>{item.amount}</td>
-                                                                <td>{item.type}</td>
-                                                                <td>{item.length}</td>
-                                                                <td>
-                                                                    {/* {item.defaultTrailer ? 'Yes' : 'No'} */}
-                                                                    <label htmlFor="defaultTrailer"></label>
-                                                                    <input type="checkBox"  name='defaultTrailer' checked={item.defaultTrailer} readOnly/>
-
-
-                                                                </td>
-                                                                <td>
-                                                                    <button type='button' onClick={(e)=>onOtherTrailerDelete(e, index)}>Delete</button>
-                                                                    <button type='button' onClick={(e)=>onOtherTrailerEdit(e, index)}>Edit</button>
-                                                                </td>
-                                                            </tr>)
-                                                        ))}
-                                                        {otherTypeTrailerArray.map((item, index)=>{
-                                                            <tr key={index}>
-                                                                {editingIndex === index ? 
-                                                                (
-                                                                    <>
+                                                        <button type='button'  onClick={(e)=>onSaveOtherTypeTrailer(e)}>Save Trailers</button>    
+                                                        <button type='button'  onClick={(e)=>onCancelOtherTrailers(e)}>Cancel</button>                                                        
+                                                        
+                                                    </div>}
+                                                </div>
+                                                <div className='trailerType-other-grid'>
+                                                    <h3>Other-Type Trailers added:</h3>
+                                                    <table>
+                                                        <thead>
+                                                            <tr>    
+                                                                <th>Amount</th>
+                                                                <th>Trailer Type</th>
+                                                                <th>Trailer Length</th>
+                                                                <th>Default? </th>
+                                                                <th>Actions </th>
+                                                            </tr>    
+                                                        </thead>
+                                                        <tbody>
+                                                            {otherTypeTrailerArray.map((item, index) => (
+                                                                editingIndex === index ? (
+                                                                    <tr key={index}>
                                                                         <td>
                                                                             <label htmlFor="editedAmount"></label>
                                                                             <input type="text" name='editedAmount' value={ottEditingAmount} onChange={(e) => setOttEditingAmount(e.target.value)}  />
@@ -486,17 +442,12 @@ const BoardAdmin  = () =>{
                                                                         </td>
                                                                         <td>
                                                                             <button type='button' onClick={(e)=>onOtherTrailerEditSave(e, index)}>Save</button>
-                                                                            
                                                                             <button type='button'>Cancel</button>
                                                                         </td>
-                                                                    
-                                                                    </>
-                                                                )
-                                                                
-                                                                :
-                                                                
-                                                                (
-                                                                <>
+
+                                                                    </tr>
+                                                                ) :
+                                                                (<tr key={index}>
                                                                     <td>{item.amount}</td>
                                                                     <td>{item.type}</td>
                                                                     <td>{item.length}</td>
@@ -511,63 +462,112 @@ const BoardAdmin  = () =>{
                                                                         <button type='button' onClick={(e)=>onOtherTrailerDelete(e, index)}>Delete</button>
                                                                         <button type='button' onClick={(e)=>onOtherTrailerEdit(e, index)}>Edit</button>
                                                                     </td>
-                                                                </>
-                                                                )
-                                                                }
-                                                            </tr>
-                                                        })}
+                                                                </tr>)
+                                                            ))}
+                                                            {otherTypeTrailerArray.map((item, index)=>{
+                                                                <tr key={index}>
+                                                                    {editingIndex === index ? 
+                                                                    (
+                                                                        <>
+                                                                            <td>
+                                                                                <label htmlFor="editedAmount"></label>
+                                                                                <input type="text" name='editedAmount' value={ottEditingAmount} onChange={(e) => setOttEditingAmount(e.target.value)}  />
+                                                                            </td>
+                                                                            <td>
+                                                                                <label htmlFor="editedType"></label>
+                                                                                <input type="text" name='editedType' value={ottEditingType} onChange={(e) => setOttEditingType(e.target.value)}/>
+                                                                            </td>
+                                                                            <td>
+                                                                                <label htmlFor="editedLenght"></label>
+                                                                                <input type="text" name='editedLenght' value={ottEditingLenght} onChange={(e) => setOttEditingLenght(e.target.value)} />
+                                                                            </td>
+                                                                            <td>
+                                                                                <input type="checkBox" name='editedDefault' checked={ottEditingDefault} onChange={(e)=>setOttEditingDefault(e.target.checked)} />
+                                                                            </td>
+                                                                            <td>
+                                                                                <button type='button' onClick={(e)=>onOtherTrailerEditSave(e, index)}>Save</button>
+                                                                                
+                                                                                <button type='button'>Cancel</button>
+                                                                            </td>
+                                                                        
+                                                                        </>
+                                                                    )
+                                                                    
+                                                                    :
+                                                                    
+                                                                    (
+                                                                    <>
+                                                                        <td>{item.amount}</td>
+                                                                        <td>{item.type}</td>
+                                                                        <td>{item.length}</td>
+                                                                        <td>
+                                                                            {/* {item.defaultTrailer ? 'Yes' : 'No'} */}
+                                                                            <label htmlFor="defaultTrailer"></label>
+                                                                            <input type="checkBox"  name='defaultTrailer' checked={item.defaultTrailer} readOnly/>
 
-                                                    </tbody>
-                                                    <tfoot>
-                                                    </tfoot>
-                                                </table>
-                                            </div>
-                                      <div>  
-                                </div>                                                                      
-                            </div>               
 
-                        </div>
-                        <div className='equipmentForm-equipment'>
-                            <div className='equipment-tarps'>
-                            <span>Equipment:</span>
-                                <br />
-                                <span>Tarps:   </span>
-                                        <br />
-                                        <input type="text" className='equipment-tarps8ft' name='equipment-tarps8ft' onChange={e => setTarps8ft(e.target.value)} />
-                                        <label htmlFor="equipment-tarps8ft">x 8FT Tarps</label>
+                                                                        </td>
+                                                                        <td>
+                                                                            <button type='button' onClick={(e)=>onOtherTrailerDelete(e, index)}>Delete</button>
+                                                                            <button type='button' onClick={(e)=>onOtherTrailerEdit(e, index)}>Edit</button>
+                                                                        </td>
+                                                                    </>
+                                                                    )
+                                                                    }
+                                                                </tr>
+                                                            })}
 
-                                        <br />
-                                        <input type="text" className='equipment-tarps6ft' name='equipment-tarps6ft'  onChange={e => setTarps6ft(e.target.value)} />
-                                        <label htmlFor="equipment-tarps6ft">x 6FT Tarps</label>
-
-                                        <br />
-                                        <input type="text" className='equipment-tarps4ft' name='equipment-tarps4ft'  onChange={e => setTarps4ft(e.target.value)} />
-                                        <label htmlFor="equipment-tarps4ft">x 4FT Tarps</label>
-
+                                                        </tbody>
+                                                        <tfoot>
+                                                        </tfoot>
+                                                    </table>
+                                                </div>
+                                        <div>  
+                                    </div>                                                                      
+                                </div>               
 
                             </div>
+                            <div className='equipmentForm-equipment'>
+                                <div className='equipment-tarps'>
+                                <span>Equipment:</span>
+                                    <br />
+                                    <span>Tarps:   </span>
+                                            <br />
+                                            <input type="text" className='equipment-tarps8ft' name='equipment-tarps8ft' onChange={e => setTarps8ft(e.target.value)} />
+                                            <label htmlFor="equipment-tarps8ft">x 8FT Tarps</label>
 
-                            <div className='equipment-sec'>
-                            <span>Securing:   </span>
-                                        <br />
-                                        <input type="text" className='equipment-chains' name='equipment-chains'  onChange={e => setChains(e.target.value)} />
-                                        <label htmlFor="equipment-chains">x Chains</label>
+                                            <br />
+                                            <input type="text" className='equipment-tarps6ft' name='equipment-tarps6ft'  onChange={e => setTarps6ft(e.target.value)} />
+                                            <label htmlFor="equipment-tarps6ft">x 6FT Tarps</label>
 
-                                        <br />
-                                        <input type="text" className='equipment-binders' name='equipment-binders'  onChange={e => setBinders(e.target.value)} />
-                                        <label htmlFor="equipment-binders">x Binders</label>
+                                            <br />
+                                            <input type="text" className='equipment-tarps4ft' name='equipment-tarps4ft'  onChange={e => setTarps4ft(e.target.value)} />
+                                            <label htmlFor="equipment-tarps4ft">x 4FT Tarps</label>
 
-                                        <br />
-                                        <input type="text" className='equipment-pipeStakes' name='equipment-pipeStakes'  onChange={e => setPipeStakes(e.target.value)} />
-                                        <label htmlFor="equipment-pipeStakes">x PipeStakes</label>
 
-                                        <br />
-                                        <input type="text" className='equipment-dunnage' name='equipment-dunnage'  onChange={e => setDunnage(e.target.value)} />
-                                        <label htmlFor="equipment-dunnage">x Dunnage</label>
+                                </div>
 
-                            </div>    
-                            
-                        </div>
+                                <div className='equipment-sec'>
+                                <span>Securing:   </span>
+                                            <br />
+                                            <input type="text" className='equipment-chains' name='equipment-chains'  onChange={e => setChains(e.target.value)} />
+                                            <label htmlFor="equipment-chains">x Chains</label>
+
+                                            <br />
+                                            <input type="text" className='equipment-binders' name='equipment-binders'  onChange={e => setBinders(e.target.value)} />
+                                            <label htmlFor="equipment-binders">x Binders</label>
+
+                                            <br />
+                                            <input type="text" className='equipment-pipeStakes' name='equipment-pipeStakes'  onChange={e => setPipeStakes(e.target.value)} />
+                                            <label htmlFor="equipment-pipeStakes">x PipeStakes</label>
+
+                                            <br />
+                                            <input type="text" className='equipment-dunnage' name='equipment-dunnage'  onChange={e => setDunnage(e.target.value)} />
+                                            <label htmlFor="equipment-dunnage">x Dunnage</label>
+
+                                </div>    
+                                
+                            </div>
                         </div>    
                         <div className='newDriverForm-driverForm'>
                             <label htmlFor="driverName">Driver Name:</label>
@@ -607,72 +607,63 @@ const BoardAdmin  = () =>{
                         </tr>
                     </thead>
                     <tbody>
-                   
-                        {Array.from(currentClients).map((company, index) => {
-                            return (
-                                <React.Fragment key={index} >
-                                    <tr className="companyRow">
-                                        <td>{company.companyName}</td>
-                                        <td>{company.companyPhoneNumber}</td>
-                                        <td>{company.ownerName}</td>
-                                        <td>{company.ownerPhoneNumber}</td>
-                                        <td>{company.address}</td>
-                                        <td>{company.mcNumber}</td>
-                                        <td>{company.dotNumber}</td>
-                                        <td>{company.einNumber}</td>
-                                        <td>
-                                            <button>Edit Cpmpany</button>
-                                            <button>Delete Company</button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colSpan="10">
-                                            <table className='driverTable'>
-                                              
-                                                <thead>
-                                             
-                                                    <tr>
-                                                        <th>Driver Name</th>
-                                                        <th>Driver Phone#</th>
-                                                        <th>Available Date</th>
-                                                        <th>Location</th>
-                                                        <th>Available Equipment</th>
-                                                        <th>Available Trailers</th>
-                                                        <th>Actions</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                {currentDrivers.filter(driver => driver.selectedCompany === company.companyName).map((driver, index) => (
-                                                    <tr key={index}>
-                                                        <td>{driver.driverName}</td>
-                                                        <td>{driver.driverPhoneNumber}</td>
-                                                        <td>{driver.availableDate}</td>
-                                                        <td>{driver.currentLocation}</td>
-                                                        <td>
-                                                            {driver.equipment && Object.entries(driver.equipment).map(([key, value], index) => (
-                                                                <div key={index}>
-                                                                {key}: {value}
-                                                                </div>
-                                                            ))}
-                                                        </td>
-                                                        <td>
-                                                            {driver.trailers.map((item, index) => (
-                                                                <div key={index}>
-                                                                {item.type}, {item.Ammount}
-                                                                </div>
-                                                            ))}
-                                                        </td>
+                 
+                    {Array.from(currentClients).map((client, index) => (
+                        <React.Fragment key={index}>
+                            <tr>
+                                <td>{client.companyName}</td>
+                                <td>{client.companyPhoneNumber}</td>
+                                <td>{client.ownerName}</td>
+                                <td>{client.ownerPhoneNumber}</td>
+                                <td>{client.address}</td>
+                                <td>{client.mcNumber}</td>
+                                <td>{client.dotNumber}</td>
+                                <td>{client.einNumber}</td>
+                                <td>
+                                    <button type='button'>Edit</button>
+                                    <button type='button'>Delete</button>
+                                </td>                           
+                            </tr>
+                            <>
+                                <tr>
+                                    <th>Driver Name</th>
+                                    <th>Driver Phone#</th>
+                                    <th>Available Trailers</th>
+                                    <th>Available Equipment</th>
+                                    <th>Available Date</th>                                    
+                                    <th>Current Location</th>
+                                    <th>Admin</th>
 
-                                                    </tr>
-                                                ))}
-                                                  
-                                                </tbody>
-                                            </table>
-                                        </td>
-                                    </tr>
-                                </React.Fragment>
-                            );
-                        })}
+
+
+                                </tr>
+                         
+                            {currentDrivers.filter(driver => driver.driverCompany === client.companyName).map((driver, driverIndex) => (//DISPLAYS EACH DRIVER TO ITS COMPANY
+                                <tr key={`driver-${index}-${driverIndex}`}>
+                                    <td>{driver.driverName}</td>
+                                    <td>{driver.driverPhoneNumber}</td>
+                                    <td>
+                                        {driver.trailerInfo.map((trailer, index) => (
+                                            trailer.amount > 0 ? 
+                                                <span>{trailer.type} {trailer.length}</span> 
+                                                :
+                                                null
+                                        ))}
+                                    </td>
+                                    <td>Available EQ</td>
+                                    <td>{driver.availableDate}</td>
+                                    <td>{driver.currentLocation}</td>
+                                    <td>
+                                        <button type='button'>Edit Driver</button>
+                                        <button type='button'>Delete Driver</button>
+                                    </td>
+                                </tr>
+                             ))}
+                            </>
+                        </React.Fragment>
+                    ))}
+
+                        
                     </tbody>
                     <tfoot></tfoot>
                 </table>
