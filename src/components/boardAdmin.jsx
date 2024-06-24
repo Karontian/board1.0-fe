@@ -103,7 +103,7 @@ const BoardAdmin  = () =>{
         try {
             let response =  await axios.get('http://localhost:3001/getClients')
             let clients = response.data.clients
-            console.log('GET CLIENTS RESPONSE', clients)
+            // console.log('GET CLIENTS RESPONSE', clients)
             setCurrentClients(clients)
         } catch (error) {
             console.log(error)
@@ -112,7 +112,7 @@ const BoardAdmin  = () =>{
     const getDrivers = async()=>{
         try {
             let response = await axios.get(`http://localhost:3001/getDrivers`)
-            console.log('GET DRIVERS RESPONSE', response)
+            // console.log('GET DRIVERS RESPONSE', response)
             setCurrentDrivers(response.data.drivers)
         } catch (err) {
             console.log(err)
@@ -191,6 +191,7 @@ const BoardAdmin  = () =>{
             })); //convets equipment info into an array to be received by backed
     
             // console.log('trailer array:',newTrailerArray, 'equipmentSelected', newSelectedEquipmentArray)
+            console.log('EQUIPMENT TSHOOT', newSelectedEquipmentArray)
 
             const dataToSend = {
                 driverInfo: {
@@ -202,8 +203,9 @@ const BoardAdmin  = () =>{
                 },
                 selectedEquipment: newSelectedEquipmentArray,
                 trailerInfo: newTrailerArray
-            };
             
+            };
+            console.log('PRE SERVER POST', dataToSend)
             const additionCall = await axios.post('http://localhost:3001/driverAdd', dataToSend, {
                 headers: {
                     'Content-Type': 'application/json'
@@ -291,7 +293,7 @@ const BoardAdmin  = () =>{
         setOtherTypeOfTrailerSelected(false)
     }
 
-    console.log('CURRENT DRIVERS',currentDrivers, 'CURRENT CLIENTS', currentClients)
+    // console.log('CURRENT DRIVERS',currentDrivers, 'CURRENT CLIENTS', currentClients)
 
     return (
         <div className="mainContent-boardAdmin">
@@ -643,14 +645,26 @@ const BoardAdmin  = () =>{
                                     <td>{driver.driverName}</td>
                                     <td>{driver.driverPhoneNumber}</td>
                                     <td>
-                                        {driver.trailerInfo.map((trailer, index) => (
-                                            trailer.amount > 0 ? 
-                                                <span>{trailer.type} {trailer.length}</span> 
+                                        <ul>
+                                            {driver.trailerInfo.map((trailer, index) => (
+                                                trailer.amount > 0 ? 
+                                                    <li key={index}>{trailer.amount}{trailer.type} {trailer.length}</li> 
+                                                    :
+                                                    null
+                                            ))}
+                                    </ul>
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            {driver.selectedEquipment.map((eq, index)=>(
+                                                eq.qty > 0 ?
+                                                <li key={index}>{eq.type} qty: {eq.qty}</li>
                                                 :
                                                 null
-                                        ))}
+                                            ))}
+                                        </ul>
+
                                     </td>
-                                    <td>Available EQ</td>
                                     <td>{driver.availableDate}</td>
                                     <td>{driver.currentLocation}</td>
                                     <td>
