@@ -13,6 +13,10 @@ const BoardAdmin  = () =>{
     const [dotNumber, setDotNumber] = useState('');
     const [einNumber, setEinNumber] = useState('');
     const [currentClients, setCurrentClients] = useState('');
+    // const [companyEditMode, setCompanyEditMode] = useState(false)
+    const [editingCompanyIndex, setEditingCompanyIndex] = useState(null);
+
+
 
 
     //TRAILER TYPE STATE
@@ -120,7 +124,7 @@ const BoardAdmin  = () =>{
     }//FETCH added drivers
 
 
-    //COMPANY  AND DRIVER ADD CONTROLS
+    //COMPANY CRUD CONTRLS 
     const onCompanySubmit = async(e) =>{//ADDS A COMPANY
         e.preventDefault()
         // console.log('COMPANY ADD')
@@ -145,7 +149,67 @@ const BoardAdmin  = () =>{
         e.target.reset()
 
     }
+    const onCompanyDelete = async(e, index, companyName)=>{//DELETES A COMPANY
+        console.log('DELETING COMPANY', e, index, companyName)
+        try {
+            const req = await axios.delete(`http://localhost:3001/deleteCompany/${index}`)
+            console.log(req)
+        } catch (err) {
+            console.log(err)
+        }
+    }
+    const onCompanyEdit = async(e, index)=>{// TOGGLES COMPANY EDIT MODE
+        console.log('COMPANY EDIT', e, index)
+        setEditingCompanyIndex(index)        
+    }
+    const handleClientChange = (index, field, value) => {    // Handler to update client information
+    const updatedClients = currentClients.map((client, clientIndex) => {   // Create a new array with updated client information
+      if (index === clientIndex) {
+        return { ...client, [field]: value };
+      }
+      return client;
+    });
+    setCurrentClients(updatedClients);// Update the state with the new clients array
 
+    };
+
+    const onCompanyEditSave = async (e, index, companyId) => {
+    console.log('COMPANY EDIT SAVE', e, index);
+    try {
+        // Find the client by index in the currentClients array
+        const clientToSave = currentClients[index];
+        if (!clientToSave) {
+            console.error('Client not found');
+            return;
+        }
+
+        // Use the client's information for the update
+        const updatedInformation = {
+            companyId: clientToSave._id, // Assuming _id is the field for companyId
+            companyName: clientToSave.companyName,
+            companyPhoneNumber: clientToSave.companyPhoneNumber,
+            ownerName: clientToSave.ownerName,
+            ownerPhoneNumber: clientToSave.ownerPhoneNumber,
+            address: clientToSave.address,
+            mcNumber: clientToSave.mcNumber,
+            dotNumber: clientToSave.dotNumber,
+            einNumber: clientToSave.einNumber
+        };
+
+        const edition = await axios.put(`http://localhost:3001/companyEdit/${companyId}`, updatedInformation);
+        console.log(edition);
+        setEditingCompanyIndex('');
+    } catch (err) {
+        console.log(err);
+    }
+};
+    const onCompanyEditCancel = async(e, index)=>{//CANCEL EDITION MODE
+        console.log('ON COMPANY EDIT CANCEL', e, index)
+        setEditingCompanyIndex('')
+    }
+
+
+    //DRIVER CRUD CONTROLS
     const onDriverAdd = async(e) =>{ //ADDS A DRIVER, includes: Company Info, Driver info and Equipment info
         try {
             console.log('ADDING DRIVER', e.target)
@@ -229,6 +293,7 @@ const BoardAdmin  = () =>{
 
     }
 
+
     //OTHER TYPE TRAILER LOCAL CRUD CONTROLS
     const onSaveOtherTypeTrailer = async(e)=>{//TOGGLE control for other Type trailer && otherTypeTrailer array ADDITION
         try {
@@ -293,7 +358,6 @@ const BoardAdmin  = () =>{
         setOtherTypeOfTrailerSelected(false)
     }
 
-    // console.log('CURRENT DRIVERS',currentDrivers, 'CURRENT CLIENTS', currentClients)
 
     return (
         <div className="mainContent-boardAdmin">
@@ -610,37 +674,58 @@ const BoardAdmin  = () =>{
                     </thead>
                     <tbody>
                  
-                    {Array.from(currentClients).map((client, index) => (
+                    {Array.from(currentClients).map((client, index) => (//DISPPLAYS COMPANY AND NESTS DRIVERS TABLE
+                      editingCompanyIndex === index ? // Check if this is the company being edited
                         <React.Fragment key={index}>
-                            <tr>
-                                <td>{client.companyName}</td>
-                                <td>{client.companyPhoneNumber}</td>
-                                <td>{client.ownerName}</td>
-                                <td>{client.ownerPhoneNumber}</td>
-                                <td>{client.address}</td>
-                                <td>{client.mcNumber}</td>
-                                <td>{client.dotNumber}</td>
-                                <td>{client.einNumber}</td>
-                                <td>
-                                    <button type='button'>Edit</button>
-                                    <button type='button'>Delete</button>
-                                </td>                           
-                            </tr>
-                            <>
-                                <tr>
-                                    <th>Driver Name</th>
-                                    <th>Driver Phone#</th>
-                                    <th>Available Trailers</th>
-                                    <th>Available Equipment</th>
-                                    <th>Available Date</th>                                    
-                                    <th>Current Location</th>
-                                    <th>Admin</th>
-
-
-
-                                </tr>
-                         
-                            {currentDrivers.filter(driver => driver.driverCompany === client.companyName).map((driver, driverIndex) => (//DISPLAYS EACH DRIVER TO ITS COMPANY
+                         <tr>
+                            <td><input type="text" value={client.companyName} onChange={(e) => handleClientChange(index, 'companyName', e.target.value)} /></td>
+                            <td><input type="text" value={client.companyPhoneNumber} onChange={(e) => handleClientChange(index, 'companyPhoneNumber', e.target.value)} /></td>
+                            <td><input type="text" value={client.ownerName} onChange={(e) => handleClientChange(index, 'ownerName', e.target.value)} /></td>
+                            <td><input type="text" value={client.ownerPhoneNumber} onChange={(e) => handleClientChange(index, 'ownerPhoneNumber', e.target.value)} /></td>
+                            <td><input type="text" value={client.address} onChange={(e) => handleClientChange(index, 'address', e.target.value)} /></td>
+                            <td><input type="text" value={client.mcNumber} onChange={(e) => handleClientChange(index, 'mcNumber', e.target.value)} /></td>
+                            <td><input type="text" value={client.dotNumber} onChange={(e) => handleClientChange(index, 'dotNumber', e.target.value)} /></td>
+                            <td><input type="text" value={client.einNumber} onChange={(e) => handleClientChange(index, 'einNumber', e.target.value)} /></td>
+                            <td>
+                                <button onClick={(e) => onCompanyEditSave(e, index, client._id)} type='button'>Save</button>
+                                <button onClick={(e) => onCompanyEditCancel(e, index)} type='button'>Cancel</button>
+                            </td>                           
+                        </tr>                        
+                        </React.Fragment>
+                        : // Default view
+                        <React.Fragment key={index}>
+                        <tr>
+                            <td>{client.companyName}</td>
+                            <td>{client.companyPhoneNumber}</td>
+                            <td>{client.ownerName}</td>
+                            <td>{client.ownerPhoneNumber}</td>
+                            <td>{client.address}</td>
+                            <td>{client.mcNumber}</td>
+                            <td>{client.dotNumber}</td>
+                            <td>{client.einNumber}</td>
+                            <td>
+                            <button onClick={(e) => onCompanyEdit(e, index)} type='button'>Edit</button>
+                            <button onClick={(e) => onCompanyDelete(e, client._id, client.companyName)} type='button'>Delete</button>
+                            </td>
+                        </tr>
+                        <tr> 
+                            <td colSpan="9"> {/* Span across all columns */}
+                            <table> {/*NESTED DRIVER TABLE*/} 
+                                <thead>
+                                    <tr>
+                                        <th>Drivers:</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Driver Name</th>
+                                        <th>Driver Phone Number</th>
+                                        <th>Current Location</th>
+                                        <th>Available Date</th>
+                                        <th>Trailer Equipment</th>
+                                        <th>Securing Equipment</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {currentDrivers.filter(driver => driver.driverCompany === client.companyName).map((driver, driverIndex) => (//DISPLAYS EACH DRIVER TO ITS COMPANY
                                 <tr key={`driver-${index}-${driverIndex}`}>
                                     <td>{driver.driverName}</td>
                                     <td>{driver.driverPhoneNumber}</td>
@@ -667,14 +752,17 @@ const BoardAdmin  = () =>{
                                     </td>
                                     <td>{driver.availableDate}</td>
                                     <td>{driver.currentLocation}</td>
-                                    <td>
-                                        <button type='button'>Edit Driver</button>
-                                        <button type='button'>Delete Driver</button>
-                                    </td>
+                                    
                                 </tr>
                              ))}
-                            </>
+                                {/* Add more nested rows as needed */}
+                                </tbody>
+                            </table>
+                            </td>
+                        </tr>
                         </React.Fragment>
+
+                  
                     ))}
 
                         
