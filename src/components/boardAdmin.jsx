@@ -13,7 +13,6 @@ const BoardAdmin  = () =>{
     const [dotNumber, setDotNumber] = useState('');
     const [einNumber, setEinNumber] = useState('');
     const [currentClients, setCurrentClients] = useState('');
-    // const [companyEditMode, setCompanyEditMode] = useState(false)
     const [editingCompanyIndex, setEditingCompanyIndex] = useState(null);
 
 
@@ -62,8 +61,8 @@ const BoardAdmin  = () =>{
     const [currentDrivers,  setCurrentDrivers] = useState([])
     const [currentLocation, setCurrentLocation] = useState('')
     const [availableDate, setAvailableDate] = useState('')
-    const [editingDriverIndex, setEditingDriverIndex] = useState([])
-    const [editingDriverCompany, setEditingDriverCompany] = useState([])
+    const [editingDriverIndex, setEditingDriverIndex] = useState([]) //TOGGLES A DRIVER ON EDITION
+    const [editingDriverCompany, setEditingDriverCompany] = useState([]) //IDENTIFIES WHAT COMPANY IS THE EDITING DRIVER UNDER
 
     //DATA REFS
         ///OTHER TRAILER TYPE DATA HOLDERS
@@ -313,18 +312,51 @@ const BoardAdmin  = () =>{
         }
     }
 
-    const onDriverEditSave = async(e, index, company, driver)=>{// SAVES EDITED INFORMATION BACK TO THE DB
-        console.log('ON EDIT SAVE', e.target, index, company, driver)
+    const onDriverEditSave = async(e, index, company, driverId)=>{// SAVES EDITED INFORMATION BACK TO THE DB
+        console.log('ON EDIT SAVE', e.target, index, company, driverId)
         try {
-            const updatedInformation = {
-                
+            const driverToSave = currentDrivers.find(driver => driver._id === driverId);
+            if (!driverToSave) {
+                console.error('Driver not found');
+                return;
             }
+            console.log('NEW DRIVER INFORMATION', driverToSave)
+            const updatedDriverInformation = {
+                driverId: driverToSave._id, // Assuming _id is the field for driverId
+                driverName: driverToSave.driverName,
+                driverPhoneNumber: driverToSave.driverPhoneNumber,
+                driverCompany: driverToSave.driverCompany,
+                currentLocation: driverToSave.currentLocation,
+                availableDate: driverToSave.availableDate
+            };
+    
+            const edition = await axios.put(`http://localhost:3001/driverEditSave/${driverId}`, updatedDriverInformation);
+            console.log(edition);
+    
+
+            setEditingDriverCompany([]) 
+            setEditingDriverIndex([])   
+                // Toggle
+
         } catch (err) {
             console.log(err)
         }
     }
+    
+    const onHandleDriverChange = (driverId, field, value) => {
+        // Find the index of the driver being edited
+        const driverIndex = currentDrivers.findIndex(driver => driver._id === driverId);
+        if (driverIndex !== -1) {
+          // Create a new copy of the currentDrivers array
+          const newDrivers = [...currentDrivers];
+          // Update the specific field for the found driver
+          newDrivers[driverIndex] = { ...newDrivers[driverIndex], [field]: value };
+          // Update the state with the new drivers array
+          setCurrentDrivers(newDrivers); // Assuming setCurrentDrivers is your state updater function
+        }
+      };
 
-
+      
     //OTHER TYPE TRAILER LOCAL CRUD CONTROLS
     const onSaveOtherTypeTrailer = async(e)=>{//TOGGLE control for other Type trailer && otherTypeTrailer array ADDITION
         try {
@@ -389,7 +421,7 @@ const BoardAdmin  = () =>{
         setOtherTypeOfTrailerSelected(false)
     }
 
-    console.log('CURRENT CLIENTS', currentClients)
+    console.log('CURRENT CLIENTS', currentClients, 'CURRENT DRIVERS', currentDrivers)
     // console.log(editingDriverCompany, editingDriverIndex)
     return (
         <div className="mainContent-boardAdmin">
@@ -705,7 +737,7 @@ const BoardAdmin  = () =>{
                     </thead>
                     <tbody>
                         {Array.from(currentClients).map((client, index) => (
-                        editingCompanyIndex === index ? (
+                        editingCompanyIndex === index ? ( // COMPANY EDIT MODE ON
                             <React.Fragment key={index}>
                             <tr>
                                 <td><input type="text" value={client.companyName} onChange={(e) => handleClientChange(index, 'companyName', e.target.value)} /></td>
@@ -722,9 +754,9 @@ const BoardAdmin  = () =>{
                                 </td>   
                             </tr>
                             </React.Fragment>
-                        ) : (
-                            <React.Fragment key={index}>
-                            <tr>
+                        ) : ( //COMPANY EDIT MODE OFF 
+                            <React.Fragment key={index}> 
+                            <tr> 
                                 <td>{client.companyName}</td>
                                 <td>{client.companyPhoneNumber}</td>
                                 <td>{client.ownerName}</td>
@@ -761,10 +793,10 @@ const BoardAdmin  = () =>{
                                                     {editingDriverIndex.includes(driverIndex) && editingDriverCompany === client._id ? ( //conditional to render edit input fields
                                                         // Render input fields for editing
                                                         <>
-                                                            <td><input type="text" defaultValue={driver.driverName} /></td>
-                                                            <td><input type="text" defaultValue={driver.driverPhoneNumber} /></td>
-                                                            <td><input type="text" defaultValue={driver.currentLocation} /></td>
-                                                            <td><input type="text" defaultValue={driver.availableDate} /></td>
+                                                            <td><input type="text" value={driver.driverName} onChange={(e) => onHandleDriverChange(driver._id, 'driverName', e.target.value)} /></td>      
+                                                            <td><input type="text" value={driver.driverPhoneNumber} onChange={(e) => onHandleDriverChange(driver._id, 'driverPhoneNumber', e.target.value)} /></td>                                                          
+                                                            <td><input type="text" value={driver.currentLocation} onChange={(e) => onHandleDriverChange(driver._id, 'currentLocation', e.target.value)} /></td>
+                                                            <td><input type="text" value={driver.availableDate} onChange={(e) => onHandleDriverChange(driver._id, 'availableDate', e.target.value)} /></td>
                                                             {/* For trailer and securing equipment, you might need a more complex UI for editing */}
                                                             <td>
                                                                 <ul>
