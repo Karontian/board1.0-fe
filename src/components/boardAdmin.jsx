@@ -343,7 +343,7 @@ const BoardAdmin  = () =>{
         }
     }
     
-    const onHandleDriverChange = (driverId, field, value) => {
+    const onHandleDriverChange = async(driverId,  field, value) => {//CONTROLS THE CHANGE IN INPUT FOR  THE DRIVER CRUD
         // Find the index of the driver being edited
         const driverIndex = currentDrivers.findIndex(driver => driver._id === driverId);
         if (driverIndex !== -1) {
@@ -354,7 +354,18 @@ const BoardAdmin  = () =>{
           // Update the state with the new drivers array
           setCurrentDrivers(newDrivers); // Assuming setCurrentDrivers is your state updater function
         }
-      };
+    };
+    const onDriverDelete = async(e, index, _id)=>{
+        console.log('ON DRIVER DELETE',e, index, _id)
+        try {
+            const driverToDelete = _id
+            const deletion = await axios.delete(`http://localhost:3001/driverDelete/${driverToDelete}`)
+            console.log(deletion)
+        } catch (err) {
+            console.log(err)
+        }
+    }
+   
 
       
     //OTHER TYPE TRAILER LOCAL CRUD CONTROLS
@@ -421,7 +432,6 @@ const BoardAdmin  = () =>{
         setOtherTypeOfTrailerSelected(false)
     }
 
-    console.log('CURRENT CLIENTS', currentClients, 'CURRENT DRIVERS', currentDrivers)
     // console.log(editingDriverCompany, editingDriverIndex)
     return (
         <div className="mainContent-boardAdmin">
@@ -797,16 +807,20 @@ const BoardAdmin  = () =>{
                                                             <td><input type="text" value={driver.driverPhoneNumber} onChange={(e) => onHandleDriverChange(driver._id, 'driverPhoneNumber', e.target.value)} /></td>                                                          
                                                             <td><input type="text" value={driver.currentLocation} onChange={(e) => onHandleDriverChange(driver._id, 'currentLocation', e.target.value)} /></td>
                                                             <td><input type="text" value={driver.availableDate} onChange={(e) => onHandleDriverChange(driver._id, 'availableDate', e.target.value)} /></td>
-                                                            {/* For trailer and securing equipment, you might need a more complex UI for editing */}
+                                                            {/* For trailer and securing equipment edition the USER will have to delete and READD the drriver */}
                                                             <td>
-                                                                <ul>
-                                                                    {driver.trailerInfo.map((trailer, index) => (
-                                                                        trailer.amount > 0 ? 
-                                                                        <li key={index}>{`${trailer.amount} ${trailer.type} ${trailer.length}`}</li> 
-                                                                        : null
-                                                                    ))}
-                                                                </ul>
-                                                            </td>
+                                                                    {editingDriverIndex.includes(driverIndex) && editingDriverCompany === client._id ? (
+                                                                        <ul>
+                                                                            {driver.trailerInfo.map((trailer, index) => (
+                                                                                trailer.amount > 0 ? 
+                                                                                <li key={index}>{`${trailer.amount} ${trailer.type} ${trailer.length}`}</li> 
+                                                                                : null
+                                                                            ))}
+                                                                        </ul>
+                                                                    ) : (
+                                                                       null
+                                                                    )}
+                                                            </td>                                                            
                                                             <td>
                                                                 <ul>
                                                                     {driver.selectedEquipment.map((eq, index) => (
@@ -850,7 +864,7 @@ const BoardAdmin  = () =>{
                                                             </td>
                                                             <td>
                                                                 <button type='button' onClick={(e)=>onDriverEdit(e, driverIndex, driver.driverCompany)} disabled={editingDriverCompany.length > 0 && editingDriverIndex.length > 0} >Edit</button>
-                                                                <button type='button' disabled={editingDriverCompany.length > 0 && editingDriverIndex.length > 0} >Delete</button>
+                                                                <button type='button'  onClick={(e)=>onDriverDelete(e, driverIndex, driver._id )} disabled={editingDriverCompany.length > 0 && editingDriverIndex.length > 0} >Delete</button>
 
                                                             </td>
                                                         </>
