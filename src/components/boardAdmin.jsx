@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import axios from 'axios'
 import './boardAdmin.css'
+import DriverAdmin from './driverAdmin'
 
 const BoardAdmin  = () =>{
     //COMPANY INFO STATE
@@ -125,7 +126,7 @@ const BoardAdmin  = () =>{
 
     //COMPANY CRUD CONTRLS 
     const onCompanySubmit = async(e) =>{//ADDS A COMPANY
-        e.preventDefault()
+        // e.preventDefault()
         // console.log('COMPANY ADD')
         try{
             const newCompany = {
@@ -432,7 +433,8 @@ const BoardAdmin  = () =>{
         setOtherTypeOfTrailerSelected(false)
     }
 
-    // console.log(editingDriverCompany, editingDriverIndex)
+
+    console.log(currentDrivers)
     return (
         <div className="mainContent-boardAdmin">
             <div className="newCompanyForm-boardAdmin">
@@ -440,28 +442,28 @@ const BoardAdmin  = () =>{
                 <h1>Add a new copany:</h1>
 
                     <label htmlFor="companyName">Company Name: </label>
-                    <input type="text" name="companyName" onChange={(e)=>setCompanyName(e.target.value)}/>
+                    <input type="text" name="companyName" onChange={(e)=>setCompanyName(e.target.value)} required/>
                     
                     <label htmlFor="companyPhoneNumber">Company Phone#: </label>
-                    <input type="text" name="companyPhoneNumber"onChange={(e)=>setCompanyPhoneNumber(e.target.value)} />
+                    <input type="text" name="companyPhoneNumber"onChange={(e)=>setCompanyPhoneNumber(e.target.value)} required />
 
                     <label htmlFor="mcNumber">MC#: </label>
-                    <input type="text" name="mcNumber" onChange={(e)=>setMcNumber(e.target.value)}/>
+                    <input type="text" name="mcNumber" onChange={(e)=>setMcNumber(e.target.value)} required/>
                     
                     <label htmlFor="dotNumber">DOT#: </label>
-                    <input type="text" name="dotNumber" onChange={(e)=>setDotNumber(e.target.value)} />
+                    <input type="text" name="dotNumber" onChange={(e)=>setDotNumber(e.target.value)}required />
 
                     <label htmlFor="einNumber">EIN#: </label>
-                    <input type="text" name="einNumber" onChange={(e)=>setEinNumber(e.target.value)}/>
+                    <input type="text" name="einNumber" onChange={(e)=>setEinNumber(e.target.value)} required/>
 
                     <label htmlFor="ownerName">Company Owner: </label>
-                    <input type="text" name="ownerName"onChange={(e)=>setOwnerName(e.target.value)} />
+                    <input type="text" name="ownerName"onChange={(e)=>setOwnerName(e.target.value)} required/>
 
                     <label htmlFor="ownerPhoneNumber">Owner Phone#: </label>
-                    <input type="text" name="ownerPhoneNumber"onChange={(e)=>setOwnwerPhoneNumber(e.target.value)} />
+                    <input type="text" name="ownerPhoneNumber"onChange={(e)=>setOwnwerPhoneNumber(e.target.value)} required />
 
                     <label htmlFor="address">Address: </label>
-                    <input type="text" name="address" onChange={(e)=>setAddress(e.target.value)} />
+                    <input type="text" name="address" onChange={(e)=>setAddress(e.target.value)} required />
 
                     <button type="submit">Add</button>
                     
@@ -766,117 +768,32 @@ const BoardAdmin  = () =>{
                             </React.Fragment>
                         ) : ( //COMPANY EDIT MODE OFF 
                             <React.Fragment key={index}> 
-                            <tr> 
-                                <td>{client.companyName}</td>
-                                <td>{client.companyPhoneNumber}</td>
-                                <td>{client.ownerName}</td>
-                                <td>{client.ownerPhoneNumber}</td>
-                                <td>{client.address}</td>
-                                <td>{client.mcNumber}</td>
-                                <td>{client.dotNumber}</td>
-                                <td>{client.einNumber}</td>
-                                <td>
-                                <button onClick={(e) => onCompanyEdit(e, index)} type='button'>Edit</button>
-                                <button onClick={(e) => onCompanyDelete(e, client._id, client.companyName)} type='button'>Delete</button>
-                                </td>
-                            </tr>
-                            {/* NESTED DRIVER ARRAY START */}
-                            <tr> 
-                                <td colSpan="9">
-                                    <table>
-                                        <thead>
-                                            <tr><th colSpan="6">Drivers:</th></tr>
-                                            <tr>
-                                                <th>Driver Name</th>
-                                                <th>Driver Phone Number</th>
-                                                <th>Current Location</th>
-                                                <th>Available Date</th>
-                                                <th>Trailer Equipment</th>
-                                                <th>Securing Equipment</th>
-                                                <th></th>
-                                            </tr>
-                                        </thead>
-                                
-                                        <tbody>
-                                            {currentDrivers.filter(driver => driver.driverCompany === client._id).map((driver, driverIndex) => (
-                                                <tr key={`driver-${driverIndex}`}>
-                                                    {editingDriverIndex.includes(driverIndex) && editingDriverCompany === client._id ? ( //conditional to render edit input fields
-                                                        // Render input fields for editing
-                                                        <>
-                                                            <td><input type="text" value={driver.driverName} onChange={(e) => onHandleDriverChange(driver._id, 'driverName', e.target.value)} /></td>      
-                                                            <td><input type="text" value={driver.driverPhoneNumber} onChange={(e) => onHandleDriverChange(driver._id, 'driverPhoneNumber', e.target.value)} /></td>                                                          
-                                                            <td><input type="text" value={driver.currentLocation} onChange={(e) => onHandleDriverChange(driver._id, 'currentLocation', e.target.value)} /></td>
-                                                            <td><input type="text" value={driver.availableDate} onChange={(e) => onHandleDriverChange(driver._id, 'availableDate', e.target.value)} /></td>
-                                                            {/* For trailer and securing equipment edition the USER will have to delete and READD the drriver */}
-                                                            <td>
-                                                                    {editingDriverIndex.includes(driverIndex) && editingDriverCompany === client._id ? (
-                                                                        <ul>
-                                                                            {driver.trailerInfo.map((trailer, index) => (
-                                                                                trailer.amount > 0 ? 
-                                                                                <li key={index}>{`${trailer.amount} ${trailer.type} ${trailer.length}`}</li> 
-                                                                                : null
-                                                                            ))}
-                                                                        </ul>
-                                                                    ) : (
-                                                                       null
-                                                                    )}
-                                                            </td>                                                            
-                                                            <td>
-                                                                <ul>
-                                                                    {driver.selectedEquipment.map((eq, index) => (
-                                                                        eq.qty > 0 ?
-                                                                        <li key={index}>{`${eq.type} qty: ${eq.qty}`}</li>
-                                                                        : null
-                                                                    ))}
-                                                                </ul>
-                                                            </td>
-                                                            <td>
-                                                                <button type='button' onClick={(e)=>onDriverEditSave(e, driverIndex, driver.driverCompany, driver._id)}>Save</button>
-                                                                <button type='button'>Delete</button>
-
-                                                            </td>
-                                                        </>
-                                                    ) : (
-                                                        // Render text if not in editing mode
-                                                        <>
-                                                            <td>{driver.driverName}</td>
-                                                            <td>{driver.driverPhoneNumber}</td>
-                                                            <td>{driver.currentLocation}</td>
-                                                            <td>{driver.availableDate}</td>
-                                                            {/* Continue rendering other fields as normal */}
-                                                            <td>
-                                                                <ul>
-                                                                    {driver.trailerInfo.map((trailer, index) => (
-                                                                        trailer.amount > 0 ? 
-                                                                        <li key={index}>{`${trailer.amount} ${trailer.type} ${trailer.length}`}</li> 
-                                                                        : null
-                                                                    ))}
-                                                                </ul>
-                                                            </td>
-                                                            <td>
-                                                                <ul>
-                                                                    {driver.selectedEquipment.map((eq, index) => (
-                                                                        eq.qty > 0 ?
-                                                                        <li key={index}>{`${eq.type} qty: ${eq.qty}`}</li>
-                                                                        : null
-                                                                    ))}
-                                                                </ul>
-                                                            </td>
-                                                            <td>
-                                                                <button type='button' onClick={(e)=>onDriverEdit(e, driverIndex, driver.driverCompany)} disabled={editingDriverCompany.length > 0 && editingDriverIndex.length > 0} >Edit</button>
-                                                                <button type='button'  onClick={(e)=>onDriverDelete(e, driverIndex, driver._id )} disabled={editingDriverCompany.length > 0 && editingDriverIndex.length > 0} >Delete</button>
-
-                                                            </td>
-                                                        </>
-                                                    )}
-                                                    
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </td>
-                            </tr>
-                         {/* NESTED DRIVER ARRAY END */}
+                                <tr> 
+                                    <td>{client.companyName}</td>
+                                    <td>{client.companyPhoneNumber}</td>
+                                    <td>{client.ownerName}</td>
+                                    <td>{client.ownerPhoneNumber}</td>
+                                    <td>{client.address}</td>
+                                    <td>{client.mcNumber}</td>
+                                    <td>{client.dotNumber}</td>
+                                    <td>{client.einNumber}</td>
+                                    <td>
+                                        <button onClick={(e) => onCompanyEdit(e, index)} type='button'>Edit</button>
+                                        <button onClick={(e) => onCompanyDelete(e, client._id, client.companyName)} type='button'>Delete</button>
+                                    </td>
+                                </tr>
+                                {/* NESTED DRIVER ARRAY START */}
+                                <DriverAdmin 
+                                        client={client}
+                                        currentDrivers={currentDrivers}
+                                        editingDriverIndex={editingDriverIndex}
+                                        editingDriverCompany={editingDriverCompany}
+                                        onHandleDriverChange={onHandleDriverChange}
+                                        onDriverEditSave={onDriverEditSave}
+                                        onDriverEdit={onDriverEdit}
+                                        onDriverDelete={onDriverDelete}
+                                />
+                                {/* NESTED DRIVER ARRAY END */}
 
                             </React.Fragment>
                         )
