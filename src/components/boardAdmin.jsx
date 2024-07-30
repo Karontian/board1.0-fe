@@ -16,9 +16,6 @@ const BoardAdmin  = () =>{
     const [currentClients, setCurrentClients] = useState('');
     const [editingCompanyIndex, setEditingCompanyIndex] = useState(null);
 
-
-
-
     //TRAILER TYPE STATE
     const [fb48Checked, setFb48Checked] = useState(false);
     const [fb48Amount, setFb48Amount] = useState("");
@@ -42,8 +39,6 @@ const BoardAdmin  = () =>{
     const [ottEditingAmount, setOttEditingAmount] = useState('')//holds the amount value on edition
     const [ottEditingLenght, setOttEditingLenght] = useState('')// lenght value
     const [ottEditingDefault, setOttEditingDefault] = useState('')//default value
-
-    
 
     //EQUIPMENT TYPE STATE
     const [tarps8ft, setTarps8ft] = useState(null)
@@ -100,8 +95,6 @@ const BoardAdmin  = () =>{
             clientEventSource.close();
         };
     }, [otherTypeTrailerArray]);
-
-
 
     const getClients = async()=>{//FETCH added clients
         try {
@@ -207,7 +200,6 @@ const BoardAdmin  = () =>{
         console.log('ON COMPANY EDIT CANCEL', e, index)
         setEditingCompanyIndex('')
     }
-
 
     //DRIVER CRUD CONTROLS
     const onDriverAdd = async(e) =>{ //ADDS A DRIVER, includes: Company Info, Driver info and Equipment info
@@ -356,7 +348,7 @@ const BoardAdmin  = () =>{
           setCurrentDrivers(newDrivers); // Assuming setCurrentDrivers is your state updater function
         }
     };
-    const onDriverDelete = async(e, index, _id)=>{
+    const onDriverDelete = async(e, index, _id)=>{//DELETES A DRIVER FROM MAIN DRIVER DISPLAY
         console.log('ON DRIVER DELETE',e, index, _id)
         try {
             const driverToDelete = _id
@@ -366,9 +358,45 @@ const BoardAdmin  = () =>{
             console.log(err)
         }
     }
-   
+    const onDriverTrailerDelete = async(e, driverId, amount, type, len)=>{//DELETES A TRAILER  FROM DRIVER DISPLAY
+        try {
+         
+            console.log('onDriverTrailerDelete', e, driverId, amount, type, len);
+            const driverToEdit = currentDrivers.find((driver) => driver._id === driverId);
+            console.log(driverToEdit);
+            if (!driverToEdit) {
+                throw new Error('Driver not found');
+            }
+            const trailerToDelete = {
+                amount,
+                type,
+                len
+            };
+            const edition = await axios.put(`http://localhost:3001/driverTrailerDelete/${driverToEdit._id}`, trailerToDelete);
+            console.log('Edition response:', edition);
 
-      
+
+        } catch (e) {
+            console.log(e)
+        }   
+    }
+    const onDriverTrailerAdd = async(driverId, amount, type, len, def)=>{ //ADDS A TRAILER  FROM DRIVER DISPLAY
+        console.log('DRIVER EDIT TRAILER ADD',driverId, amount, type, len, def) 
+        try {
+            const trailerInfo = {
+                amount,
+                type,
+                len,
+                def
+            }
+            const update = await axios.put(`http://localhost:3001/driverTrailerAdd/${driverId}`, trailerInfo)
+            console.log(update)
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+
     //OTHER TYPE TRAILER LOCAL CRUD CONTROLS
     const onSaveOtherTypeTrailer = async(e)=>{//TOGGLE control for other Type trailer && otherTypeTrailer array ADDITION
         try {
@@ -792,6 +820,8 @@ const BoardAdmin  = () =>{
                                         onDriverEditSave={onDriverEditSave}
                                         onDriverEdit={onDriverEdit}
                                         onDriverDelete={onDriverDelete}
+                                        onDriverTrailerDelete={onDriverTrailerDelete}
+                                        onDriverTrailerAdd={onDriverTrailerAdd}
                                 />
                                 {/* NESTED DRIVER ARRAY END */}
 

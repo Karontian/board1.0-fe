@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useState} from 'react';
+import AddTrailerModal from './addTrailerModal';
 
 const DriverAdmin = ({
   client,
@@ -8,9 +9,26 @@ const DriverAdmin = ({
   onHandleDriverChange,
   onDriverEditSave,
   onDriverEdit,
-  onDriverDelete
+  onDriverDelete,
+  onDriverTrailerDelete,
+  onDriverTrailerAdd
 }) => {
+
+const [isModalOpen, setIsModalOpen] = useState(false)
+const [currentDriverId, setCurrentDriverId] = useState('')
+
+const handleAddTrailerClick = (e, driverId) =>{ //OPENS THE MODAL
+    console.log('DRIVER ADDMING OPENING MODAL', e, driverId)
+    setCurrentDriverId(driverId)
+    setIsModalOpen(true)
+}
+
+const handleModalSubmit = (amount,  type, len, def) =>{
+    console.log('DRIVER ADMIN: ADDING', amount, type, len, def)
+    onDriverTrailerAdd(currentDriverId, amount, type, len, def)
+}
   return (
+    <>
     <tr>
       <td colSpan="9">
         <table>
@@ -38,9 +56,9 @@ const DriverAdmin = ({
                     <td>
                       <ul>
                         {driver.trailerInfo.filter(trailer => trailer.amount !== null && trailer.amount !== 0).map((trailer, index) => (
-                          <li key={index}>{trailer.amount}x {trailer.type} {trailer.length} <button>Delete</button></li>
+                          <li key={index}>{trailer.amount}x {trailer.type} {trailer.length} <button onClick={(e) =>onDriverTrailerDelete(e, driver._id, trailer.amount, trailer.type, trailer.length)}>Delete</button></li>
                         ))}
-                        <li><button>Add Trailer</button></li>
+                        <li><button onClick={(e)=>handleAddTrailerClick(e, driver._id)}>Add Trailer</button></li>
                       </ul>
                     </td>
                     <td>
@@ -52,7 +70,7 @@ const DriverAdmin = ({
                     </td>
                     <td>
                       <button type='button' onClick={(e) => onDriverEditSave(e, driverIndex, driver.driverCompany, driver._id)}>Save</button>
-                      <button type='button'>Delete</button>
+                      <button type='button' >Delete</button>
                     </td>
                   </>
                 ) : (
@@ -91,6 +109,14 @@ const DriverAdmin = ({
         </table>
       </td>
     </tr>
+    <AddTrailerModal 
+        isOpen={isModalOpen}
+        onRequestClose={() => setIsModalOpen(false)}
+        onSubmit={handleModalSubmit}
+        currentDriverId={currentDriverId}
+      />
+
+    </>
   );
 };
 

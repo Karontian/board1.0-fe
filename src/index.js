@@ -1,8 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
+import Modal from 'react-modal';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+
+
+// Set the app element for MODAL
+Modal.setAppElement('#root'); // Ensure this matches the root element ID in your index.html
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
