@@ -1,0 +1,145 @@
+<div className='trailerType-other'>
+                                            <button type='button' onClick={() => setOtherTypeOfTrailerSelected(true)} disabled={otherTypeOfTrailerSelected === true}>+Other Type Trailer</button>                                
+
+                                                    <div className='trailerType-other-form'>
+                                                        {otherTypeOfTrailerSelected === true && 
+                                                            <div  className='other-trailerType'>
+
+                                                            <h5>Add a new Other-Type trailer:</h5>
+                                                            
+                                                            <input type="text" name='amount' className='other-trailerType-amount'ref={amountRef}/>
+                                                            <label htmlFor="amount">x  </label>
+
+
+                                                            <label htmlFor="type">Type</label>
+                                                            <input type="text" name='type' className='other-trailerType-type'ref={typeRef}/>
+                                                            <br />
+
+                                                            <label htmlFor="length">Length</label>
+                                                            <input type="text" name='length'className='other-trailerType-length'ref={lengthRef}/>
+                                                            <span>ft    </span>
+
+                                                            <label htmlFor="default">Default?</label>
+                                                            <input type="checkbox" name='default' className='other-trailerType' ref={defaultRef}/>
+
+                                                            <button type='button'  onClick={(e)=>onSaveOtherTypeTrailer(e)}>Save Trailers</button>    
+                                                            <button type='button'  onClick={(e)=>onCancelOtherTrailers(e)}>Cancel</button>                                                        
+                                                            
+                                                        </div>}
+                                                    </div>
+                                                    <div className='trailerType-other-grid'>
+                                                        <h3>Other-Type Trailers added:</h3>
+                                                        <table>
+                                                            <thead>
+                                                                <tr>    
+                                                                    <th>Amount</th>
+                                                                    <th>Trailer Type</th>
+                                                                    <th>Trailer Length</th>
+                                                                    <th>Default? </th>
+                                                                    <th>Actions </th>
+                                                                </tr>    
+                                                            </thead>
+                                                            <tbody>
+                                                                {otherTypeTrailerArray.map((item, index) => (
+                                                                    editingIndex === index ? (
+                                                                        <tr key={index}>
+                                                                            <td>
+                                                                                <label htmlFor="editedAmount"></label>
+                                                                                <input type="text" name='editedAmount' value={ottEditingAmount} onChange={(e) => setOttEditingAmount(e.target.value)}  />
+                                                                            </td>
+                                                                            <td>
+                                                                                <label htmlFor="editedType"></label>
+                                                                                <input type="text" name='editedType' value={ottEditingType} onChange={(e) => setOttEditingType(e.target.value)}/>
+                                                                            </td>
+                                                                            <td>
+                                                                                <label htmlFor="editedLength"></label>
+                                                                                <input type="text" name='editedLenght' value={ottEditingLenght} onChange={(e) => setOttEditingLenght(e.target.value)} />
+                                                                            </td>
+                                                                            <td>
+                                                                                <input type="checkBox" name='editedDefault' checked={ottEditingDefault} onChange={(e)=>setOttEditingDefault(e.target.checked)} />
+                                                                            </td>
+                                                                            <td>
+                                                                                <button type='button' onClick={(e)=>onOtherTrailerEditSave(e, index)}>Save</button>
+                                                                                <button type='button'>Cancel</button>
+                                                                            </td>
+
+                                                                        </tr>
+                                                                    ) :
+                                                                    (<tr key={index}>
+                                                                        <td>{item.amount}</td>
+                                                                        <td>{item.type}</td>
+                                                                        <td>{item.length}</td>
+                                                                        <td>
+                                                                            {/* {item.defaultTrailer ? 'Yes' : 'No'} */}
+                                                                            <label htmlFor="defaultTrailer"></label>
+                                                                            <input type="checkBox"  name='defaultTrailer' checked={item.defaultTrailer} readOnly/>
+
+
+                                                                        </td>
+                                                                        <td>
+                                                                            <button type='button' onClick={(e)=>onOtherTrailerDelete(e, index)}>Delete</button>
+                                                                            <button type='button' onClick={(e)=>onOtherTrailerEdit(e, index)}>Edit</button>
+                                                                        </td>
+                                                                    </tr>)
+                                                                ))}
+                                                                {otherTypeTrailerArray.map((item, index)=>{
+                                                                    <tr key={index}>
+                                                                        {editingIndex === index ? 
+                                                                        (
+                                                                            <>
+                                                                                <td>
+                                                                                    <label htmlFor="editedAmount"></label>
+                                                                                    <input type="text" name='editedAmount' value={ottEditingAmount} onChange={(e) => setOttEditingAmount(e.target.value)}  />
+                                                                                </td>
+                                                                                <td>
+                                                                                    <label htmlFor="editedType"></label>
+                                                                                    <input type="text" name='editedType' value={ottEditingType} onChange={(e) => setOttEditingType(e.target.value)}/>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <label htmlFor="editedLenght"></label>
+                                                                                    <input type="text" name='editedLenght' value={ottEditingLenght} onChange={(e) => setOttEditingLenght(e.target.value)} />
+                                                                                </td>
+                                                                                <td>
+                                                                                    <input type="checkBox" name='editedDefault' checked={ottEditingDefault} onChange={(e)=>setOttEditingDefault(e.target.checked)} />
+                                                                                </td>
+                                                                                <td>
+                                                                                    <button type='button' onClick={(e)=>onOtherTrailerEditSave(e, index)}>Save</button>
+                                                                                    
+                                                                                    <button type='button'>Cancel</button>
+                                                                                </td>
+                                                                            
+                                                                            </>
+                                                                        )
+                                                                        
+                                                                        :
+                                                                        
+                                                                        (
+                                                                        <>
+                                                                            <td>{item.amount}</td>
+                                                                            <td>{item.type}</td>
+                                                                            <td>{item.length}</td>
+                                                                            <td>
+                                                                                {/* {item.defaultTrailer ? 'Yes' : 'No'} */}
+                                                                                <label htmlFor="defaultTrailer"></label>
+                                                                                <input type="checkBox"  name='defaultTrailer' checked={item.defaultTrailer} readOnly/>
+
+
+                                                                            </td>
+                                                                            <td>
+                                                                                <button type='button' onClick={(e)=>onOtherTrailerDelete(e, index)}>Delete</button>
+                                                                                <button type='button' onClick={(e)=>onOtherTrailerEdit(e, index)}>Edit</button>
+                                                                            </td>
+                                                                        </>
+                                                                        )
+                                                                        }
+                                                                    </tr>
+                                                                })}
+
+                                                            </tbody>
+                                                            <tfoot>
+                                                            </tfoot>
+                                                        </table>
+                                                    </div>
+                                            <div>  
+                                        </div>                                                                      
+                                        </div> 

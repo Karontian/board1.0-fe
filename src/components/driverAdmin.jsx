@@ -27,6 +27,8 @@ const handleModalSubmit = (amount,  type, len, def) =>{
     console.log('DRIVER ADMIN: ADDING', amount, type, len, def)
     onDriverTrailerAdd(currentDriverId, amount, type, len, def)
 }
+
+console.log('CURRENT DRIVERS', currentDrivers)
   return (
     <>
     <tr>
@@ -56,7 +58,7 @@ const handleModalSubmit = (amount,  type, len, def) =>{
                     <td>
                       <ul>
                         {driver.trailerInfo.filter(trailer => trailer.amount !== null && trailer.amount !== 0).map((trailer, index) => (
-                          <li key={index}>{trailer.amount}x {trailer.type} {trailer.length} <button onClick={(e) =>onDriverTrailerDelete(e, driver._id, trailer.amount, trailer.type, trailer.length)}>Delete</button></li>
+                          <li key={index}>{trailer.amount}x {trailer.type} {trailer.length} {trailer.def ? 'Default' : null} <button onClick={(e) =>onDriverTrailerDelete(e, driver._id, trailer.amount, trailer.type, trailer.length)}>Delete</button></li>
                         ))}
                         <li><button onClick={(e)=>handleAddTrailerClick(e, driver._id)}>Add Trailer</button></li>
                       </ul>
@@ -83,7 +85,7 @@ const handleModalSubmit = (amount,  type, len, def) =>{
                       <ul>
                         {driver.trailerInfo.filter(trailer => trailer.amount !== null && trailer.amount !== 0).length > 0 ? (
                           driver.trailerInfo.filter(trailer => trailer.amount !== null && trailer.amount !== 0).map((trailer, index) => (
-                            <li key={index}>{trailer.amount}x {trailer.type} {trailer.length}</li>
+                            <li key={index}>{trailer.amount}x {trailer.type} {trailer.length}  {trailer.def ? 'Default' : null}</li>
                           ))
                         ) : (
                           <span>No Trailer Available</span>

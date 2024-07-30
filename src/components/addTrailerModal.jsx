@@ -11,7 +11,7 @@ const AddTrailerModal = ({ isOpen, onRequestClose, onSubmit, currentDriverId }) 
   const handleSubmit = (e) => {
     e.preventDefault(); 
     const finalType = type === 'Other' ? onOtherTrailer : type;
-    onSubmit(amount, type, len, def);
+    onSubmit(amount, finalType, len, def);
     onRequestClose();
     setAmount('')
     setType('')
@@ -21,6 +21,7 @@ const AddTrailerModal = ({ isOpen, onRequestClose, onSubmit, currentDriverId }) 
 
 
   };
+  console.log(onOtherTrailer)
 
   return (
     <Modal isOpen={isOpen} onRequestClose={onRequestClose}>
