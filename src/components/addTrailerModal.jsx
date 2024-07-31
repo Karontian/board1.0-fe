@@ -21,7 +21,6 @@ const AddTrailerModal = ({ isOpen, onRequestClose, onSubmit, currentDriverId }) 
 
 
   };
-  console.log(onOtherTrailer)
 
   return (
     <Modal isOpen={isOpen} onRequestClose={onRequestClose}>

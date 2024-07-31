@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import AddTrailerModal from './addTrailerModal';
+import AddEquipmentModal from './addEquipmentModal';
 
 const DriverAdmin = ({
   client,
@@ -11,22 +12,37 @@ const DriverAdmin = ({
   onDriverEdit,
   onDriverDelete,
   onDriverTrailerDelete,
-  onDriverTrailerAdd
+  onDriverTrailerAdd,
+  onDriverEquipmentDelete
 }) => {
 
 const [isModalOpen, setIsModalOpen] = useState(false)
+const [isEquipmentModalOpen, setIsEquipmentModalOpen] = useState(false); // State for the new modal
 const [currentDriverId, setCurrentDriverId] = useState('')
 
-const handleAddTrailerClick = (e, driverId) =>{ //OPENS THE MODAL
+const handleAddTrailerClick = (e, driverId) =>{ //OPENS TRAILERS MODAL
     console.log('DRIVER ADDMING OPENING MODAL', e, driverId)
     setCurrentDriverId(driverId)
     setIsModalOpen(true)
+}
+
+const handleAddEquipmentClick = (e, driverId)=>{ //OPENS EQUIPMENT MODAL
+    console.log('EQUIPMENT ADDING OPEN MODAL', driverId)
+    setCurrentDriverId(driverId);
+    setIsEquipmentModalOpen(true)
+
 }
 
 const handleModalSubmit = (amount,  type, len, def) =>{
     console.log('DRIVER ADMIN: ADDING', amount, type, len, def)
     onDriverTrailerAdd(currentDriverId, amount, type, len, def)
 }
+
+
+const handleAddEquipmentSubmit = (data) => { // Function to handle submission of the new modal
+    console.log('New Modal Data:', data);
+    // Handle the new modal data submission
+  };
 
 console.log('CURRENT DRIVERS', currentDrivers)
   return (
@@ -66,8 +82,9 @@ console.log('CURRENT DRIVERS', currentDrivers)
                     <td>
                       <ul>
                         {driver.selectedEquipment.map((eq, index) => (
-                          eq.qty > 0 ? <li key={index}>{`${eq.type} qty: ${eq.qty}`}</li> : null
+                          eq.qty > 0 ? <li key={index}>{`${eq.type} qty: ${eq.qty}`} <button type='button' onClick={(e)=>onDriverEquipmentDelete(e, driver._id, eq.type, eq.qty)}>Delete</button> </li> : null
                         ))}
+                        <li><button onClick={(e)=>handleAddEquipmentClick(e, driver._id)} >Add Equipment</button></li>
                       </ul>
                     </td>
                     <td>
@@ -111,12 +128,18 @@ console.log('CURRENT DRIVERS', currentDrivers)
         </table>
       </td>
     </tr>
-    <AddTrailerModal 
-        isOpen={isModalOpen}
-        onRequestClose={() => setIsModalOpen(false)}
-        onSubmit={handleModalSubmit}
-        currentDriverId={currentDriverId}
-      />
+        <AddTrailerModal 
+            isOpen={isModalOpen}
+            onRequestClose={() => setIsModalOpen(false)}
+            onSubmit={handleModalSubmit}
+            currentDriverId={currentDriverId}
+        />
+        <AddEquipmentModal
+                    isOpen={isEquipmentModalOpen}
+                    onRequestClose={() => setIsEquipmentModalOpen(false)}
+                    onSubmit={handleAddEquipmentSubmit}
+                    currentDriverId={currentDriverId}
+        /> 
 
     </>
   );

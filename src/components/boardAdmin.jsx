@@ -165,7 +165,6 @@ const BoardAdmin  = () =>{
     setCurrentClients(updatedClients);// Update the state with the new clients array
 
     };
-
     const onCompanyEditSave = async (e, index, companyId) => {
     console.log('COMPANY EDIT SAVE', e, index);
     try {
@@ -284,7 +283,6 @@ const BoardAdmin  = () =>{
         }
 
     }
-
     const onDriverEdit = async(e, index, company)=>{ // EDITS A DRIVER ONCE IN DISPLAY
         console.log('EDITING DRIVER', e, index, company)
         try {
@@ -304,7 +302,6 @@ const BoardAdmin  = () =>{
             console.log(e)
         }
     }
-
     const onDriverEditSave = async(e, index, company, driverId)=>{// SAVES EDITED INFORMATION BACK TO THE DB
         console.log('ON EDIT SAVE', e.target, index, company, driverId)
         try {
@@ -334,8 +331,7 @@ const BoardAdmin  = () =>{
         } catch (err) {
             console.log(err)
         }
-    }
-    
+    } 
     const onHandleDriverChange = async(driverId,  field, value) => {//CONTROLS THE CHANGE IN INPUT FOR  THE DRIVER CRUD
         // Find the index of the driver being edited
         const driverIndex = currentDrivers.findIndex(driver => driver._id === driverId);
@@ -395,7 +391,25 @@ const BoardAdmin  = () =>{
             console.log(err)
         }
     }
+    const onDriverEquipmentDelete = async(e, driverId, type, qty)=>{
+        console.log('EQUIPMENT DELETE', e, driverId, type, qty)
+        try {
+            const driverToEdit = currentDrivers.find((driver)=>driver._id === driverId)
+            console.log(driverToEdit)
+            if (!driverToEdit) {
+                throw new Error('Driver Not found');
+            }     
+            const eqToDelete = {
+                type,
+                qty
+            }   
+            const edition = await axios.put(`http://localhost:3001/driverEquipmentDelete/${driverToEdit._id}`, eqToDelete);
 
+
+        } catch (err) {
+            console.log(err)
+        }
+    }
 
     //OTHER TYPE TRAILER LOCAL CRUD CONTROLS
     const onSaveOtherTypeTrailer = async(e)=>{//TOGGLE control for other Type trailer && otherTypeTrailer array ADDITION
@@ -426,42 +440,6 @@ const BoardAdmin  = () =>{
         })
 
     }
-
-    // const onOtherTrailerEdit = async(e,index)=>{//TOGGLE control to add other type trailers
-    //     console.log('ON OTHER  TRAILER EDIT', e, index)
-    //     setEditingIndex(true)
-    //     const item = otherTypeTrailerArray[index];
-    //     console.log(item.defaultTrailer)
-    //     setOttEditingAmount(item.amount);
-    //     setOttEditingType(item.type);
-    //     setOttEditingLenght(item.length);
-    //     setOttEditingDefault(item.def);
-    //     setEditingIndex(index);  // Set the editing index here
-
-    
-    // }
-
-    // const onOtherTrailerEditSave = async(e,index)=>{//TOGGLE control for other Type trailer && otherTypeTrailer array EDDITION
-    //     const newOtherTypeTrailerArray = [...otherTypeTrailerArray]
-    //     newOtherTypeTrailerArray[index] = {
-    //         ...newOtherTypeTrailerArray[index],
-    //         Amount: ottEditingAmount,
-    //         type: ottEditingType,
-    //         length: ottEditingLenght,
-    //         def: ottEditingDefault
-    //     }
-    //     setOtherTypeTrailerArray(newOtherTypeTrailerArray)
-    //     // setEditingIndex(false)
-    //     setEditingIndex(null);
-    //     setOttEditingAmount('');
-    //     setOttEditingType('');
-    //     setOttEditingLenght('');
-    //     setOttEditingDefault(false);
-    
-    //     console.log('OTT')
-    //     console.log('ON SAVE OTT', newOtherTypeTrailerArray)
-
-    // }
     const onOtherTrailerEdit = async (e, index) => {
         console.log('ON OTHER TRAILER EDIT', e, index);
         const item = otherTypeTrailerArray[index];
@@ -802,6 +780,7 @@ const BoardAdmin  = () =>{
                                         onDriverDelete={onDriverDelete}
                                         onDriverTrailerDelete={onDriverTrailerDelete}
                                         onDriverTrailerAdd={onDriverTrailerAdd}
+                                        onDriverEquipmentDelete={onDriverEquipmentDelete}
                                 />
                                 {/* NESTED DRIVER ARRAY END */}
 
