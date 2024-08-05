@@ -410,6 +410,19 @@ const BoardAdmin  = () =>{
             console.log(err)
         }
     }
+    const onDriverEquipmentAdd = async(driverId, type, qty)=>{
+        console.log('ADD EQUIPMENT', driverId, type, qty)
+        try {
+            const eqInfo = {
+                type,
+                qty
+            }
+            const update = await axios.put(`http://localhost:3001/driverEquipmentAdd/${driverId}`, eqInfo)  
+            console.log('UUPDATED DRIVER',update) 
+        } catch (err) {
+            
+        }
+    }
 
     //OTHER TYPE TRAILER LOCAL CRUD CONTROLS
     const onSaveOtherTypeTrailer = async(e)=>{//TOGGLE control for other Type trailer && otherTypeTrailer array ADDITION
@@ -781,6 +794,7 @@ const BoardAdmin  = () =>{
                                         onDriverTrailerDelete={onDriverTrailerDelete}
                                         onDriverTrailerAdd={onDriverTrailerAdd}
                                         onDriverEquipmentDelete={onDriverEquipmentDelete}
+                                        onDriverEquipmentAdd={onDriverEquipmentAdd}
                                 />
                                 {/* NESTED DRIVER ARRAY END */}
 

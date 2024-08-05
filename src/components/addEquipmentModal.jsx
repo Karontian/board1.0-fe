@@ -8,8 +8,11 @@ const AddEquipmentModal = ({ isOpen, onRequestClose, onSubmit, currentDriverId }
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const finalType = type === 'Other' ? onOtherType : type;
+
+    const finalType = type === 'other' ? onOtherType : type;
+    
     onSubmit(finalType, qty);
+    console.log(finalType, qty)
     onRequestClose();
     setType('');
     setQty('');
@@ -25,13 +28,17 @@ const AddEquipmentModal = ({ isOpen, onRequestClose, onSubmit, currentDriverId }
           Type:
           <select value={type} onChange={(e) => setType(e.target.value)} required>
             <option value="">Select equipment type:</option>
-            <option value="Type1">Type1</option>
-            <option value="Type2">Type2</option>
-            <option value="Type3">Type3</option>
-            <option value="Other">Other</option>
+            <option value="4ftTarps">4ftTarps</option>
+            <option value="6ftTarps">6ftTarps</option>
+            <option value="8ftTarps">8ftTarps</option>
+            <option value="chains">Chains</option>
+            <option value="binders">Binders</option>
+            <option value="pipeStakes">Pipe Stakes</option>
+            <option value="other">Other</option>
+
           </select>
         </label>
-        {type === 'Other' && (
+        {type === 'other' && (
           <label>
             Other Type:
             <input

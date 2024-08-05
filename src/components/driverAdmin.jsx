@@ -13,7 +13,8 @@ const DriverAdmin = ({
   onDriverDelete,
   onDriverTrailerDelete,
   onDriverTrailerAdd,
-  onDriverEquipmentDelete
+  onDriverEquipmentDelete,
+  onDriverEquipmentAdd
 }) => {
 
 const [isModalOpen, setIsModalOpen] = useState(false)
@@ -33,14 +34,15 @@ const handleAddEquipmentClick = (e, driverId)=>{ //OPENS EQUIPMENT MODAL
 
 }
 
-const handleModalSubmit = (amount,  type, len, def) =>{
+const handleModalSubmit = (amount,  type, len, def) =>{ // SUBMIT FOR TRAILER EQUIPMENT MODAL
     console.log('DRIVER ADMIN: ADDING', amount, type, len, def)
     onDriverTrailerAdd(currentDriverId, amount, type, len, def)
 }
 
 
-const handleAddEquipmentSubmit = (data) => { // Function to handle submission of the new modal
-    console.log('New Modal Data:', data);
+const handleAddEquipmentSubmit = (driverId, type, qty) => { // Function to handle submission of the new modal
+    console.log('New Modal Data:',driverId, type, qty);
+    onDriverEquipmentAdd(currentDriverId, driverId, type, qty)
     // Handle the new modal data submission
   };
 
@@ -65,7 +67,7 @@ console.log('CURRENT DRIVERS', currentDrivers)
           <tbody>
             {currentDrivers.filter(driver => driver.driverCompany === client._id).map((driver, driverIndex) => (
               <tr key={`driver-${driverIndex}`}>
-                {editingDriverIndex.includes(driverIndex) && editingDriverCompany === client._id ? (
+                {editingDriverIndex.includes(driverIndex) && editingDriverCompany === client._id ? ( //DRIVER EDIT  MODE ON
                   <>
                     <td><input type="text" value={driver.driverName} onChange={(e) => onHandleDriverChange(driver._id, 'driverName', e.target.value)} /></td>
                     <td><input type="text" value={driver.driverPhoneNumber} onChange={(e) => onHandleDriverChange(driver._id, 'driverPhoneNumber', e.target.value)} /></td>
@@ -79,14 +81,28 @@ console.log('CURRENT DRIVERS', currentDrivers)
                         <li><button onClick={(e)=>handleAddTrailerClick(e, driver._id)}>Add Trailer</button></li>
                       </ul>
                     </td>
+
+
                     <td>
-                      <ul>
-                        {driver.selectedEquipment.map((eq, index) => (
-                          eq.qty > 0 ? <li key={index}>{`${eq.type} qty: ${eq.qty}`} <button type='button' onClick={(e)=>onDriverEquipmentDelete(e, driver._id, eq.type, eq.qty)}>Delete</button> </li> : null
-                        ))}
-                        <li><button onClick={(e)=>handleAddEquipmentClick(e, driver._id)} >Add Equipment</button></li>
-                      </ul>
+                        <ul>
+                        {driver.selectedEquipment.map((eq, index) => {
+                                console.log('Equipment Type:', eq.type); // Add this line to log the type
+                                return (
+                                eq.qty > 0 ? (
+                                    <li key={index}>
+                                    {`${eq.type} qty: ${eq.qty}`} 
+                                    <button type='button' onClick={(e) => onDriverEquipmentDelete(e, driver._id, eq.type, eq.qty)}>Delete</button>
+                                    </li>
+                                ) : null
+                                );
+                            })}
+                            <li>
+                                <button onClick={(e) => handleAddEquipmentClick(e, driver._id)}>Add Equipment</button>
+                            </li>
+                        </ul>        
                     </td>
+
+
                     <td>
                       <button type='button' onClick={(e) => onDriverEditSave(e, driverIndex, driver.driverCompany, driver._id)}>Save</button>
                       <button type='button' >Delete</button>
