@@ -5,7 +5,7 @@ const AddTrailerModal = ({ isOpen, onRequestClose, onSubmit, currentDriverId }) 
   const [amount, setAmount] = useState('');
   const [type, setType] = useState('');
   const [len, setLen] = useState('');
-  const [def, setDef] = useState('')
+  const [def, setDef] = useState(false)
   const [onOtherTrailer, setOnOtherTrailer] = useState('')
 
   const handleSubmit = (e) => {
@@ -21,6 +21,17 @@ const AddTrailerModal = ({ isOpen, onRequestClose, onSubmit, currentDriverId }) 
 
 
   };
+
+  const onHandleCancel = (e) =>{
+    e.preventDefault()
+    onRequestClose();
+    setAmount('')
+    setType('')
+    setLen('')
+    setDef('')
+    setOnOtherTrailer('');
+
+  }
 
   return (
     <Modal isOpen={isOpen} onRequestClose={onRequestClose}>
@@ -63,6 +74,9 @@ const AddTrailerModal = ({ isOpen, onRequestClose, onSubmit, currentDriverId }) 
           <input type='checkBox' checked={def} value={def} onChange={(e)=>setDef(e.target.checked)}/>
         </label>
         <button type="submit">Add</button>
+        <button type='button' onClick={(e)=>onHandleCancel(e)}>Cancel</button>
+
+        
       </form>
     </Modal>
   );

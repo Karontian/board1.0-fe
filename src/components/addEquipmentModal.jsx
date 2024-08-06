@@ -19,6 +19,13 @@ const AddEquipmentModal = ({ isOpen, onRequestClose, onSubmit, currentDriverId }
     setOnOtherType('');
   };
 
+  const onHandleCancel = (e) =>{
+    onRequestClose();
+    setType('');
+    setQty('');
+    setOnOtherType('');
+
+  }
   return (
     <Modal isOpen={isOpen} onRequestClose={onRequestClose}>
       <h2>DriverID#: {currentDriverId}</h2>
@@ -54,6 +61,8 @@ const AddEquipmentModal = ({ isOpen, onRequestClose, onSubmit, currentDriverId }
           <input type="number" value={qty} onChange={(e) => setQty(e.target.value)} required />
         </label>
         <button type="submit">Add</button>
+        <button type='button' onClick={(e)=>onHandleCancel(e)}>Cancel</button>
+
       </form>
     </Modal>
   );

@@ -121,16 +121,21 @@ console.log('CURRENT DRIVERS', currentDrivers)
                             <li key={index}>{trailer.amount}x {trailer.type} {trailer.length}  {trailer.def ? 'Default' : null}</li>
                           ))
                         ) : (
-                          <span>No Trailer Available</span>
+                          <span>No Trailer available, EDIT Driver</span>
                         )}
                       </ul>
-                    </td>
+                    </td>         
+
                     <td>
-                      <ul>
-                        {driver.selectedEquipment.map((eq, index) => (
-                          eq.qty > 0 ? <li key={index}>{`${eq.type} qty: ${eq.qty}`}</li> : null
-                        ))}
-                      </ul>
+                    <ul>
+                        {driver.selectedEquipment.filter(eq => eq.qty > 0).length > 0 ? (
+                        driver.selectedEquipment.filter(eq => eq.qty > 0).map((eq, index) => (
+                            <li key={index}>{`${eq.type} qty: ${eq.qty}`}</li>
+                        ))
+                        ) : (
+                        <span>No equipment available, EDIT Driver</span>
+                        )}
+                    </ul>
                     </td>
                     <td>
                       <button type='button' onClick={(e) => onDriverEdit(e, driverIndex, driver.driverCompany)} disabled={editingDriverCompany.length > 0 && editingDriverIndex.length > 0}>Edit</button>
