@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Modal from 'react-modal';
 
-const AddTrailerModal = ({ isOpen, onRequestClose, onSubmit, currentDriverId }) => {
+const AddTrailerModal = ({ isOpen, onRequestClose, onSubmit, currentDriverId, onError }) => {
   const [amount, setAmount] = useState('');
   const [type, setType] = useState('');
   const [len, setLen] = useState('');
@@ -11,14 +11,13 @@ const AddTrailerModal = ({ isOpen, onRequestClose, onSubmit, currentDriverId }) 
   const handleSubmit = (e) => {
     e.preventDefault(); 
     const finalType = type === 'Other' ? onOtherTrailer : type;
-    onSubmit(amount, finalType, len, def);
+    onSubmit(amount, finalType, len, def, onError);
     onRequestClose();
     setAmount('')
     setType('')
     setLen('')
-    setDef('')
+    setDef(false)
     setOnOtherTrailer('');
-
 
   };
 
