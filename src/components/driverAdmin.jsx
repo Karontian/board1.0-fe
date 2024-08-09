@@ -4,7 +4,6 @@ import AddEquipmentModal from './addEquipmentModal';
 
 const DriverAdmin = ({
   client,
-  currentDrivers,
   editingDriverIndex,
   editingDriverCompany,
   onHandleDriverChange,
@@ -15,7 +14,8 @@ const DriverAdmin = ({
   onDriverTrailerAdd,
   onDriverEquipmentDelete,
   onDriverEquipmentAdd,
-  onDriverError
+  currentDrivers
+  
 }) => {
 
 const [isModalOpen, setIsModalOpen] = useState(false)
@@ -47,7 +47,6 @@ const handleAddEquipmentSubmit = (driverId, type, qty) => { // Function to handl
     // Handle the new modal data submission
   };
 
-console.log('DRIVER ADMIN ', onDriverError())
   return (
     <>
     <tr>
@@ -166,7 +165,7 @@ console.log('DRIVER ADMIN ', onDriverError())
             onRequestClose={() => setIsModalOpen(false)}
             onSubmit={handleModalSubmit}
             currentDriverId={currentDriverId}
-            onDriverError={onDriverError}
+            currentDrivers={currentDrivers}
         />
         <AddEquipmentModal
                     isOpen={isEquipmentModalOpen}

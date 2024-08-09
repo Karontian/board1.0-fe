@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Modal from 'react-modal';
 
-const AddTrailerModal = ({ isOpen, onRequestClose, onSubmit, currentDriverId, onError }) => {
+const AddTrailerModal = ({ isOpen, onRequestClose, onSubmit, currentDriverId, currentDrivers }) => {
   const [amount, setAmount] = useState('');
   const [type, setType] = useState('');
   const [len, setLen] = useState('');
@@ -10,14 +10,26 @@ const AddTrailerModal = ({ isOpen, onRequestClose, onSubmit, currentDriverId, on
 
   const handleSubmit = (e) => {
     e.preventDefault(); 
-    const finalType = type === 'Other' ? onOtherTrailer : type;
-    onSubmit(amount, finalType, len, def, onError);
-    onRequestClose();
-    setAmount('')
-    setType('')
-    setLen('')
-    setDef(false)
-    setOnOtherTrailer('');
+    const currentDriver = currentDrivers.filter((driver) => driver._id === currentDriverId);            
+    const trailers = currentDriver[0].trailerInfo
+
+    const hasDefTrailer = trailers.some(trailer => trailer.def === true);
+    if (hasDefTrailer && def === true) {
+      alert('Driver already has a default trailer')
+      return
+    } else {
+
+      const finalType = type === 'Other' ? onOtherTrailer : type;
+      onSubmit(amount, finalType, len, def);
+      onRequestClose();
+      setAmount('')
+      setType('')
+      setLen('')
+      setDef(false)
+      setOnOtherTrailer('');
+  
+    }
+
 
   };
 
@@ -31,6 +43,8 @@ const AddTrailerModal = ({ isOpen, onRequestClose, onSubmit, currentDriverId, on
     setOnOtherTrailer('');
 
   }
+
+  console.log('TRAILER MODAL CURRENT DRIVERS', currentDrivers)
 
   return (
     <Modal isOpen={isOpen} onRequestClose={onRequestClose}>

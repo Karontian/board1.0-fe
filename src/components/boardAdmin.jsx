@@ -377,49 +377,27 @@ const BoardAdmin  = () =>{
             console.log(e)
         }   
     }
-    const onDriverError = ()=>{
-        console.log('ON DRIVER ERROR BOARDADMIN')
-        const driverError = true
-    }
+   
 
     const onDriverTrailerAdd = async(driverId, amount, type, len, def)=>{ //ADDS A TRAILER  FROM DRIVER DISPLAY
         console.log('DRIVER EDIT TRAILER ADD',driverId, amount, type, len, def) 
 
         try {
             // console.log('CURRENT DRIVERS @ MODAL', currentDrivers)
-            const currentDriver = currentDrivers.filter((driver) => driver._id === driverId);            
-            const trailers = currentDriver[0].trailerInfo
-
-            const hasDefTrailer = trailers.some(trailer => trailer.def === true);
-            console.log('HAS DEF', hasDefTrailer)
-            if (hasDefTrailer && def ) {
-                alert('Def trailer already added')
-                onDriverError()
-                return
-            } else {
-                const updateInfo = {
-                    amount,
-                    type,
-                    len,
-                    def
-                }
-    
-                const update = await axios.put(`http://localhost:3001/driverTrailerAdd/${driverId}`, updateInfo)
-                console.log(update)
-    
-
+            const updateInfo = {
+                amount,
+                type,
+                len,
+                def
             }
+
+            const update = await axios.put(`http://localhost:3001/driverTrailerAdd/${driverId}`, updateInfo)
+            console.log(update)
 
         } catch (err) {
             console.log(err)
         }
     }
-
-
-
-    
-
-
 
     const onDriverEquipmentDelete = async(e, driverId, type, qty)=>{
         console.log('EQUIPMENT DELETE', e, driverId, type, qty)
@@ -884,7 +862,6 @@ const BoardAdmin  = () =>{
                                         onDriverTrailerAdd={onDriverTrailerAdd}
                                         onDriverEquipmentDelete={onDriverEquipmentDelete}
                                         onDriverEquipmentAdd={onDriverEquipmentAdd}
-                                        onDriverError={onDriverError}
                                 />
                                 {/* NESTED DRIVER ARRAY END */}
 
