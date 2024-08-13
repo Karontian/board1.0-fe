@@ -60,6 +60,8 @@ const BoardAdmin  = () =>{
     const [editingDriverIndex, setEditingDriverIndex] = useState([]) //TOGGLES A DRIVER ON EDITION
     const [editingDriverCompany, setEditingDriverCompany] = useState([]) //IDENTIFIES WHAT COMPANY IS THE EDITING DRIVER UNDER
     const [isDefaultSelected, setIsDefaultSelected] = useState(false)
+    const [checkedTrailer, setCheckedTrailer] = useState(null); // TRACKS WHAT TRAILER GETS TO BE DEFAULT AT THE EQUIPMENT ADD SECTION
+   
     //DATA REFS
         ///OTHER TRAILER TYPE DATA HOLDERS
     const amountRef = useRef();
@@ -203,23 +205,51 @@ const BoardAdmin  = () =>{
     //DRIVER CRUD CONTROLS
     const onDriverAdd = async(e) =>{ //ADDS A DRIVER, includes: Company Info, Driver info and Equipment info
         try {
-            console.log('ADDING DRIVER', e.target)
+            // console.log('ADDING DRIVER', e.target)
+            // e.preventDefault();
+            // clearTimeout(timeoutRef.current);
+            // const fb48Amount = e.target.elements['fb48-ammount'].value;
+            // const fb48Checked = e.target.elements['default-fb48'].checked;
+            // const fb53Amount = e.target.elements['fb53-ammount'].value;
+            // const fb53Checked = e.target.elements['default-fb53'].checked;
+    
+            // const van48Amount = e.target.elements['van48-ammount'].value;
+            // const van48Checked = e.target.elements['default-van48'].checked;
+            // const van53Amount = e.target.elements['van53-ammount'].value;
+            // const van53Checked = e.target.elements['default-van53'].checked;
+    
+            // const reefer48Amount = e.target.elements['reefer48-ammount'].value;
+            // const reefer48Checked = e.target.elements['default-reefer48'].checked;
+            // const reefer53Amount = e.target.elements['reefer53-default'].value;
+            // const reefer53Checked = e.target.elements['default-reefer53'].checked;
+
+            console.log('ADDING DRIVER', e.target);
             e.preventDefault();
             clearTimeout(timeoutRef.current);
-            const fb48Amount = e.target.elements['fb48-ammount'].value;
-            const fb48Checked = e.target.elements['default-fb48'].checked;
-            const fb53Amount = e.target.elements['fb53-ammount'].value;
-            const fb53Checked = e.target.elements['default-fb53'].checked;
-    
-            const van48Amount = e.target.elements['van48-ammount'].value;
-            const van48Checked = e.target.elements['default-van48'].checked;
-            const van53Amount = e.target.elements['van53-ammount'].value;
-            const van53Checked = e.target.elements['default-van53'].checked;
-    
-            const reefer48Amount = e.target.elements['reefer48-ammount'].value;
-            const reefer48Checked = e.target.elements['default-reefer48'].checked;
-            const reefer53Amount = e.target.elements['reefer53-default'].value;
-            const reefer53Checked = e.target.elements['default-reefer53'].checked;
+
+            const elements = e.target.elements;
+            console.log('Form Elements:', elements);
+
+            const fb48Amount = elements['fb48-ammount']?.value;
+            const fb48Checked = elements['default-fb48']?.checked;
+            const fb53Amount = elements['fb53-ammount']?.value;
+            const fb53Checked = elements['default-fb53']?.checked;
+
+            const van48Amount = elements['van48-ammount']?.value;
+            const van48Checked = elements['default-van48']?.checked;
+            const van53Amount = elements['van53-ammount']?.value;
+            const van53Checked = elements['default-van53']?.checked;
+
+            const reefer48Amount = elements['reefer48-ammount']?.value;
+            const reefer48Checked = elements['default-reefer48']?.checked;
+            const reefer53Amount = elements['reefer53-ammount']?.value;
+            const reefer53Checked = elements['default-reefer53']?.checked;
+
+            console.log('Values:', {
+                fb48Amount, fb48Checked, fb53Amount, fb53Checked,
+                van48Amount, van48Checked, van53Amount, van53Checked,
+                reefer48Amount, reefer48Checked, reefer53Amount, reefer53Checked
+            });
         
             let newTrailerArray = [...otherTypeTrailerArray, 
                 { amount: fb48Amount, type: 'flatbed', length: '48', def: fb48Checked },
@@ -228,9 +258,8 @@ const BoardAdmin  = () =>{
                 { amount: van53Amount, type: 'van', length: '53', def: van53Checked },
                 { amount: reefer48Amount, type: 'reefer', length: '48', def: reefer48Checked },
                 { amount: reefer53Amount, type: 'reefer', length: '53', def: reefer53Checked }
-            ];//collects all trailer info           
-            // console.log('ALL TRAILERS', newTrailerArray)
-            
+            ];
+
             const newSelectedEquipment = {//collects all the equipment info
                 tarps8ft: tarps8ft,
                 tarps6ft: tarps6ft,
@@ -277,6 +306,23 @@ const BoardAdmin  = () =>{
                 setDriverName('');
                 setDriverPhone('');
                 setIsDefaultSelected(false)
+
+                setFb48Checked(false);
+                setFb53Checked(false);
+                setVan48Checked(false);
+                setVan53Checked(false);
+                setReefer48Checked(false);
+                setReefer53Checked(false);
+                setCheckedTrailer(false)
+
+
+                elements['default-fb48'].checked = false;
+                elements['default-fb53'].checked = false;
+                elements['default-van48'].checked = false;
+                elements['default-van53'].checked = false;
+                elements['default-reefer48'].checked = false;
+                elements['default-reefer53'].checked = false;
+    
             }, 1000);
             
         } catch (err) {
@@ -355,6 +401,11 @@ const BoardAdmin  = () =>{
             console.log(err)
         }
     }
+    const handleCheckboxChange = (name) => {
+        setCheckedTrailer(name);
+      };
+
+    //TRAILER CRUD INFORMATION
     const onDriverTrailerDelete = async(e, driverId, amount, type, len)=>{//DELETES A TRAILER  FROM DRIVER DISPLAY
         try {
          
@@ -377,7 +428,6 @@ const BoardAdmin  = () =>{
             console.log(e)
         }   
     }
-   
 
     const onDriverTrailerAdd = async(driverId, amount, type, len, def)=>{ //ADDS A TRAILER  FROM DRIVER DISPLAY
         console.log('DRIVER EDIT TRAILER ADD',driverId, amount, type, len, def) 
@@ -550,49 +600,8 @@ const BoardAdmin  = () =>{
 
                          </select>
                         <div className='newDriverForm-equipmentForm'>
-                            <div className='equipmentForm-trailerType'>
+                            {/* <div className='equipmentForm-trailerType'>
                                     <strong>Trailer Type:</strong>
-
-                                    {/* <div className='trailerType-fb'>
-                                        <input type="text" className='equipmentOption-trailerType' name='fb48-ammount'  onChange={e => setFb48Amount(e.target.value)} />
-                                        <label htmlFor="fb48-ammount">xFB48 default?</label>
-                                        <input type="checkBox" id='fb48' name='default-fb48' disabled={isDefaultSelected} onChange={(e) => {
-                                            setFb48Checked(e.target.checked);
-                                            handleDefaultChange(e.target.name, e.target.checked);
-                                        }} />
-
-
-                                        <input type="text" className='equipmentOption-trailerType' name='fb53-ammount'  onChange={e => setFb53Amount(e.target.value)} />
-                                        <label htmlFor="fb53-ammount">xFB53 default?</label>
-                                        <input type="checkBox" id='fb53' name='default-fb53' disabled={isDefaultSelected}   onChange={e => setFb53Checked(e.target.checked)} />
-
-                                    </div>
-                                    <div className='trailerType-van'>
-
-                                        <input type="text" className='equipmentOption-trailerType' name='van48-ammount'onChange={e => setVan48Amount(e.target.value)} />
-                                        <label htmlFor="van48-ammount">xV48 default?</label>
-                                        <input type="checkBox" id='van48' name='default-van48'  onChange={e => setVan48Checked(e.target.checked)} />
-
-                                        
-                                        <input type="text" className='equipmentOption-trailerType' name='van53-ammount' onChange={e => setVan53Amount(e.target.value)} />
-                                        <label htmlFor="van53-ammount">xV53 default?</label>
-                                        <input type="checkBox" id='van53' name='default-van53'  onChange={e => setVan53Checked(e.target.checked)} />
-
-
-                                    </div>
-                                    <div className='trailerType-reefer'>
-                                    
-                                        <input type="text" className='equipmentOption-trailerType' name='reefer48-ammount'  onChange={e => setReefer48Amount(e.target.value)} />
-                                        <label htmlFor="reefer48-ammount">xR48 default?</label>
-                                        <input type="checkBox" id='reefer48' name='default-reefer48'  onChange={e => setReefer48Checked(e.target.checked)} />
-
-                                        <input type="text" className='equipmentOption-trailerType' name='reefer53-default'  onChange={e => setReefer53Amount(e.target.value)} />
-                                        <label htmlFor="reefer53-ammount">xR53 default?</label>
-                                        <input type="checkBox" id='reefer53' name='default-reefer53'  onChange={e => setReefer53Checked(e.target.checked)} />
-
-
-                                    </div>
-                                    <br /> */}
 
                                     <div className='trailerType-fb'>
                                         <input type="text" className='equipmentOption-trailerType' name='fb48-ammount' onChange={e => setFb48Amount(e.target.value)} />
@@ -732,7 +741,126 @@ const BoardAdmin  = () =>{
                                 </div>
                                                       
 
-                            </div>
+                            </div> */}
+                                <div className='equipmentForm-trailerType'>
+                                <strong>Trailer Type:</strong>
+
+                                <div className='trailerType-fb'>
+                                    <input type="text" className='equipmentOption-trailerType' name='fb48-ammount' onChange={e => setFb48Amount(e.target.value)} />
+                                    <label htmlFor="fb48-ammount">xFB48 default?</label>
+                                    <input type="checkbox" id='fb48' name='default-fb48' checked={checkedTrailer === 'default-fb48'} onChange={() => handleCheckboxChange('default-fb48')} />
+
+                                    <input type="text" className='equipmentOption-trailerType' name='fb53-ammount' onChange={e => setFb53Amount(e.target.value)} />
+                                    <label htmlFor="fb53-ammount">xFB53 default?</label>
+                                    <input type="checkbox" id='fb53' name='default-fb53' checked={checkedTrailer === 'default-fb53'} onChange={() => handleCheckboxChange('default-fb53')} />
+                                </div>
+
+                                <div className='trailerType-van'>
+                                    <input type="text" className='equipmentOption-trailerType' name='van48-ammount' onChange={e => setVan48Amount(e.target.value)} />
+                                    <label htmlFor="van48-ammount">xV48 default?</label>
+                                    <input type="checkbox" id='van48' name='default-van48' checked={checkedTrailer === 'default-van48'} onChange={() => handleCheckboxChange('default-van48')} />
+
+                                    <input type="text" className='equipmentOption-trailerType' name='van53-ammount' onChange={e => setVan53Amount(e.target.value)} />
+                                    <label htmlFor="van53-ammount">xV53 default?</label>
+                                    <input type="checkbox" id='van53' name='default-van53' checked={checkedTrailer === 'default-van53'} onChange={() => handleCheckboxChange('default-van53')} />
+                                </div>
+
+                                <div className='trailerType-reefer'>
+                                    <input type="text" className='equipmentOption-trailerType' name='reefer48-ammount' onChange={e => setReefer48Amount(e.target.value)} />
+                                    <label htmlFor="reefer48-ammount">xR48 default?</label>
+                                    <input type="checkbox" id='reefer48' name='default-reefer48' checked={checkedTrailer === 'default-reefer48'} onChange={() => handleCheckboxChange('default-reefer48')} />
+
+                                    <input type="text" className='equipmentOption-trailerType' name='reefer53-ammount' onChange={e => setReefer53Amount(e.target.value)} />
+                                    <label htmlFor="reefer53-ammount">xR53 default?</label>
+                                    <input type="checkbox" id='reefer53' name='default-reefer53' checked={checkedTrailer === 'default-reefer53'} onChange={() => handleCheckboxChange('default-reefer53')} />
+                                </div>
+
+                                <div className='trailerType-other'>
+                                    <button type='button' onClick={() => setOtherTypeOfTrailerSelected(true)} disabled={otherTypeOfTrailerSelected === true}>+Other Type Trailer</button>
+
+                                    <div className='trailerType-other-form'>
+                                    {otherTypeOfTrailerSelected === true &&
+                                        <div className='other-trailerType'>
+                                        <h5>Add a new Other-Type trailer:</h5>
+                                        <input type="text" name='amount' className='other-trailerType-amount' ref={amountRef} />
+                                        <label htmlFor="amount">x</label>
+
+                                        <label htmlFor="type">Type</label>
+                                        <input type="text" name='type' className='other-trailerType-type' ref={typeRef} />
+                                        <br />
+
+                                        <label htmlFor="length">Length</label>
+                                        <input type="text" name='length' className='other-trailerType-length' ref={lengthRef} />
+                                        <span>ft</span>
+
+                                        <label htmlFor="default">Default?</label>
+                                        <input type="checkbox" name='default' className='other-trailerType' ref={defaultRef} checked={checkedTrailer === 'default-other'} onChange={() => handleCheckboxChange('default-other')} />
+
+                                        <button type='button' onClick={(e) => onSaveOtherTypeTrailer(e)}>Save Trailers</button>
+                                        <button type='button' onClick={(e) => onCancelOtherTrailers(e)}>Cancel</button>
+                                        </div>
+                                    }
+                                    </div>
+
+                                    <div className='trailerType-other-grid'>
+                                    <h3>Other-Type Trailers added:</h3>
+                                    <table>
+                                        <thead>
+                                        <tr>
+                                            <th>Amount</th>
+                                            <th>Trailer Type</th>
+                                            <th>Trailer Length</th>
+                                            <th>Default?</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {otherTypeTrailerArray.map((item, index) => (
+                                            editingIndex === index ? ( // EDITING MODE
+                                            <tr key={index}>
+                                                <td>
+                                                <label htmlFor="editedAmount"></label>
+                                                <input type="text" name='editedAmount' value={ottEditingAmount} onChange={(e) => setOttEditingAmount(e.target.value)} />
+                                                </td>
+                                                <td>
+                                                <label htmlFor="editedType"></label>
+                                                <input type="text" name='editedType' value={ottEditingType} onChange={(e) => setOttEditingType(e.target.value)} />
+                                                </td>
+                                                <td>
+                                                <label htmlFor="editedLength"></label>
+                                                <input type="text" name='editedLength' value={ottEditingLenght} onChange={(e) => setOttEditingLenght(e.target.value)} />
+                                                </td>
+                                                <td>
+                                                <input type="checkbox" name='editedDefault' checked={ottEditingDefault && checkedTrailer === 'editedDefault'  } onChange={(e) => (setOttEditingDefault(e.target.checked ), handleCheckboxChange('editedDefault'))} />
+                                                </td>
+                                                <td>
+                                                <button type='button' onClick={(e) => onOtherTrailerEditSave(e, index)}>Save</button>
+                                                <button type='button'>Cancel</button>
+                                                </td>
+                                            </tr>
+                                            ) : (
+                                            <tr key={index}>
+                                                <td>{item.amount}</td>
+                                                <td>{item.type}</td>
+                                                <td>{item.length}</td>
+                                                <td>
+                                                <label htmlFor="defaultTrailer"></label>
+                                                <input type="checkbox" name='defaultTrailer' checked={item.def} readOnly />
+                                                </td>
+                                                <td>
+                                                <button type='button' onClick={(e) => onOtherTrailerDelete(e, index)}>Delete</button>
+                                                <button type='button' onClick={(e) => onOtherTrailerEdit(e, index)}>Edit</button>
+                                                </td>
+                                            </tr>
+                                            )
+                                        ))}
+                                        </tbody>
+                                        <tfoot>
+                                        </tfoot>
+                                    </table>
+                                    </div>
+                                </div>
+                                </div>
 
 
                             <div className='equipmentForm-equipment'>

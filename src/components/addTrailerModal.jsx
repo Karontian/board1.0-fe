@@ -44,7 +44,6 @@ const AddTrailerModal = ({ isOpen, onRequestClose, onSubmit, currentDriverId, cu
 
   }
 
-  console.log('TRAILER MODAL CURRENT DRIVERS', currentDrivers)
 
   return (
     <Modal isOpen={isOpen} onRequestClose={onRequestClose}>

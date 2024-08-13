@@ -74,13 +74,7 @@ const handleAddEquipmentSubmit = (driverId, type, qty) => { // Function to handl
                     <td><input type="text" value={driver.currentLocation} onChange={(e) => onHandleDriverChange(driver._id, 'currentLocation', e.target.value)} /></td>
                     <td><input type="text" value={driver.availableDate} onChange={(e) => onHandleDriverChange(driver._id, 'availableDate', e.target.value)} /></td>
                     <td>
-                      {/* <ul>
-                        {driver.trailerInfo.filter(trailer => trailer.amount !== null && trailer.amount !== 0).map((trailer, index) => (
-                          <li key={index}>{trailer.amount}x {trailer.type} {trailer.length} {trailer.def ? 'Default' : null} <button onClick={(e) =>onDriverTrailerDelete(e, driver._id, trailer.amount, trailer.type, trailer.length)}>Delete</button></li>
-                        ))}
-                        <li><button onClick={(e)=>handleAddTrailerClick(e, driver._id)}>Add Trailer</button></li>
-                      </ul> */}
-
+                
                     <ul>
                       {driver.trailerInfo.filter(trailer => trailer.amount !== null && trailer.amount !== 0).map((trailer, index) => (
                         <li key={index}>
