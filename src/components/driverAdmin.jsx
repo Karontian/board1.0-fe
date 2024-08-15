@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import AddTrailerModal from './addTrailerModal';
 import AddEquipmentModal from './addEquipmentModal';
+import axios  from 'axios'
 
 const DriverAdmin = ({
   client,
@@ -21,6 +22,7 @@ const DriverAdmin = ({
 const [isModalOpen, setIsModalOpen] = useState(false)
 const [isEquipmentModalOpen, setIsEquipmentModalOpen] = useState(false); // State for the new modal
 const [currentDriverId, setCurrentDriverId] = useState('')
+
 
 const handleAddTrailerClick = (e, driverId) =>{ //OPENS TRAILERS MODAL
     console.log('DRIVER ADDMING OPENING MODAL', e, driverId)
@@ -46,6 +48,26 @@ const handleAddEquipmentSubmit = (driverId, type, qty) => { // Function to handl
     onDriverEquipmentAdd(currentDriverId, driverId, type, qty)
     // Handle the new modal data submission
   };
+
+  const handleCheckboxChange = async (e, driverId, trailerId) => {//sets the default  trailer @ ddriverEdit level
+    console.log(e, driverId, trailerId )
+    try {
+      let updateInfo = {
+        driver: driverId,
+        trailer: trailerId
+        
+      }
+      const updateCall = axios.put(`http://localhost:3001/driverEditDefaultChange/${driverId}`, updateInfo)
+      console.log('DEF CHANGE UPDATE CALL',updateCall)
+      
+    } catch (err) {
+      console.log(err)
+    }
+
+  };
+
+
+
 
   return (
     <>
@@ -79,12 +101,23 @@ const handleAddEquipmentSubmit = (driverId, type, qty) => { // Function to handl
                       {driver.trailerInfo.filter(trailer => trailer.amount !== null && trailer.amount !== 0).map((trailer, index) => (
                         <li key={index}>
                           {trailer.amount}x {trailer.type} {trailer.length} 
-                          <input type="checkbox" checked={trailer.def} readOnly />
+                          
+                          <input 
+                          type="checkbox" 
+                          checked={trailer.def}  
+                          onChange={(e)=>handleCheckboxChange(e, driver._id, trailer._id)} 
+                          />
+                        
+
                           <button onClick={(e) => onDriverTrailerDelete(e, driver._id, trailer.amount, trailer.type, trailer.length)}>Delete</button>
                         </li>
                       ))}
                       <li><button onClick={(e) => handleAddTrailerClick(e, driver._id)}>Add Trailer</button></li>
+
+
                     </ul>
+
+
                     </td>
 
 
