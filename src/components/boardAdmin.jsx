@@ -2,6 +2,9 @@ import React, { useEffect, useRef, useState } from 'react'
 import axios from 'axios'
 import './boardAdmin.css'
 import DriverAdmin from './driverAdmin'
+import ConfirmationModal from './confirmationModal'
+import './ConfirmationModal.css'; // Import the CSS file for styling
+
 
 const BoardAdmin  = () =>{
     //COMPANY INFO STATE
@@ -62,6 +65,10 @@ const BoardAdmin  = () =>{
     const [isDefaultSelected, setIsDefaultSelected] = useState(false)
     const [checkedTrailer, setCheckedTrailer] = useState(null); // TRACKS WHAT TRAILER GETS TO BE DEFAULT AT THE EQUIPMENT ADD SECTION
    
+    //CONFIRMATION MODAL STATE
+    const [showModal, setShowModal] = useState(false);
+    const [deleteInfo, setDeleteInfo] = useState({});
+  
     //DATA REFS
         ///OTHER TRAILER TYPE DATA HOLDERS
     const amountRef = useRef();
@@ -70,6 +77,9 @@ const BoardAdmin  = () =>{
     const defaultRef = useRef();
     const formRef = useRef(); //CONTROLS THE FORM TO ADD NEW DRIVER INFO
     const timeoutRef = useRef();/// CONTROLS THE TIMEOUT CLEAN OF ARRAYS AFTER DRIVER ADD
+
+    
+
 
     useEffect(() => {//MONITORS Server changes && OtherTypeTrailer array
         getClients()
@@ -144,8 +154,8 @@ const BoardAdmin  = () =>{
         e.target.reset()
 
     }
-    const onCompanyDelete = async(e, index, companyName)=>{//DELETES A COMPANY
-        console.log('DELETING COMPANY', e, index, companyName)
+    const onCompanyDelete = async(index)=>{//DELETES A COMPANY
+        console.log('DELETING COMPANY',index)
         try {
             const req = await axios.delete(`http://localhost:3001/deleteCompany/${index}`)
             console.log(req)
@@ -153,6 +163,22 @@ const BoardAdmin  = () =>{
             console.log(err)
         }
     }
+
+    const handleDeleteClick = (e, index, companyName) => { //OPENS DELETE COMPANY CONFIRMATION MODAL
+        console.log('DELETING')
+        setDeleteInfo({ index, companyName });
+        setShowModal(true);
+    };
+    
+    const handleConfirmDelete = () => { //CONFIRMS COMPANY DELETION IN THE MODAL AND CALLS DELETE FUNCTION
+        onCompanyDelete(deleteInfo.index);
+        setShowModal(false);
+    };
+    
+    const handleCancelDelete = () => {//CANCELS COMPANY  DELETION
+        setShowModal(false);
+    };
+    
     const onCompanyEdit = async(e, index)=>{// TOGGLES COMPANY EDIT MODE
         console.log('COMPANY EDIT', e, index)
         setEditingCompanyIndex(index)        
@@ -227,6 +253,8 @@ const BoardAdmin  = () =>{
             const reefer53Amount = elements['reefer53-ammount']?.value;
             const reefer53Checked = elements['default-reefer53']?.checked;
            
+
+            //FORM VALIDATION
             const otherAmounts = otherTypeTrailerArray.map(trailer => trailer.amount);
             const amounts = [
                 fb48Amount, fb53Amount,
@@ -248,15 +276,21 @@ const BoardAdmin  = () =>{
                 alert('At least one trailer type has to be selected as default')
                 return
             }
-            
-            
-            
+
+            if(selectedCompany === ''){
+                alert('Please select a company')
+                return
+            }
+            //FORM VALIDATION
+
             
             console.log('Values:', {
                 fb48Amount, fb48Checked, fb53Amount, fb53Checked,
                 van48Amount, van48Checked, van53Amount, van53Checked,
                 reefer48Amount, reefer48Checked, reefer53Amount, reefer53Checked
             }, 'OTHER TRAILERS', otherTypeTrailerArray);        
+
+
             let newTrailerArray = [...otherTypeTrailerArray, 
                 { amount: fb48Amount, type: 'flatbed', length: '48', def: fb48Checked },
                 { amount: fb53Amount, type: 'flatbed', length: '53', def: fb53Checked },
@@ -280,7 +314,8 @@ const BoardAdmin  = () =>{
                 qty: value
             })); //convets equipment info into an array to be received by backed
     
-
+            console.log('SELECTED COMPANY', selectedCompany)
+         
             const dataToSend = {
                 driverInfo: {
                     driverName: driverName, 
@@ -313,13 +348,19 @@ const BoardAdmin  = () =>{
                 setIsDefaultSelected(false)
 
                 setFb48Checked(false);
+                setFb48Amount('')
                 setFb53Checked(false);
+                setFb53Amount('')
                 setVan48Checked(false);
+                setVan48Amount('')
                 setVan53Checked(false);
+                setVan53Amount('')
                 setReefer48Checked(false);
+                setReefer48Amount('')
                 setReefer53Checked(false);
+                setReefer53Amount('')
                 setCheckedTrailer(false)
-
+                //otherTypeTrailer array gets reset because its local before sending to the DB
 
                 elements['default-fb48'].checked = false;
                 elements['default-fb53'].checked = false;
@@ -335,6 +376,32 @@ const BoardAdmin  = () =>{
         }
 
     }
+    const onDriverAddCancel = async(e)=>{//CANCELS A DRIIVER ADDITION
+        console.log('CANCEL ADDITION')
+        setTrailerArray([])
+        setOtherTypeTrailerArray([]);
+        setSelectedEquipment([]);
+        setSelectedCompany('');
+        setDriverName('');
+        setDriverPhone('');
+        setIsDefaultSelected(false)
+
+        setFb48Checked(false);
+        setFb48Amount('')
+        setFb53Checked(false);
+        setFb53Amount('')
+        setVan48Checked(false);
+        setVan48Amount('')
+        setVan53Checked(false);
+        setVan53Amount('')
+        setReefer48Checked(false);
+        setReefer48Amount('')
+        setReefer53Checked(false);
+        setReefer53Amount('')
+        setCheckedTrailer(false)
+
+    }
+
     const onDriverEdit = async(e, index, company)=>{ // EDITS A DRIVER ONCE IN DISPLAY
         console.log('EDITING DRIVER', e, index, company)
         try {
@@ -396,8 +463,8 @@ const BoardAdmin  = () =>{
           setCurrentDrivers(newDrivers); // Assuming setCurrentDrivers is your state updater function
         }
     };
-    const onDriverDelete = async(e, index, _id)=>{//DELETES A DRIVER FROM MAIN DRIVER DISPLAY
-        console.log('ON DRIVER DELETE',e, index, _id)
+    const onDriverDelete = async(_id)=>{//DELETES A DRIVER FROM MAIN DRIVER DISPLAY
+        console.log('ON DRIVER DELETE', _id)
         try {
             const driverToDelete = _id
             const deletion = await axios.delete(`http://localhost:3001/driverDelete/${driverToDelete}`)
@@ -408,6 +475,45 @@ const BoardAdmin  = () =>{
     }
     const handleCheckboxChange = (name) => {
         setCheckedTrailer(name);
+
+        //RESET TO '' ALL VALUES RIGHT AFTER A CLICK
+        setFb48Amount("");
+        setFb53Amount("");
+        setVan48Amount("");
+        setVan53Amount("");
+        setReefer48Amount("");
+        setReefer53Amount("");
+
+        switch (name) {
+            case 'default-fb48':
+                setFb48Checked(!fb48Checked);
+                if (!fb48Checked) setFb48Amount("1");
+                break;
+            case 'default-fb53':
+                setFb53Checked(!fb53Checked);
+                if (!fb53Checked) setFb53Amount("1");
+                break;
+            case 'default-van48':
+                setVan48Checked(!van48Checked);
+                if (!van48Checked) setVan48Amount("1");
+                break;
+            case 'default-van53':
+                setVan53Checked(!van53Checked);
+                if (!van53Checked) setVan53Amount("1");
+                break;
+            case 'default-reefer48':
+                setReefer48Checked(!reefer48Checked);
+                if (!reefer48Checked) setReefer48Amount("1");
+                break;
+            case 'default-reefer53':
+                setReefer53Checked(!reefer53Checked);
+                if (!reefer53Checked) setReefer53Amount("1");
+                break;
+            default:
+                break;
+        }
+
+        
       };
 
     //TRAILER CRUD INFORMATION
@@ -502,21 +608,18 @@ const BoardAdmin  = () =>{
             let type = typeRef.current.value
             let length = lengthRef.current.value
             let def = defaultRef.current.checked
-            // if((amount === 0 || amount === '') || (type === '') || (length === '')){
-            //     alert('Values empty')
-            // }
-
+            
             switch (true) {
                 case (amount === 0 || amount === ''):
-                    alert('Please add a trailer amount')
+                    alert('Please add a trailer amount');
                     return;
                 case (type === ''):
-                    alert('Please add a trailer name or type')
+                    alert('Please add a trailer name or type');
                     return;
                 case (length === ''):
-                    alert('Please add a trailer lenght')
+                    alert('Please add a trailer length');
                     return;
-                ;
+               
             }
             console.log('DEFAULT T', def)
             setOtherTypeTrailerArray(prev => [...prev, { amount, type, length, def }]);                
@@ -613,7 +716,7 @@ const BoardAdmin  = () =>{
                    <form ref={formRef}  onSubmit={onDriverAdd}>
                        <h3 id='h3'>Add a new Driver</h3>
                          <label htmlFor="client">Select a Client:</label>
-                         <select name="client" id="client" onChange={e => setSelectedCompany(e.target.value)}>
+                         <select name="client" id="client" onChange={e => setSelectedCompany(e.target.value)} required>
                             <option value="default" ></option>
                              {Array.from(currentClients).map((company, index) => {
                                 return <option key={index} value={company.companyName}>{company.companyName}</option>
@@ -625,31 +728,31 @@ const BoardAdmin  = () =>{
                                 <strong>Trailer Type:</strong>
 
                                 <div className='trailerType-fb'>
-                                    <input type="text" className='equipmentOption-trailerType' name='fb48-ammount' onChange={e => setFb48Amount(e.target.value)} />
+                                    <input type="text" className='equipmentOption-trailerType' name='fb48-ammount' onChange={e => setFb48Amount(e.target.value)} value={fb48Amount} />
                                     <label htmlFor="fb48-ammount">xFB48 default?</label>
-                                    <input type="checkbox" id='fb48' name='default-fb48' checked={checkedTrailer === 'default-fb48'} onChange={() => handleCheckboxChange('default-fb48')} />
+                                    <input type="checkbox" id='fb48' name='default-fb48' checked={checkedTrailer === 'default-fb48'} onChange={() => handleCheckboxChange('default-fb48') } />
 
-                                    <input type="text" className='equipmentOption-trailerType' name='fb53-ammount' onChange={e => setFb53Amount(e.target.value)} />
+                                    <input type="text" className='equipmentOption-trailerType' name='fb53-ammount' onChange={e => setFb53Amount(e.target.value)} value={fb53Amount} />
                                     <label htmlFor="fb53-ammount">xFB53 default?</label>
                                     <input type="checkbox" id='fb53' name='default-fb53' checked={checkedTrailer === 'default-fb53'} onChange={() => handleCheckboxChange('default-fb53')} />
                                 </div>
 
                                 <div className='trailerType-van'>
-                                    <input type="text" className='equipmentOption-trailerType' name='van48-ammount' onChange={e => setVan48Amount(e.target.value)} />
+                                    <input type="text" className='equipmentOption-trailerType' name='van48-ammount' onChange={e => setVan48Amount(e.target.value)} value={van48Amount}/>
                                     <label htmlFor="van48-ammount">xV48 default?</label>
                                     <input type="checkbox" id='van48' name='default-van48' checked={checkedTrailer === 'default-van48'} onChange={() => handleCheckboxChange('default-van48')} />
 
-                                    <input type="text" className='equipmentOption-trailerType' name='van53-ammount' onChange={e => setVan53Amount(e.target.value)} />
+                                    <input type="text" className='equipmentOption-trailerType' name='van53-ammount' onChange={e => setVan53Amount(e.target.value)}  value={van53Amount}/>
                                     <label htmlFor="van53-ammount">xV53 default?</label>
                                     <input type="checkbox" id='van53' name='default-van53' checked={checkedTrailer === 'default-van53'} onChange={() => handleCheckboxChange('default-van53')} />
                                 </div>
 
                                 <div className='trailerType-reefer'>
-                                    <input type="text" className='equipmentOption-trailerType' name='reefer48-ammount' onChange={e => setReefer48Amount(e.target.value)} />
+                                    <input type="text" className='equipmentOption-trailerType' name='reefer48-ammount' onChange={e => setReefer48Amount(e.target.value)} value={reefer48Amount} />
                                     <label htmlFor="reefer48-ammount">xR48 default?</label>
                                     <input type="checkbox" id='reefer48' name='default-reefer48' checked={checkedTrailer === 'default-reefer48'} onChange={() => handleCheckboxChange('default-reefer48')} />
 
-                                    <input type="text" className='equipmentOption-trailerType' name='reefer53-ammount' onChange={e => setReefer53Amount(e.target.value)} />
+                                    <input type="text" className='equipmentOption-trailerType' name='reefer53-ammount' onChange={e => setReefer53Amount(e.target.value)}  value={reefer53Amount}/>
                                     <label htmlFor="reefer53-ammount">xR53 default?</label>
                                     <input type="checkbox" id='reefer53' name='default-reefer53' checked={checkedTrailer === 'default-reefer53'} onChange={() => handleCheckboxChange('default-reefer53')} />
                                 </div>
@@ -661,7 +764,8 @@ const BoardAdmin  = () =>{
                                     {otherTypeOfTrailerSelected === true &&
                                         <div className='other-trailerType'>
                                         <h5>Add a new Other-Type trailer:</h5>
-                                        <input type="text" name='amount' className='other-trailerType-amount' ref={amountRef} required/>
+
+                                        <input type="text" name='amount' className='other-trailerType-amount' ref={amountRef}  required/>
                                         <label htmlFor="amount">x</label>
 
                                         <label htmlFor="type">Type</label>
@@ -786,18 +890,19 @@ const BoardAdmin  = () =>{
                         </div>    
                         <div className='newDriverForm-driverForm'>
                             <label htmlFor="driverName">Driver Name:</label>
-                            <input type="text" name='driverName'  onChange={e =>setDriverName(e.target.value)}/>
+                            <input type="text" name='driverName'  onChange={e =>setDriverName(e.target.value)} required/>
 
                             <label htmlFor="driverPhoneNumber">Driver Phone#:</label>
-                            <input type="text" name='driverPhoneNumber' onChange={e =>setDriverPhone(e.target.value)} />
+                            <input type="text" name='driverPhoneNumber' onChange={e =>setDriverPhone(e.target.value) } required />
                             
                             <label htmlFor="currentLocation">Current Location:</label>
-                            <input type="text" name='currentLocation' onChange={e => setCurrentLocation(e.target.value)} />
+                            <input type="text" name='currentLocation' onChange={e => setCurrentLocation(e.target.value)} required />
 
                             <label htmlFor="availableDate">Available Date:</label>                                                        
-                            <input type="date" name="availableDate" id="" onChange={e => setAvailableDate(e.target.value)} />
+                            <input type="date" name="availableDate" id="" onChange={e => setAvailableDate(e.target.value)}  required/>
 
                             <button type='submit' >Add+</button>
+                            <button type='button' onClick={(e)=>onDriverAddCancel(e)}>Cancel</button>
                             {/* <button type='button' onClick={(e)=>onAddAnotherDriver(e)} disabled={addAnotherDriver === false}> Add another Driver</button> */}
 
                         </div>         
@@ -852,9 +957,10 @@ const BoardAdmin  = () =>{
                                     <td>{client.einNumber}</td>
                                     <td>
                                         <button onClick={(e) => onCompanyEdit(e, index)} type='button'>Edit</button>
-                                        <button onClick={(e) => onCompanyDelete(e, client._id, client.companyName)} type='button'>Delete</button>
+                                        <button onClick={(e) => handleDeleteClick(e, client._id, client.companyName)} type='button'>Delete</button>
                                     </td>
                                 </tr>
+                                
                                 {/* NESTED DRIVER ARRAY START */}
                                 <DriverAdmin 
                                         client={client}
@@ -875,8 +981,17 @@ const BoardAdmin  = () =>{
                             </React.Fragment>
                         )
                         ))}
+                        
                     </tbody>
+                    
                 </table>
+                <ConfirmationModal
+                        isOpen={showModal}
+                        message={`Are you sure you want to delete company ${deleteInfo.companyName} from the DB?`}
+                        onConfirm={handleConfirmDelete}
+                        onCancel={handleCancelDelete}
+                        />
+                
             </div>
         </div>
     )

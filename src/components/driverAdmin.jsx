@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
 import AddTrailerModal from './addTrailerModal';
 import AddEquipmentModal from './addEquipmentModal';
+import ConfirmationModal from './confirmationModal';
+
 import axios  from 'axios'
 
 const DriverAdmin = ({
@@ -22,6 +24,8 @@ const DriverAdmin = ({
 const [isModalOpen, setIsModalOpen] = useState(false)
 const [isEquipmentModalOpen, setIsEquipmentModalOpen] = useState(false); // State for the new modal
 const [currentDriverId, setCurrentDriverId] = useState('')
+const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+const [driverToDelete, setDriverToDelete] = useState(null);
 
 
 const handleAddTrailerClick = (e, driverId) =>{ //OPENS TRAILERS MODAL
@@ -66,6 +70,26 @@ const handleAddEquipmentSubmit = (driverId, type, qty) => { // Function to handl
 
   };
 
+  const handleDeleteClick = (driverId) => { //Driver delete and opens confirmation modal
+    console.log('handleDeleteClick',  driverId)
+    setDriverToDelete(driverId);
+    setIsConfirmationModalOpen(true);
+  };
+
+  const handleConfirmDelete = () => {// Confirms driver delete from modal
+    console.log('CONFIRM DELETE', driverToDelete)
+    onDriverDelete(driverToDelete);
+    setIsConfirmationModalOpen(false);
+    setDriverToDelete(null);
+  };
+
+  const handleCancelDelete = () => {// Cancels a driver delete from modal
+    setIsConfirmationModalOpen(false);
+    setDriverToDelete(null);
+  };
+
+
+
 
 
 
@@ -87,7 +111,7 @@ const handleAddEquipmentSubmit = (driverId, type, qty) => { // Function to handl
             </tr>
           </thead>
           <tbody>
-            {currentDrivers.filter(driver => driver.driverCompany === client._id).map((driver, driverIndex) => (
+            {currentDrivers.filter(driver => driver.driverCompany === client._id).map((driver, driverIndex) => ( //displays  drivers when their company id matches a company id
               <tr key={`driver-${driverIndex}`}>
                 {editingDriverIndex.includes(driverIndex) && editingDriverCompany === client._id ? ( //DRIVER EDIT  MODE ON
                   <>
@@ -146,7 +170,7 @@ const handleAddEquipmentSubmit = (driverId, type, qty) => { // Function to handl
                       <button type='button' >Delete</button>
                     </td>
                   </>
-                ) : (
+                ) : ( //EDIT MODE  OFF
                   <>
                     <td>{driver.driverName}</td>
                     <td>{driver.driverPhoneNumber}</td>
@@ -177,7 +201,9 @@ const handleAddEquipmentSubmit = (driverId, type, qty) => { // Function to handl
                     </td>
                     <td>
                       <button type='button' onClick={(e) => onDriverEdit(e, driverIndex, driver.driverCompany)} disabled={editingDriverCompany.length > 0 && editingDriverIndex.length > 0}>Edit</button>
-                      <button type='button' onClick={(e) => onDriverDelete(e, driverIndex, driver._id)} disabled={editingDriverCompany.length > 0 && editingDriverIndex.length > 0}>Delete</button>
+                      <button type='button' onClick={(e) => handleDeleteClick(driver._id)} disabled={editingDriverCompany.length > 0 && editingDriverIndex.length > 0}>Delete</button>
+                      {/* <button type='button' onClick={(e) => onDriverDelete(e, driverIndex, driver._id)} disabled={editingDriverCompany.length > 0 && editingDriverIndex.length > 0}>Delete</button> */}
+
                     </td>
                   </>
                 )}
@@ -200,6 +226,14 @@ const handleAddEquipmentSubmit = (driverId, type, qty) => { // Function to handl
                     onSubmit={handleAddEquipmentSubmit}
                     currentDriverId={currentDriverId}
         /> 
+        <ConfirmationModal
+        isOpen={isConfirmationModalOpen}
+        onRequestClose={handleCancelDelete}
+        message="Are you sure you want to delete this driver?"
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+      />
+
 
     </>
   );
