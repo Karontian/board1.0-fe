@@ -4,6 +4,8 @@ import './boardAdmin.css'
 import DriverAdmin from './driverAdmin'
 import ConfirmationModal from './confirmationModal'
 import './ConfirmationModal.css'; // Import the CSS file for styling
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const BoardAdmin  = () =>{
@@ -65,10 +67,13 @@ const BoardAdmin  = () =>{
     const [isDefaultSelected, setIsDefaultSelected] = useState(false)
     const [checkedTrailer, setCheckedTrailer] = useState(null); // TRACKS WHAT TRAILER GETS TO BE DEFAULT AT THE EQUIPMENT ADD SECTION
    
-    //CONFIRMATION MODAL STATE
+    //DELETE CONFIRMATION MODAL
     const [showModal, setShowModal] = useState(false);
     const [deleteInfo, setDeleteInfo] = useState({});
-  
+    
+    //ADDITION CONFIRMATION MODAL
+    
+
     //DATA REFS
         ///OTHER TRAILER TYPE DATA HOLDERS
     const amountRef = useRef();
@@ -79,7 +84,7 @@ const BoardAdmin  = () =>{
     const timeoutRef = useRef();/// CONTROLS THE TIMEOUT CLEAN OF ARRAYS AFTER DRIVER ADD
 
     
-
+//// FIX THIS IF NETLIFY DOES NOT SUPPORT SERVER PUSHED UPDATES
 
     useEffect(() => {//MONITORS Server changes && OtherTypeTrailer array
         getClients()
@@ -128,11 +133,13 @@ const BoardAdmin  = () =>{
         }
     }//FETCH added drivers
 
+//// FIX THIS IF NETLIFY DOES NOT SUPPORT SERVER PUSHED UPDATES
 
     //COMPANY CRUD CONTRLS 
     const onCompanySubmit = async(e) =>{//ADDS A COMPANY
-        // e.preventDefault()
+        e.preventDefault()
         // console.log('COMPANY ADD')
+
         try{
             const newCompany = {
                 companyName: companyName,
@@ -145,8 +152,17 @@ const BoardAdmin  = () =>{
                 einNumber: einNumber,
             
             }
+
+            const existingCompany = currentClients.find(company => company.companyName === newCompany.companyName);
+            if (existingCompany) {
+                alert('There is already a company with the same name');
+                return; // Exit the function if the company already exists
+            }
+
             const addition = await axios.post('http://localhost:3001/newCompany', newCompany)
-            // console.log(addition)
+            if (addition) {
+                toast.success("New company added successfully");
+            }
 
         }catch(err){
             console.log(err)
@@ -184,8 +200,9 @@ const BoardAdmin  = () =>{
         setEditingCompanyIndex(index)        
     }
     const handleClientChange = (index, field, value) => {    // Handler to update client information
-    const updatedClients = currentClients.map((client, clientIndex) => {   // Create a new array with updated client information
-      if (index === clientIndex) {
+        console.log('handle change')
+        const updatedClients = currentClients.map((client, clientIndex) => {   // Create a new array with updated client information
+        if (index === clientIndex) {
         return { ...client, [field]: value };
       }
       return client;
@@ -231,7 +248,7 @@ const BoardAdmin  = () =>{
     //DRIVER CRUD CONTROLS
     const onDriverAdd = async(e) =>{ //ADDS A DRIVER, includes: Company Info, Driver info and Equipment info
         try {
-          
+        
 
             e.preventDefault();
             clearTimeout(timeoutRef.current);
@@ -252,7 +269,7 @@ const BoardAdmin  = () =>{
             const reefer48Checked = elements['default-reefer48']?.checked;
             const reefer53Amount = elements['reefer53-ammount']?.value;
             const reefer53Checked = elements['default-reefer53']?.checked;
-           
+        
 
             //FORM VALIDATION
             const otherAmounts = otherTypeTrailerArray.map(trailer => trailer.amount);
@@ -315,7 +332,7 @@ const BoardAdmin  = () =>{
             })); //convets equipment info into an array to be received by backed
     
             console.log('SELECTED COMPANY', selectedCompany)
-         
+        
             const dataToSend = {
                 driverInfo: {
                     driverName: driverName, 
@@ -328,7 +345,7 @@ const BoardAdmin  = () =>{
                 trailerInfo: newTrailerArray
             
             };
-          
+        
             console.log('PRE SERVER POST', dataToSend)
             const additionCall = await axios.post('http://localhost:3001/driverAdd', dataToSend, {
                 headers: {
@@ -337,6 +354,11 @@ const BoardAdmin  = () =>{
             });
 
             console.log('ADDITION CALL',additionCall);
+            if (additionCall){
+                toast.success("Driver added successfully");
+
+            }
+        
 
             timeoutRef.current = setTimeout(() => {//RESETS all arrays 1sec after addition
                 setTrailerArray([])
@@ -675,8 +697,8 @@ const BoardAdmin  = () =>{
         setOtherTypeOfTrailerSelected(false)
     }
 
+    console.log(currentClients)
 
-    console.log(currentDrivers)
     return (
         <div className="mainContent-boardAdmin">
             <div className="newCompanyForm-boardAdmin">
@@ -684,32 +706,68 @@ const BoardAdmin  = () =>{
                 <h1>Add a new copany:</h1>
 
                     <label htmlFor="companyName">Company Name: </label>
-                    <input type="text" name="companyName" onChange={(e)=>setCompanyName(e.target.value)} required/>
+                    <input type="text" 
+                           name="companyName" 
+                           onChange={(e)=>setCompanyName(e.target.value)} 
+                           placeholder='Enter a company Name'
+                           required/>
+                                            
+                    <label htmlFor="companyPhoneNumber">Company Phone#:  </label>
+                    <input type="number" 
+                           name="companyPhoneNumber"
+                           onChange={(e)=>setCompanyPhoneNumber(e.target.value)}
+                           placeholder='xxx - xxx - xxxx'
+                           required 
+                    />
                     
-                    <label htmlFor="companyPhoneNumber">Company Phone#: </label>
-                    <input type="text" name="companyPhoneNumber"onChange={(e)=>setCompanyPhoneNumber(e.target.value)} required />
 
                     <label htmlFor="mcNumber">MC#: </label>
-                    <input type="text" name="mcNumber" onChange={(e)=>setMcNumber(e.target.value)} required/>
+                    <input type="number" 
+                           name="mcNumber" 
+                           onChange={(e)=>setMcNumber(e.target.value)} 
+                           placeholder='Enter an MC# '
+                           required/>
                     
                     <label htmlFor="dotNumber">DOT#: </label>
-                    <input type="text" name="dotNumber" onChange={(e)=>setDotNumber(e.target.value)}required />
+                    <input type="number" 
+                           name="dotNumber" 
+                           onChange={(e)=>setDotNumber(e.target.value)}
+                           placeholder='Enter a DOT#'
+                           required />
 
                     <label htmlFor="einNumber">EIN#: </label>
-                    <input type="text" name="einNumber" onChange={(e)=>setEinNumber(e.target.value)} required/>
+                    <input type="number" 
+                           name="einNumber" 
+                           onChange={(e)=>setEinNumber(e.target.value)} 
+                           placeholder='Enter a EIN#'
+                           required/>
 
                     <label htmlFor="ownerName">Company Owner: </label>
-                    <input type="text" name="ownerName"onChange={(e)=>setOwnerName(e.target.value)} required/>
+                    <input type="text" 
+                           name="ownerName"
+                           onChange={(e)=>setOwnerName(e.target.value)} 
+                           placeholder='Owner Name'
+                           required/>
 
                     <label htmlFor="ownerPhoneNumber">Owner Phone#: </label>
-                    <input type="text" name="ownerPhoneNumber"onChange={(e)=>setOwnwerPhoneNumber(e.target.value)} required />
+                    <input type="number" 
+                           name="ownerPhoneNumber"
+                           onChange={(e)=>setOwnwerPhoneNumber(e.target.value)} 
+                           placeholder='xxx - xxx - xxxx'
+                           required />
 
                     <label htmlFor="address">Address: </label>
-                    <input type="text" name="address" onChange={(e)=>setAddress(e.target.value)} required />
+                    <input type="text" 
+                           name="address" 
+                           onChange={(e)=>setAddress(e.target.value)} 
+                           placeholder='Company registered address'
+                           required />
 
                     <button type="submit">Add</button>
                     
                 </form>
+                <ToastContainer />
+
             </div>
 
             <div className='newDriverForm-boardAdmin'>
@@ -890,23 +948,25 @@ const BoardAdmin  = () =>{
                         </div>    
                         <div className='newDriverForm-driverForm'>
                             <label htmlFor="driverName">Driver Name:</label>
-                            <input type="text" name='driverName'  onChange={e =>setDriverName(e.target.value)} required/>
+                            <input type="text" name='driverName'  onChange={e =>setDriverName(e.target.value)} required placeholder='Driver Name'/>
 
                             <label htmlFor="driverPhoneNumber">Driver Phone#:</label>
-                            <input type="text" name='driverPhoneNumber' onChange={e =>setDriverPhone(e.target.value) } required />
+                            <input type="text" name='driverPhoneNumber' onChange={e =>setDriverPhone(e.target.value) } required placeholder='xxx - xxx - xxxx' />
                             
                             <label htmlFor="currentLocation">Current Location:</label>
-                            <input type="text" name='currentLocation' onChange={e => setCurrentLocation(e.target.value)} required />
+                            <input type="text" name='currentLocation' onChange={e => setCurrentLocation(e.target.value)} required placeholder='Current location' />
 
                             <label htmlFor="availableDate">Available Date:</label>                                                        
-                            <input type="date" name="availableDate" id="" onChange={e => setAvailableDate(e.target.value)}  required/>
+                            <input type="date" name="availableDate" id="" onChange={e => setAvailableDate(e.target.value)}  required />
 
-                            <button type='submit' >Add+</button>
+                            <button type='submit' >Save</button>
                             <button type='button' onClick={(e)=>onDriverAddCancel(e)}>Cancel</button>
                             {/* <button type='button' onClick={(e)=>onAddAnotherDriver(e)} disabled={addAnotherDriver === false}> Add another Driver</button> */}
 
                         </div>         
                    </form>
+                   <ToastContainer />
+
             </div>
 
             <div className='companyBoard-boardAdmin'>
@@ -931,13 +991,13 @@ const BoardAdmin  = () =>{
                             <React.Fragment key={index}>
                             <tr>
                                 <td><input type="text" value={client.companyName} onChange={(e) => handleClientChange(index, 'companyName', e.target.value)} /></td>
-                                <td><input type="text" value={client.companyPhoneNumber} onChange={(e) => handleClientChange(index, 'companyPhoneNumber', e.target.value)} /></td>
+                                <td><input type="number" value={client.companyPhoneNumber} onChange={(e) => handleClientChange(index, 'companyPhoneNumber', e.target.value)}  /></td>
                                 <td><input type="text" value={client.ownerName} onChange={(e) => handleClientChange(index, 'ownerName', e.target.value)} /></td>
-                                <td><input type="text" value={client.ownerPhoneNumber} onChange={(e) => handleClientChange(index, 'ownerPhoneNumber', e.target.value)} /></td>
+                                <td><input type="number" value={client.ownerPhoneNumber} onChange={(e) => handleClientChange(index, 'ownerPhoneNumber', e.target.value)} /></td>
                                 <td><input type="text" value={client.address} onChange={(e) => handleClientChange(index, 'address', e.target.value)} /></td>
-                                <td><input type="text" value={client.mcNumber} onChange={(e) => handleClientChange(index, 'mcNumber', e.target.value)} /></td>
-                                <td><input type="text" value={client.dotNumber} onChange={(e) => handleClientChange(index, 'dotNumber', e.target.value)} /></td>
-                                <td><input type="text" value={client.einNumber} onChange={(e) => handleClientChange(index, 'einNumber', e.target.value)} /></td>
+                                <td><input type="number" value={client.mcNumber} onChange={(e) => handleClientChange(index, 'mcNumber', e.target.value)} /></td>
+                                <td><input type="number" value={client.dotNumber} onChange={(e) => handleClientChange(index, 'dotNumber', e.target.value)} /></td>
+                                <td><input type="number" value={client.einNumber} onChange={(e) => handleClientChange(index, 'einNumber', e.target.value)} /></td>
                                 <td>
                                     <button onClick={(e) => onCompanyEditSave(e, index, client._id)} type='button'>Save</button>
                                     <button onClick={(e) => onCompanyEditCancel(e, index)} type='button'>Cancel</button>
