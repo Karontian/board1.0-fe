@@ -369,6 +369,9 @@ const BoardAdmin  = () =>{
                 setDriverPhone('');
                 setIsDefaultSelected(false)
                 setAssignedDispatcher('')
+                setAvailableDate('')
+                setDriverStatus('')
+
 
                 setFb48Checked(false);
                 setFb48Amount('')
@@ -409,6 +412,8 @@ const BoardAdmin  = () =>{
         setDriverPhone('');
         setIsDefaultSelected(false)
         setAssignedDispatcher('')
+        setAvailableDate('')
+        setDriverStatus('')
 
         setFb48Checked(false);
         setFb48Amount('')
@@ -562,6 +567,7 @@ const BoardAdmin  = () =>{
         }
 
     }
+
 
     //TRAILER CRUD INFORMATION
     const onDriverTrailerDelete = async(e, driverId, amount, type, len)=>{//DELETES A TRAILER  FROM DRIVER DISPLAY
@@ -988,10 +994,13 @@ const BoardAdmin  = () =>{
                             
                             <label htmlFor="currentLocation">Current Location:</label>
                             <input type="text" name='currentLocation' onChange={e => setCurrentLocation(e.target.value)} required placeholder='Current location' />
-
+                            
+                            <label htmlFor="inactiveDriver">Inactive</label>
+                            <input type="checkBox" name="inactiveDriver" id="inactiveDriver"  onChange={e => setDriverStatus(e.target.checked ? 'inactive' : null)} />   
+                            
                             <label htmlFor="availableDate">Available Date:</label>                                                        
-                            <input type="date" name="availableDate" id="" onChange={e => onDateSetup(e, e.target.value)}  required />
-
+                            <input type="date" name="availableDate" id="" onChange={e => onDateSetup(e, e.target.value)} disabled={driverStatus} required />
+          
                             <label htmlFor="assignedDispatcher">Assigned Dispatcher</label>
                             <select id="assignedDispatcher" name="assignedDispatcher" onChange={e => setAssignedDispatcher(e.target.value)}>
                                 <option value="default">Select a dispatcher:</option>

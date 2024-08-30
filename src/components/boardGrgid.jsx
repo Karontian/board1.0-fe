@@ -29,7 +29,17 @@ const BoardGrid = ({
             <tbody>
                 {currentDrivers.map((driver, index) => (
                     <tr key={index}>
-                        <td><input type="checkbox" checked={driver.status} readOnly /></td>
+                        <td>
+                        
+                            {/* <input type="checkbox" checked={driver.status} readOnly /> */}
+                            <input 
+                                type="checkbox" 
+                                checked={driver.driverStatus === 'urgent' || driver.driverStatus === 'notUrgent' || driver.driverStatus === 'otherDate'} 
+                                readOnly 
+                            />
+
+                        </td>
+                        
                         <td>{driver.assignedDispatcher} <button>Re-Assign</button></td>
                         <td>{driver.driverName}</td>
                         <td>{driver.driverPhoneNumber}</td>
