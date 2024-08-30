@@ -66,7 +66,9 @@ const BoardAdmin  = () =>{
     const [editingDriverCompany, setEditingDriverCompany] = useState([]) //IDENTIFIES WHAT COMPANY IS THE EDITING DRIVER UNDER
     const [isDefaultSelected, setIsDefaultSelected] = useState(false)
     const [checkedTrailer, setCheckedTrailer] = useState(null); // TRACKS WHAT TRAILER GETS TO BE DEFAULT AT THE EQUIPMENT ADD SECTION
-   
+    const [assignedDispatcher, setAssignedDispatcher] = useState('')
+    const [driverStatus, setDriverStatus] = useState('')//tracks the driver's status
+
     //DELETE CONFIRMATION MODAL
     const [showModal, setShowModal] = useState(false);
     const [deleteInfo, setDeleteInfo] = useState({});
@@ -179,22 +181,18 @@ const BoardAdmin  = () =>{
             console.log(err)
         }
     }
-
     const handleDeleteClick = (e, index, companyName) => { //OPENS DELETE COMPANY CONFIRMATION MODAL
         console.log('DELETING')
         setDeleteInfo({ index, companyName });
         setShowModal(true);
     };
-    
     const handleConfirmDelete = () => { //CONFIRMS COMPANY DELETION IN THE MODAL AND CALLS DELETE FUNCTION
         onCompanyDelete(deleteInfo.index);
         setShowModal(false);
     };
-    
     const handleCancelDelete = () => {//CANCELS COMPANY  DELETION
         setShowModal(false);
     };
-    
     const onCompanyEdit = async(e, index)=>{// TOGGLES COMPANY EDIT MODE
         console.log('COMPANY EDIT', e, index)
         setEditingCompanyIndex(index)        
@@ -239,7 +237,7 @@ const BoardAdmin  = () =>{
     } catch (err) {
         console.log(err);
     }
-};
+    };
     const onCompanyEditCancel = async(e, index)=>{//CANCEL EDITION MODE
         console.log('ON COMPANY EDIT CANCEL', e, index)
         setEditingCompanyIndex('')
@@ -340,6 +338,8 @@ const BoardAdmin  = () =>{
                     driverCompany: selectedCompany,
                     currentLocation: currentLocation,
                     availableDate: availableDate,
+                    assignedDispatcher: assignedDispatcher,
+                    driverStatus: driverStatus
                 },
                 selectedEquipment: newSelectedEquipmentArray,
                 trailerInfo: newTrailerArray
@@ -368,6 +368,7 @@ const BoardAdmin  = () =>{
                 setDriverName('');
                 setDriverPhone('');
                 setIsDefaultSelected(false)
+                setAssignedDispatcher('')
 
                 setFb48Checked(false);
                 setFb48Amount('')
@@ -407,6 +408,7 @@ const BoardAdmin  = () =>{
         setDriverName('');
         setDriverPhone('');
         setIsDefaultSelected(false)
+        setAssignedDispatcher('')
 
         setFb48Checked(false);
         setFb48Amount('')
@@ -423,7 +425,6 @@ const BoardAdmin  = () =>{
         setCheckedTrailer(false)
 
     }
-
     const onDriverEdit = async(e, index, company)=>{ // EDITS A DRIVER ONCE IN DISPLAY
         console.log('EDITING DRIVER', e, index, company)
         try {
@@ -536,7 +537,31 @@ const BoardAdmin  = () =>{
         }
 
         
-      };
+    };
+    const onDateSetup = async(e, date) =>{ //SETS A DRIVER STATUS BASED ON DATE
+        console.log('ON DATE SETUP',e,date)
+        try {
+            setAvailableDate(e.target.value)
+            const today = formatDate(new Date())
+            const tomorrow = formatDate(new Date(new Date().setDate(new Date().getDate() + 1)));
+            if (date === today) {
+                setDriverStatus('urgent')
+                console.log('URGENT')
+            } else if (date === tomorrow){
+                setDriverStatus('notUrgent')
+                console.log('NOT URGENT')
+            } else{
+                setDriverStatus('otherDate')
+                console.log('OTHER DATE')
+            }
+            
+            // date === formatDate(new Date()) ? console.log('DATE MATCH URGENT') : console.log('NOT MATCHED')
+            
+        } catch (err) {
+            console.log(err)
+        }
+
+    }
 
     //TRAILER CRUD INFORMATION
     const onDriverTrailerDelete = async(e, driverId, amount, type, len)=>{//DELETES A TRAILER  FROM DRIVER DISPLAY
@@ -696,8 +721,16 @@ const BoardAdmin  = () =>{
     const onCancelOtherTrailers = async(e,index)=>{//TOGGLE control for cancel action
         setOtherTypeOfTrailerSelected(false)
     }
+    //MISC FUNCTIONS
+    const formatDate = (date) => { //this standarizes the date format for the whole program
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+    
 
-    console.log(currentClients)
+    console.log(formatDate(new Date()))
 
     return (
         <div className="mainContent-boardAdmin">
@@ -957,8 +990,16 @@ const BoardAdmin  = () =>{
                             <input type="text" name='currentLocation' onChange={e => setCurrentLocation(e.target.value)} required placeholder='Current location' />
 
                             <label htmlFor="availableDate">Available Date:</label>                                                        
-                            <input type="date" name="availableDate" id="" onChange={e => setAvailableDate(e.target.value)}  required />
+                            <input type="date" name="availableDate" id="" onChange={e => onDateSetup(e, e.target.value)}  required />
 
+                            <label htmlFor="assignedDispatcher">Assigned Dispatcher</label>
+                            <select id="assignedDispatcher" name="assignedDispatcher" onChange={e => setAssignedDispatcher(e.target.value)}>
+                                <option value="default">Select a dispatcher:</option>
+                                <option value="dispatcher1">dispatcher1</option>
+                                <option value="dispatcher2">dispatcher2</option>
+                                <option value="dispatcher3">dispatcher3</option>
+                            </select>                            
+                                                                    
                             <button type='submit' >Save</button>
                             <button type='button' onClick={(e)=>onDriverAddCancel(e)}>Cancel</button>
                             {/* <button type='button' onClick={(e)=>onAddAnotherDriver(e)} disabled={addAnotherDriver === false}> Add another Driver</button> */}
