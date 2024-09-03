@@ -1,12 +1,25 @@
 import React, {useEffect, useState} from 'react'
+import OfferModal from './offerModal'
 
 const BoardGrid = ({
     currentClients,
     currentDrivers
 
 })=>{
+    const [isOfferModalOpen, setIsOfferModalOpen] = useState(false);
+    const [modalMessage, setModalMessage] = useState('');
+    const [offeredDriver, setOfferedDriver] = useState('')
 
-    console.log('CURRENT CLIENTS', currentClients, 'CURRENT DRIVERS', currentDrivers)
+
+    const onOffer = async(e, driverId)=>{
+        console.log('OFFER',e, driverId)
+        setIsOfferModalOpen(true);
+        setOfferedDriver(driverId)
+
+    }
+
+  
+    // console.log('CURRENT CLIENTS', currentClients, 'CURRENT DRIVERS', currentDrivers)
     return (
         <div id='boardGrid-table'>
         <h2>Board Grid</h2>
@@ -29,8 +42,7 @@ const BoardGrid = ({
             <tbody>
                 {currentDrivers.map((driver, index) => (
                     <tr key={index}>
-                        <td>
-                        
+                        <td>       
                             {/* <input type="checkbox" checked={driver.status} readOnly /> */}
                             <input 
                                 type="checkbox" 
@@ -69,8 +81,7 @@ const BoardGrid = ({
                         <td>{driver.currentLocation}</td>
                         <td>{driver.availableDate} <button>Change</button></td>
                         <td>
-                            <button type='button'>+1Offer</button>
-                            <button type='button'>#R</button>  
+                            <button onClick={e=>onOffer(e, driver._id)} type='button'>+1Offer</button>
 
                         </td>    
 
@@ -78,6 +89,12 @@ const BoardGrid = ({
                 ))}
             </tbody>
         </table>
+        <OfferModal
+            isOpen={isOfferModalOpen}
+            offeredDriver = {offeredDriver}
+            onRequestClose={() => setIsOfferModalOpen(false)}
+            
+        />
         </div>
     )
 }

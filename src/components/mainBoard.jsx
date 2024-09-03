@@ -33,7 +33,7 @@ const MainBoard = () =>{
 
     //FETCHES CLIENTS AND DRIVERS FROM DB
     const fetchCurrentClients = async()=>{ //fetches companies
-        console.log('FETCHING CLIENTS')
+        // console.log('FETCHING CLIENTS')
         try {
             const req = await axios.get(`http://localhost:3001/getClients`)
             setCurrentClients(req.data.clients)
@@ -43,7 +43,7 @@ const MainBoard = () =>{
     }
 
     const fetchCurrentDrivers = async()=>{//fetches drivers
-        console.log('FETCHING DRIVERS')
+        // console.log('FETCHING DRIVERS')
         try {
             const req = await axios.get(`http://localhost:3001/getDrivers`)
             setCurrentDrivers(req.data.drivers)
@@ -63,7 +63,7 @@ const MainBoard = () =>{
     }, []);
 
 
-    console.log('CURRENT CLIENTS', currentClients, 'CURRENT DRIVERS', currentDrivers)
+    // console.log('CURRENT CLIENTS', currentClients, 'CURRENT DRIVERS', currentDrivers)
 
     return (
         <div className="mainContent-mainBoard">
