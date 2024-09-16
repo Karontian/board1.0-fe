@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Modal from 'react-modal';
+import axios from 'axios'
 
 import './offerModal.css';
 
@@ -17,16 +18,37 @@ const OfferModal = ({ isOpen, onRequestClose, offeredDriver }) => {
         setOfferAccepted('no');
     };
 
-    const onOfferSave = (e, status, data) => {
+    const onOfferSave = async (e, status, data) => {
         e.preventDefault();
         console.log('OFFER SAVED', status, data);
         // CALL TO UPDATE CURRENT DRIVER LOCATION
-        setOfferAccepted(null);
+        if (status === 'accepted') {
+            try {
+                console.log('ACCEPTED', data)
+                const updateCall = await axios.put(`http://localhost:3001/driverOfferAccepted/${offeredDriver}`, data);
+                console.log('DB UPDATED', updateCall);
+                setOfferAccepted(null);
+
+            } catch (err) {
+                console.log(err);
+            }
+        } else {
+            try {
+                console.log('REJECTED', data)
+                const  updateCall = await axios.put(`http://localhost:3001/driverOfferRejected/${offeredDriver}`, data)
+                console.log('DB UPDATED', updateCall)        
+                setOfferAccepted(null);
+
+            } catch (err) {
+                // Handle error for else logic here
+            }
+        }
         setLocation('');
         setDate('');
         setComment('');
         onRequestClose()
     };
+
 
     return (
         <Modal isOpen={isOpen} onRequestClose={onRequestClose} className="modal-content" overlayClassName="modal-backdrop">
@@ -62,7 +84,7 @@ const OfferModal = ({ isOpen, onRequestClose, offeredDriver }) => {
                                     />
                                 </div>
                                 <div>
-                                    <button onClick={e => onOfferSave(e, 'accepted', { location, date })}>Save</button>
+                                    <button onClick={e => onOfferSave(e, 'accepted', { location, date})}>Save</button>
                                 </div>
                             </form>
                         </div>

@@ -43,7 +43,7 @@ const MainBoard = () =>{
     }
 
     const fetchCurrentDrivers = async()=>{//fetches drivers
-        // console.log('FETCHING DRIVERS')
+        // console.log('FETCHING DRIVERS MAIN BOARD')
         try {
             const req = await axios.get(`http://localhost:3001/getDrivers`)
             setCurrentDrivers(req.data.drivers)

@@ -68,6 +68,8 @@ const BoardAdmin  = () =>{
     const [checkedTrailer, setCheckedTrailer] = useState(null); // TRACKS WHAT TRAILER GETS TO BE DEFAULT AT THE EQUIPMENT ADD SECTION
     const [assignedDispatcher, setAssignedDispatcher] = useState('')
     const [driverStatus, setDriverStatus] = useState('')//tracks the driver's status
+    const [companyToastId, setCompanyToastId] = useState(null);
+    const [driverToastId, setDriverToastId] = useState(null);
 
     //DELETE CONFIRMATION MODAL
     const [showModal, setShowModal] = useState(false);
@@ -163,14 +165,21 @@ const BoardAdmin  = () =>{
 
             const addition = await axios.post('http://localhost:3001/newCompany', newCompany)
             if (addition) {
-                toast.success("New company added successfully");
+               const companyToast=  toast.success("New company added successfully", {
+                    autoClose: 500, // Duration in milliseconds (5000ms = 5 seconds)
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });              
+
             }
 
         }catch(err){
             console.log(err)
         }
         e.target.reset()
-
     }
     const onCompanyDelete = async(index)=>{//DELETES A COMPANY
         console.log('DELETING COMPANY',index)
@@ -339,7 +348,9 @@ const BoardAdmin  = () =>{
                     currentLocation: currentLocation,
                     availableDate: availableDate,
                     assignedDispatcher: assignedDispatcher,
-                    driverStatus: driverStatus
+                    driverStatus: driverStatus,
+                    driverLog: {comment: `New Driver ${driverName} created, dispatcher ${assignedDispatcher} assigned`}
+
                 },
                 selectedEquipment: newSelectedEquipmentArray,
                 trailerInfo: newTrailerArray
@@ -735,9 +746,6 @@ const BoardAdmin  = () =>{
         return `${year}-${month}-${day}`;
     };
     
-
-    console.log(formatDate(new Date()))
-
     return (
         <div className="mainContent-boardAdmin">
             <div className="newCompanyForm-boardAdmin">
@@ -759,7 +767,6 @@ const BoardAdmin  = () =>{
                            required 
                     />
                     
-
                     <label htmlFor="mcNumber">MC#: </label>
                     <input type="number" 
                            name="mcNumber" 
@@ -805,7 +812,7 @@ const BoardAdmin  = () =>{
                     <button type="submit">Add</button>
                     
                 </form>
-                <ToastContainer />
+                {/* <ToastContainer  REFACTORING NEEDED IF MORE THAN ONE TOAST IS USED/> */} 
 
             </div>
 

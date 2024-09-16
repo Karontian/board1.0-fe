@@ -19,7 +19,7 @@ const BoardGrid = ({
     }
 
   
-    // console.log('CURRENT CLIENTS', currentClients, 'CURRENT DRIVERS', currentDrivers)
+    console.log('CURRENT CLIENTS', currentClients, 'CURRENT DRIVERS', currentDrivers)
     return (
         <div id='boardGrid-table'>
         <h2>Board Grid</h2>
@@ -35,6 +35,10 @@ const BoardGrid = ({
                     <th>Trailer Equipment</th>
                     <th>Current Location</th>
                     <th>Available Date</th>
+                    <th>Accepted</th>
+                    <th>Rejected</th>
+                    <th>total Offers</th>
+                    <th>Driver Log</th>
                     <th></th>
 
                 </tr>
@@ -80,10 +84,17 @@ const BoardGrid = ({
                         </td>
                         <td>{driver.currentLocation}</td>
                         <td>{driver.availableDate} <button>Change</button></td>
+                        <td>{driver.offers.accepted} Accepted</td>
+                        <td>{driver.offers.rejected} Rejected</td>    
+                        <td>{driver.offers.accepted + driver.offers.rejected}</td>    
+                        <td>    {driver.driverLog.map((logEntry, index) => (
+                                <div key={index}>{logEntry.comment}</div>
+                                 ))}
+                        </td>
                         <td>
                             <button onClick={e=>onOffer(e, driver._id)} type='button'>+1Offer</button>
 
-                        </td>    
+                        </td> 
 
                     </tr>
                 ))}
