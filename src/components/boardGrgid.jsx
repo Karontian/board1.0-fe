@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react'
 import OfferModal from './offerModal'
+import DispatcherModal from './dispatchReassignModal'
 import axios from 'axios'
+import './boardGrid.css'
 
 const BoardGrid = ({
     currentClients,
@@ -8,8 +10,10 @@ const BoardGrid = ({
 
 })=>{
     const [isOfferModalOpen, setIsOfferModalOpen] = useState(false);
+    const [isDispatcherModalOpen, setIsDispatcherModalOpen] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
     const [offeredDriver, setOfferedDriver] = useState('')
+
     
 
 
@@ -41,10 +45,17 @@ const BoardGrid = ({
             }
         }
     };
+    const onDispatchReasign = async(e, driverId)=>{
+        console.log('DISPATCH REASSIGN', driverId)
+        setIsDispatcherModalOpen(true);
+    }
+    const handleDispatcherConfirm = async(dispatcher)=>{
+        console.log('DISPATCHER CHANGE CONFIRMED', dispatcher)
+    }
 
 
   
-    console.log('CURRENT CLIENTS', currentClients, 'CURRENT DRIVERS', currentDrivers)
+    // console.log('CURRENT CLIENTS', currentClients, 'CURRENT DRIVERS', currentDrivers)
     return (
         <div id='boardGrid-table'>
         <h2>Board Grid</h2>
@@ -70,7 +81,7 @@ const BoardGrid = ({
             </thead>
             <tbody>
                 {currentDrivers.map((driver, index) => (
-                    <tr key={index}>
+                    <tr key={index} className={!(driver.driverStatus === 'urgent' || driver.driverStatus === 'notUrgent' || driver.driverStatus === 'otherDate') ? 'disabled-row' : ''}>
                         <td>       
                             {/* <input type="checkbox" checked={driver.status} readOnly /> */}
                             <input 
@@ -83,7 +94,7 @@ const BoardGrid = ({
 
                         </td>
                         
-                        <td>{driver.assignedDispatcher} <button>Re-Assign</button></td>
+                        <td>{driver.assignedDispatcher} <button onClick={(e)=>onDispatchReasign(e,driver._id)}>Re-Assign</button></td>
                         <td>{driver.driverName}</td>
                         <td>{driver.driverPhoneNumber}</td>
                         
@@ -132,6 +143,14 @@ const BoardGrid = ({
             offeredDriver = {offeredDriver}
             onRequestClose={() => setIsOfferModalOpen(false)}
             
+        />
+        <DispatcherModal
+            isOpen={isDispatcherModalOpen}
+            currentDispatchers={ ['dispatcher1', 'dispatcher2', 'dispatcher3']}
+            onConfirm={handleDispatcherConfirm}
+            onCancel={() => setIsDispatcherModalOpen(false)}
+
+
         />
         </div>
     )

@@ -1,0 +1,10 @@
+.disabled-row {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+
+.disabled-row td:first-child {
+    pointer-events: auto;
+    border: 1px;
+}
