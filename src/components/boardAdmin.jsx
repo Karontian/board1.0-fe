@@ -349,7 +349,7 @@ const BoardAdmin  = () =>{
                     availableDate: availableDate,
                     assignedDispatcher: assignedDispatcher,
                     driverStatus: driverStatus,
-                    driverLog: {comment: `New Driver ${driverName} created, dispatcher ${assignedDispatcher} assigned`}
+                    driverLog: {comment: `* New Driver "${driverName}" created, dispatcher "${assignedDispatcher}" assigned`}
 
                 },
                 selectedEquipment: newSelectedEquipmentArray,

@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import OfferModal from './offerModal'
+import axios from 'axios'
 
 const BoardGrid = ({
     currentClients,
@@ -9,6 +10,8 @@ const BoardGrid = ({
     const [isOfferModalOpen, setIsOfferModalOpen] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
     const [offeredDriver, setOfferedDriver] = useState('')
+    
+
 
 
     const onOffer = async(e, driverId)=>{
@@ -17,6 +20,28 @@ const BoardGrid = ({
         setOfferedDriver(driverId)
 
     }
+    const handleActiveStatusChange = async(driver, status) => {
+        console.log('ACTIVE STATUS  CHANGE', driver, status)
+        if (status === 'urgent' || status === 'notUrgent' || status === 'otherDate') {
+            try {
+                const edition = await axios.put(`http://localhost:3001/driverActiveStateOff/${driver}`, {driverLog: `*Driver '${driver}' set to INACTIVE by: USER`})//
+                console.log('ACTIVE - INACTIVE', edition)
+
+            } catch (err) {
+                console.log(err)
+            }
+
+        } else {
+            try {
+                
+                const edition = await axios.put(`http://localhost:3001/driverActiveStateOn/${driver}`,{driverLog: `*Driver '${driver}' set to ACTIVE by: USER`})// {driverLog: `*Driver '${driver}', set to Active by: USER`}
+                console.log('INACTIVE - ACTIVE', edition)
+            } catch (err) {
+                console.log(err)
+            }
+        }
+    };
+
 
   
     console.log('CURRENT CLIENTS', currentClients, 'CURRENT DRIVERS', currentDrivers)
@@ -50,8 +75,10 @@ const BoardGrid = ({
                             {/* <input type="checkbox" checked={driver.status} readOnly /> */}
                             <input 
                                 type="checkbox" 
+                                value={driver.driverStatus}
                                 checked={driver.driverStatus === 'urgent' || driver.driverStatus === 'notUrgent' || driver.driverStatus === 'otherDate'} 
-                                readOnly 
+                                onChange={()=>handleActiveStatusChange(driver._id, driver.driverStatus)}
+                                 
                             />
 
                         </td>
