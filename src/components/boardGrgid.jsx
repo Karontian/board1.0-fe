@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import OfferModal from './offerModal'
 import DispatcherModal from './dispatchReassignModal'
+import DateForceChangeModal from './dateForceChangeModal'
 import axios from 'axios'
 import './boardGrid.css'
 
@@ -11,10 +12,11 @@ const BoardGrid = ({
 })=>{
     const [isOfferModalOpen, setIsOfferModalOpen] = useState(false);
     const [isDispatcherModalOpen, setIsDispatcherModalOpen] = useState(false);
-    const [modalMessage, setModalMessage] = useState('');
     const [offeredDriver, setOfferedDriver] = useState('')
+    const [selectedDriver, setSelectedDriver] = useState('')//Driver to whom we're changing the dispatcher
+    const [isDateModalOpen, setIsDateModalOpen] = useState(false);//force date change modal
+    const [selectedDate, setSelectedDate] = useState('');//selected date holder
 
-    
 
 
 
@@ -48,14 +50,45 @@ const BoardGrid = ({
     const onDispatchReasign = async(e, driverId)=>{
         console.log('DISPATCH REASSIGN', driverId)
         setIsDispatcherModalOpen(true);
+        setSelectedDriver(driverId)
     }
     const handleDispatcherConfirm = async(dispatcher)=>{
         console.log('DISPATCHER CHANGE CONFIRMED', dispatcher)
+        try {
+            const edition = await axios.put(`http://localhost:3001/dispatcherReassign/${selectedDriver}`, {dispatcher, driverLog: `*${dispatcher} has been assigned to ${selectedDriver}`})
+            console.log(edition)
+        } catch (err) {
+            console.log(err)
+        }
+        setIsDispatcherModalOpen(false);
+
+    }
+
+    const onForceDateChange = async(driverId, date)=>{
+        console.log('FORCE DATE CHANGE', driverId)
+        setIsDateModalOpen(true)
+        setSelectedDriver(driverId)
+    }
+
+    const onForceDateChangeConfirm = async(date, comment)=>{
+        console.log('FORCE DATE CHANGE CONFIRM', date, comment)
+        try {
+            const edition = await axios.put(`http://localhost:3001/dateForceChange/${selectedDriver}`, {
+                date,
+                logComment: `*${selectedDriver}'s available date has changed to ${date}`,
+                comment
+            });
+            console.log(edition)
+            } catch (err) {
+                console.error('Error updating date:', err);
+
+        }
+        setIsDateModalOpen(false)
     }
 
 
   
-    // console.log('CURRENT CLIENTS', currentClients, 'CURRENT DRIVERS', currentDrivers)
+    console.log('CURRENT CLIENTS', currentClients, 'CURRENT DRIVERS', currentDrivers)
     return (
         <div id='boardGrid-table'>
         <h2>Board Grid</h2>
@@ -121,7 +154,7 @@ const BoardGrid = ({
                             }
                         </td>
                         <td>{driver.currentLocation}</td>
-                        <td>{driver.availableDate} <button>Change</button></td>
+                        <td>{driver.availableDate} <button onClick={()=>onForceDateChange(driver._id)}>Force date Change</button></td>
                         <td>{driver.offers.accepted} Accepted</td>
                         <td>{driver.offers.rejected} Rejected</td>    
                         <td>{driver.offers.accepted + driver.offers.rejected}</td>    
@@ -151,6 +184,11 @@ const BoardGrid = ({
             onCancel={() => setIsDispatcherModalOpen(false)}
 
 
+        />
+        <DateForceChangeModal
+            isOpen={isDateModalOpen}
+            onConfirm={onForceDateChangeConfirm}
+            onCancel={()=>setIsDateModalOpen(false)}
         />
         </div>
     )
