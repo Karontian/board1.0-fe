@@ -17,15 +17,12 @@ const BoardGrid = ({
     const [isDateModalOpen, setIsDateModalOpen] = useState(false);//force date change modal
     const [selectedDate, setSelectedDate] = useState('');//selected date holder
 
-
-
-
     const onOffer = async(e, driverId)=>{
         console.log('OFFER',e, driverId)
         setIsOfferModalOpen(true);
         setOfferedDriver(driverId)
-
     }
+    
     const handleActiveStatusChange = async(driver, status) => {
         console.log('ACTIVE STATUS  CHANGE', driver, status)
         if (status === 'urgent' || status === 'notUrgent' || status === 'otherDate') {
