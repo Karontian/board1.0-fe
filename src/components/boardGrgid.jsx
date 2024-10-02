@@ -16,6 +16,85 @@ const BoardGrid = ({
     const [selectedDriver, setSelectedDriver] = useState('')//Driver to whom we're changing the dispatcher
     const [isDateModalOpen, setIsDateModalOpen] = useState(false);//force date change modal
     const [selectedDate, setSelectedDate] = useState('');//selected date holder
+    const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
+
+    // const sortedDrivers = [...currentDrivers].sort((a, b) => {
+    //     if (sortConfig.key) {
+    //         const aValue = a[sortConfig.key];
+    //         const bValue = b[sortConfig.key];
+
+    //         if (aValue < bValue) {
+    //             return sortConfig.direction === 'ascending' ? -1 : 1;
+    //         }
+    //         if (aValue > bValue) {
+    //             return sortConfig.direction === 'ascending' ? 1 : -1;
+    //         }
+    //     }
+    //     return 0;
+    // });
+
+    // const requestSort = (key) => {
+    //     console.log(key)
+    //     setSortConfig((prevSortConfig) => {
+    //         let direction = 'ascending';
+    //         if (prevSortConfig.key === key && prevSortConfig.direction === 'ascending') {
+    //             direction = 'descending';
+    //         }
+    //         return { key, direction };
+    //     });
+    // };
+    
+    const getNestedValue = (obj, path) => {
+        return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+    };
+    
+    const getMCNumber = (driverCompanyId) => {
+        const company = currentClients.find(company => company._id === driverCompanyId);
+        return company ? company.mcNumber : '';
+    };
+
+    const sortedDrivers = [...currentDrivers].sort((a, b) => {//NEW currentDrivers sorted
+        if (sortConfig.key) {
+            let aValue = getNestedValue(a, sortConfig.key);
+            let bValue = getNestedValue(b, sortConfig.key);
+           
+            if (sortConfig.key === 'mcNumber') {
+                aValue = getMCNumber(a.driverCompany);
+                bValue = getMCNumber(b.driverCompany);
+            } else if (sortConfig.key === 'offers.total') {
+                aValue = a.offers.accepted + a.offers.rejected;
+                bValue = b.offers.accepted + b.offers.rejected;
+            }
+
+
+            if (aValue < bValue) {
+                return sortConfig.direction === 'ascending' ? -1 : 1;
+            }
+            if (aValue > bValue) {
+                return sortConfig.direction === 'ascending' ? 1 : -1;
+            }
+        }
+        return 0;
+    });
+
+    const requestSort = (key) => {// SORTING ENGINE
+        console.log('KEY', key)
+        setSortConfig((prevSortConfig) => {
+            let direction = 'ascending';
+            if (prevSortConfig.key === key && prevSortConfig.direction === 'ascending') {
+                direction = 'descending';
+            }
+            return { key, direction };
+        });
+    };
+
+    const getSortIcon = (key) => {// SORTING ICON
+        if (sortConfig.key === key) {
+            return sortConfig.direction === 'ascending' ?  '▲' : '▼';
+        }
+        return '↕';
+    };
+
 
     const onOffer = async(e, driverId)=>{
         console.log('OFFER',e, driverId)
@@ -43,7 +122,7 @@ const BoardGrid = ({
                 console.log(err)
             }
         }
-    };
+    }
     const onDispatchReasign = async(e, driverId)=>{
         console.log('DISPATCH REASSIGN', driverId)
         setIsDispatcherModalOpen(true);
@@ -92,32 +171,41 @@ const BoardGrid = ({
         <table>
             <thead>
                 <tr>
-                    <th>Status</th>
-                    <th>Assigned  Dispather</th>
-                    <th>Driver</th>
-                    <th>Phone #</th>
-                    <th>Company</th>
-                    <th>MC#</th>
-                    <th>Trailer Equipment</th>
-                    <th>Current Location</th>
-                    <th>Available Date</th>
-                    <th>Accepted</th>
-                    <th>Rejected</th>
-                    <th>total Offers</th>
-                    <th>Driver Log</th>
-                    <th></th>
+                <th onClick={() => requestSort('driverStatus')}>Status {getSortIcon('driverStatus')}</th>
+                    <th onClick={() => requestSort('assignedDispatcher')}>Assigned Dispatcher {getSortIcon('assignedDispatcher')}</th>
+                    <th onClick={() => requestSort('driverName')}>Driver {getSortIcon('driverName')}</th>
+                    <th onClick={() => requestSort('driverPhoneNumber')}>Phone # {getSortIcon('driverPhoneNumber')}</th>
+                    <th onClick={() => requestSort('driverCompany')}>Company {getSortIcon('driverCompany')}</th>
+                    <th onClick={() => requestSort('mcNumber')}>MC# {getSortIcon('mcNumber')}</th>
+                    <th onClick={() => requestSort('trailerInfo')}>Trailer Equipment {getSortIcon('trailerInfo')}</th>
+                    <th onClick={() => requestSort('currentLocation')}>Current Location {getSortIcon('currentLocation')}</th>
+                    <th onClick={() => requestSort('availableDate')}>Available Date {getSortIcon('availableDate')}</th>
+                    <th onClick={() => requestSort('offers.accepted')}>Accepted {getSortIcon('offers.accepted')}</th>
+                    <th onClick={() => requestSort('offers.rejected')}>Rejected {getSortIcon('offers.rejected')}</th>
+                    <th onClick={() => requestSort('offers.total')}>Total Offers {getSortIcon('offers.total')}</th>
+
+                    <th colSpan={3}>Driver Log</th>
+                    <th>Offer</th>
 
                 </tr>
             </thead>
             <tbody>
-                {currentDrivers.map((driver, index) => (
-                    <tr key={index} className={!(driver.driverStatus === 'urgent' || driver.driverStatus === 'notUrgent' || driver.driverStatus === 'otherDate') ? 'disabled-row' : ''}>
+                {sortedDrivers.map((driver, index) => (
+                    <tr 
+                        key={index} 
+                        className={`
+                            ${!(driver.driverStatus === 'urgent' || driver.driverStatus === 'not-urgent' || driver.driverStatus === 'other-date') ? 'disabled-row' : ''} 
+                            ${driver.driverStatus === 'urgent' ? 'available-row-urgent' : ''}
+                            ${driver.driverStatus === 'not-urgent' ? 'available-row-not-urgent' : ''}
+                            ${driver.driverStatus === 'other-date' ? 'available-row-other-date' : ''}
+
+
+                        `}>
                         <td>       
-                            {/* <input type="checkbox" checked={driver.status} readOnly /> */}
                             <input 
                                 type="checkbox" 
                                 value={driver.driverStatus}
-                                checked={driver.driverStatus === 'urgent' || driver.driverStatus === 'notUrgent' || driver.driverStatus === 'otherDate'} 
+                                checked={driver.driverStatus === 'urgent' || driver.driverStatus === 'not-urgent' || driver.driverStatus === 'other-date'} 
                                 onChange={()=>handleActiveStatusChange(driver._id, driver.driverStatus)}
                                  
                             />
@@ -155,9 +243,17 @@ const BoardGrid = ({
                         <td>{driver.offers.accepted} Accepted</td>
                         <td>{driver.offers.rejected} Rejected</td>    
                         <td>{driver.offers.accepted + driver.offers.rejected}</td>    
-                        <td>    {driver.driverLog.map((logEntry, index) => (
+                        {/* <td>    {driver.driverLog.map((logEntry, index) => (
                                 <div key={index}>{logEntry.comment}</div>
                                  ))}
+                        </td> */}
+                        <td colSpan={3}>
+                            <div className="driver-log-container">
+                                {driver.driverLog.slice(0, 3).map((logEntry, index) => (
+                                    <div className="driver-log-entry" key={index}>{logEntry.comment}</div>
+                                ))}
+                                
+                            </div>
                         </td>
                         <td>
                             <button onClick={e=>onOffer(e, driver._id)} type='button'>+1Offer</button>

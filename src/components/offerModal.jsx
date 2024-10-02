@@ -24,7 +24,7 @@ const OfferModal = ({ isOpen, onRequestClose, offeredDriver }) => {
         // CALL TO UPDATE CURRENT DRIVER LOCATION
         if (status === 'accepted') {
             try {
-                const comment = `${offeredDriver} accepts load offer to ${data.location} on ${data.date}`
+                const comment = `*${offeredDriver} accepts load offer to ${data.location} on ${data.date} @ ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}.`
                 console.log('ACCEPTED', data.location, data.date, comment)
                 const updateCall = await axios.put(`http://localhost:3001/driverOfferAccepted/${offeredDriver}`, {
                     location: data.location,
@@ -39,9 +39,9 @@ const OfferModal = ({ isOpen, onRequestClose, offeredDriver }) => {
         } else {
             try {
                 console.log('REJECTED', data)
-                const systemComment = `* ${offeredDriver} rejects load offer on ${data.date} @ ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+                const systemComment = `* ${offeredDriver} rejects load offer  @ ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
                 const  updateCall = await axios.put(`http://localhost:3001/driverOfferRejected/${offeredDriver}`, {
-                    comment: data.comment,
+                    comment: 'Comment: '+ data.comment,
                     sysComment: systemComment
                 })
                 console.log('DB UPDATED', updateCall)        

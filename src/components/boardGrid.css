@@ -3,8 +3,32 @@
     pointer-events: none;
 }
 
-
 .disabled-row td:first-child {
     pointer-events: auto;
     border: 1px;
+}
+.available-row-urgent {
+    background-color: red;
+}
+.available-row-not-urgent {
+    background-color: yellow;
+}
+.available-row-other-date{
+    background-color: green;
+}
+
+/* boardGrid.css */
+.driver-log-container {
+    max-height: 100px; /* Adjust the height as needed */
+    max-width: 300px;
+    overflow-y: auto;
+}
+
+.driver-log-scroll {
+    max-height: 100px; /* Adjust the height as needed */
+    overflow-y: auto;
+}
+.driver-log-entry {
+    font-weight: bold;
+    margin-bottom: 10px; /* Adjust the distance as needed */
 }
