@@ -7,7 +7,8 @@ import './boardGrid.css'
 
 const BoardGrid = ({
     currentClients,
-    currentDrivers
+    currentDrivers,
+    username
 
 })=>{
     const [isOfferModalOpen, setIsOfferModalOpen] = useState(false);
@@ -18,31 +19,7 @@ const BoardGrid = ({
     const [selectedDate, setSelectedDate] = useState('');//selected date holder
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
 
-    // const sortedDrivers = [...currentDrivers].sort((a, b) => {
-    //     if (sortConfig.key) {
-    //         const aValue = a[sortConfig.key];
-    //         const bValue = b[sortConfig.key];
-
-    //         if (aValue < bValue) {
-    //             return sortConfig.direction === 'ascending' ? -1 : 1;
-    //         }
-    //         if (aValue > bValue) {
-    //             return sortConfig.direction === 'ascending' ? 1 : -1;
-    //         }
-    //     }
-    //     return 0;
-    // });
-
-    // const requestSort = (key) => {
-    //     console.log(key)
-    //     setSortConfig((prevSortConfig) => {
-    //         let direction = 'ascending';
-    //         if (prevSortConfig.key === key && prevSortConfig.direction === 'ascending') {
-    //             direction = 'descending';
-    //         }
-    //         return { key, direction };
-    //     });
-    // };
+ 
     
     const getNestedValue = (obj, path) => {
         return path.split('.').reduce((acc, part) => acc && acc[part], obj);
@@ -106,7 +83,7 @@ const BoardGrid = ({
         console.log('ACTIVE STATUS  CHANGE', driver, status)
         if (status === 'urgent' || status === 'notUrgent' || status === 'otherDate') {
             try {
-                const edition = await axios.put(`http://localhost:3001/driverActiveStateOff/${driver}`, {driverLog: `*Driver '${driver}' set to INACTIVE by: USER`})//
+                const edition = await axios.put(`http://localhost:3001/driverActiveStateOff/${driver}`, {driverLog: `*Driver '${driver}' set to INACTIVE by: ${username}`})//
                 console.log('ACTIVE - INACTIVE', edition)
 
             } catch (err) {
@@ -116,7 +93,7 @@ const BoardGrid = ({
         } else {
             try {
                 
-                const edition = await axios.put(`http://localhost:3001/driverActiveStateOn/${driver}`,{driverLog: `*Driver '${driver}' set to ACTIVE by: USER`})// {driverLog: `*Driver '${driver}', set to Active by: USER`}
+                const edition = await axios.put(`http://localhost:3001/driverActiveStateOn/${driver}`,{driverLog: `*Driver '${driver}' set to ACTIVE by: ${username}`})// {driverLog: `*Driver '${driver}', set to Active by: USER`}
                 console.log('INACTIVE - ACTIVE', edition)
             } catch (err) {
                 console.log(err)
@@ -131,7 +108,7 @@ const BoardGrid = ({
     const handleDispatcherConfirm = async(dispatcher)=>{
         console.log('DISPATCHER CHANGE CONFIRMED', dispatcher)
         try {
-            const edition = await axios.put(`http://localhost:3001/dispatcherReassign/${selectedDriver}`, {dispatcher, driverLog: `*${dispatcher} has been assigned to ${selectedDriver}`})
+            const edition = await axios.put(`http://localhost:3001/dispatcherReassign/${selectedDriver}`, {dispatcher, driverLog: `*${dispatcher} has been assigned to ${selectedDriver} by ${username}`})
             console.log(edition)
         } catch (err) {
             console.log(err)
@@ -151,7 +128,7 @@ const BoardGrid = ({
         try {
             const edition = await axios.put(`http://localhost:3001/dateForceChange/${selectedDriver}`, {
                 date,
-                logComment: `*${selectedDriver}'s available date has changed to ${date}`,
+                logComment: `*${selectedDriver}'s available date has changed to ${date} by ${username}`,
                 comment
             });
             console.log(edition)
@@ -164,7 +141,7 @@ const BoardGrid = ({
 
 
   
-    console.log('CURRENT CLIENTS', currentClients, 'CURRENT DRIVERS', currentDrivers)
+    console.log('CURRENT CLIENTS', currentClients, 'CURRENT DRIVERS', currentDrivers, username)
     return (
         <div id='boardGrid-table'>
         <h2>Board Grid</h2>
@@ -201,7 +178,7 @@ const BoardGrid = ({
 
 
                         `}>
-                        <td>       
+                        {/* <td>       
                             <input 
                                 type="checkbox" 
                                 value={driver.driverStatus}
@@ -212,7 +189,24 @@ const BoardGrid = ({
 
                         </td>
                         
-                        <td>{driver.assignedDispatcher} <button onClick={(e)=>onDispatchReasign(e,driver._id)}>Re-Assign</button></td>
+                        <td>{driver.assignedDispatcher} <button onClick={(e)=>onDispatchReasign(e,driver._id)}>Re-Assign</button></td> */}
+                         {username === 'admin' && (
+                            <>
+                                <td>
+                                    <input 
+                                        type="checkbox" 
+                                        value={driver.driverStatus}
+                                        checked={driver.driverStatus === 'urgent' || driver.driverStatus === 'not-urgent' || driver.driverStatus === 'other-date'} 
+                                        onChange={() => handleActiveStatusChange(driver._id, driver.driverStatus)}
+                                    />
+                                </td>
+                                <td>
+                                    {driver.assignedDispatcher} 
+                                    <button onClick={(e) => onDispatchReasign(e, driver._id)}>Re-Assign</button>
+                                </td>
+                            </>
+                        )}
+
                         <td>{driver.driverName}</td>
                         <td>{driver.driverPhoneNumber}</td>
                         
@@ -249,7 +243,7 @@ const BoardGrid = ({
                         </td> */}
                         <td colSpan={3}>
                             <div className="driver-log-container">
-                                {driver.driverLog.slice(0, 3).map((logEntry, index) => (
+                                {driver.driverLog.slice(0, 10).map((logEntry, index) => (
                                     <div className="driver-log-entry" key={index}>{logEntry.comment}</div>
                                 ))}
                                 

@@ -1,4 +1,8 @@
 import React, {useEffect, useState} from 'react'
+import { useLocation , useNavigate, Link} from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import Header from "./header"
 import Footer from "./footer"
 import axios from 'axios'
@@ -24,10 +28,12 @@ const MainBoard = () =>{
     //MAIN STATE
     
     //
-    
-    
-    
-    
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    const { username  } = location.state || {};
+
+
     const [currentClients, setCurrentClients] = useState([])//Stores all companies information
     const [currentDrivers, setCurrentDrivers] = useState([])//Stores all drivers information
 
@@ -62,12 +68,43 @@ const MainBoard = () =>{
         }; // Cleanup the intervals on component unmount
     }, []);
 
+    const onLogout = async()=>{//controls logout process
+        console.log('LOGOUT')
+        try {
+            const req = await axios.put(`http://localhost:3001/logout`, { username})
+            console.log(req)
+        } catch (err) {
+            console.log(err)            
+        }
+        navigate('/')
+
+    }
+
 
     // console.log('CURRENT CLIENTS', currentClients, 'CURRENT DRIVERS', currentDrivers)
+    console.log('MainBoard rendered', username);
+
+
+
 
     return (
         <div className="mainContent-mainBoard">
             <div className="header-mainBoard">
+                <div>
+                     <span id='userSpan'>Welcome {username}!! /</span>
+                     <button type='button' onClick={onLogout}>LogOut</button>
+                     {username === 'admin' && (
+                        <Link 
+                            to="/admin" 
+                            state={{ username }} 
+                            style={{ marginLeft: '10px' }}
+                        >
+                            Admin Board
+                        </Link>
+                    )}
+                </div>
+                
+
                 <Header/>
             </div>
             <div className="body-mainBoard">
@@ -76,6 +113,7 @@ const MainBoard = () =>{
                     <BoardGrid
                         currentClients={ currentClients }
                         currentDrivers={ currentDrivers }
+                        username = {username}
                     />
                     
                 </div>

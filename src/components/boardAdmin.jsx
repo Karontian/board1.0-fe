@@ -6,9 +6,25 @@ import ConfirmationModal from './confirmationModal'
 import './ConfirmationModal.css'; // Import the CSS file for styling
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+
 
 
 const BoardAdmin  = () =>{
+
+    const navigate = useNavigate();
+    const location = useLocation();
+    const { username, user } = location.state || {};
+
+    
+    useEffect(() => {
+        if (username !== 'admin') {
+            navigate('/login');
+        }
+    }, [username, navigate]);
+
+
+
     //COMPANY INFO STATE
     const [companyName, setCompanyName] = useState('')
     const [companyPhoneNumber, setCompanyPhoneNumber] = useState('');
@@ -745,9 +761,33 @@ const BoardAdmin  = () =>{
         const day = String(date.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     };
+
+    const onLogout = async()=>{//logs the user out
+        console.log('LOGOUT')
+        try {
+            const req = await axios.put(`http://localhost:3001/logout`, { username})
+            console.log(req)
+        } catch (err) {
+            console.log(err)            
+        }
+        navigate('/')
+    }
     
+    console.log('BoardAdmin rendered')
     return (
         <div className="mainContent-boardAdmin">
+                <div>
+                     <span id='userSpan'>Welcome {username}!! /</span>
+                     <button type='button' onClick={onLogout}>LogOut</button>
+                     <Link 
+                         to="/mainBoard" 
+                         state={{ username }} 
+                         style={{ marginLeft: '10px' }}
+                        >
+                            Main Board
+                    </Link>
+
+                </div>
             <div className="newCompanyForm-boardAdmin">
                 <form onSubmit={(e)=>onCompanySubmit(e)}>
                 <h1>Add a new copany:</h1>
@@ -1108,6 +1148,11 @@ const BoardAdmin  = () =>{
                         onConfirm={handleConfirmDelete}
                         onCancel={handleCancelDelete}
                         />
+                
+            </div>
+
+            <div className='companyBoard-systemUserAdmin'>
+                <h2>Current System users</h2>
                 
             </div>
         </div>
