@@ -1,94 +1,130 @@
-
-table,
-th,
-td {
-    border: 1px solid #ddd; /* lighter color */
-    padding: 3px;
-    overflow: auto;
-    margin-left: 150px;
+/* General Styles */
+.mainContent-boardAdmin {
+    padding: 20px;
+    font-family: Arial, sans-serif;
 }
 
-form {
+#userSpan {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+button {
+    padding: 5px 10px;
+    margin: 5px;
+    cursor: pointer;
+}
+
+button[type='submit'] {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+button[type='button'] {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+button[type='button']:hover {
+    background-color: #d32f2f;
+}
+
+/* Form Styles */
+.newCompanyForm-boardAdmin,
+.newDriverForm-boardAdmin {
+    margin-bottom: 20px;
+    max-width: 600px; /* Set a maximum width */
+    margin: 0 auto; /* Center the form */
+    
+}
+
+.newCompanyForm-boardAdmin form,
+.newDriverForm-boardAdmin form {
     display: flex;
     flex-direction: column;
-    padding: 40px;
-    border: solid 1px ;
-    margin: 50px;
+    border: solid black;
+    padding: 20px;
+    margin-bottom: 20px;
+
 }
 
-form label, form input, form button {
-    margin-bottom: 10px;
+.newCompanyForm-boardAdmin label,
+.newDriverForm-boardAdmin label {
+    margin-top: 10px;
 }
 
-.companyBoard-boardAdmin h1 {
-    text-align: center;
+.newCompanyForm-boardAdmin input,
+.newDriverForm-boardAdmin input,
+.newDriverForm-boardAdmin select {
+    padding: 5px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%; /* Make inputs take full width of the form */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
 
-.companyBoard-driverAddition{
-    text-align: center;
+/* Table Styles */
+table {
+    width: 100%;
+    max-width: 800px; /* Set a maximum width */
+    margin: 20px auto; /* Center the table */
+    border-collapse: collapse;
 }
 
-.driverTable {
-    background-color: red;
-    border: 1px solid ;
-    margin: 0px;
+table, th, td {
+    border: 1px solid #ddd;
 }
 
-.driverTable td {
-    background-color: green;
-    margin-left: 0px;
-    
-}
-
-
-.equipmentOption-trailerType{
-    max-width: 10px;
-    margin-left: 10px;
-}
-.equipmentOption-trailerType-other{
-    max-width: 50px;
-}
-
-.other-trailerType{
-    border: 1px solid #333;
+th, td {
     padding: 10px;
+    text-align: left;
 }
 
-.other-trailerType-type{
-    max-width: 50px;
+th {
+    background-color: #f2f2f2;
 }
 
-.other-trailerType-amount{
-    max-width: 10px;
+tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
 }
 
-.other-trailerType-length{
-    max-width: 15px;
+/* Specific Sections */
+.companyBoard-boardAdmin h1,
+.companyBoard-systemUserAdmin h2 {
+    margin-bottom: 10px;
+    text-align: center; /* Center the headings */
 }
 
-.newDriverForm-equipmentForm{
-    display: inline-flex
+.companyBoard-boardAdmin .actions button,
+.companyBoard-systemUserAdmin .actions button {
+    margin-right: 5px;
 }
 
-.equipment-tarps8ft,
-.equipment-tarps6ft,
-.equipment-tarps4ft,
-.equipment-chains,
-.equipment-binders,
-.equipment-pipeStakes,
-.equipment-dunnage {
-    max-width: 30px;
-    margin-left: 20px;
-    
-}
+    .equipmentForm-trailerType,
+    .equipmentForm-equipment {
+        margin-top: 20px;
+    }
 
-.equipment-sec,
-.equipment-tarps {
-    margin-left: 50px;
-}
+    .equipmentForm-trailerType strong,
+    .equipmentForm-equipment span {
+        display: block;
+        margin-bottom: 10px;
+    }
 
+    .equipmentOption-trailerType {
+        width: 50px;
+        margin-right: 5px;
+    }
 
-.trailerType-other-grid{
-    background-color: red;
-    margin-left: -35px;
-}
+    .trailerType-other-form {
+        margin-top: 10px;
+    }
+
+    .trailerType-other-grid table {
+        margin-top: 10px;
+    }
