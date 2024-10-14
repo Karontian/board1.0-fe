@@ -36,6 +36,7 @@ const BoardAdmin  = () =>{
     const [einNumber, setEinNumber] = useState('');
     const [currentClients, setCurrentClients] = useState('');
     const [editingCompanyIndex, setEditingCompanyIndex] = useState(null);
+    const [currentUsers, setCurrentUsers] = useState('')
 
     //TRAILER TYPE STATE
     const [fb48Checked, setFb48Checked] = useState(false);
@@ -104,23 +105,33 @@ const BoardAdmin  = () =>{
     const timeoutRef = useRef();/// CONTROLS THE TIMEOUT CLEAN OF ARRAYS AFTER DRIVER ADD
 
     
-//// FIX THIS IF NETLIFY DOES NOT SUPPORT SERVER PUSHED UPDATES
-
+/// SSE DEPENDANT UPDATES HAVE BEEN UPDATED FORR A TIMER BASED PULL CONFIGURATION REMAINS IN COMMENTS
     useEffect(() => {//MONITORS Server changes && OtherTypeTrailer array
         getClients()
         getDrivers()
-        const driverEventSource = new EventSource('http://localhost:3001/driverUpdates');
-        const clientEventSource = new EventSource('http://localhost:3001/clientUpdates');
+        getUsers()
+
+        //SSE UPDATE ENGINGE NOT SUPPORTED BY NETLIFLY
+        // const driverEventSource = new EventSource('http://localhost:3001/driverUpdates');
+        // const clientEventSource = new EventSource('http://localhost:3001/clientUpdates');
             
-        driverEventSource.onmessage = (event) => {
-            const drivers = JSON.parse(event.data);
-            setCurrentDrivers(drivers)
-        };
+        // driverEventSource.onmessage = (event) => {
+        //     const drivers = JSON.parse(event.data);
+        //     setCurrentDrivers(drivers)
+        // };
         
-        clientEventSource.onmessage = (event) => {
-            const clients = JSON.parse(event.data);
-            setCurrentClients(clients)
-        };
+        // clientEventSource.onmessage = (event) => {
+        //     const clients = JSON.parse(event.data);
+        //     setCurrentClients(clients)
+        // };
+                //SSE UPDATE ENGINGE NOT SUPPORTED BY NETLIFLY
+
+        
+        const fetchServerInfoInterval = setInterval(() => {
+            getClients();
+            getDrivers();
+            getUsers();
+        }, 1000);
 
         if (otherTypeTrailerArray.length === 0) {// RESETS the addDriver form on change to 0 of otherTrypeTrailer array
             formRef.current.reset();
@@ -128,8 +139,10 @@ const BoardAdmin  = () =>{
         }
     
         return () => {
-            driverEventSource.close();
-            clientEventSource.close();
+            // driverEventSource.close();         //SSE UPDATE ENGINGE NOT SUPPORTED BY NETLIFLY
+            // clientEventSource.close();        //SSE UPDATE ENGINGE NOT SUPPORTED BY NETLIFLY
+            clearInterval(fetchServerInfoInterval);
+
         };
     }, [otherTypeTrailerArray]);
 
@@ -143,7 +156,7 @@ const BoardAdmin  = () =>{
             console.log(error)
         }
     }
-    const getDrivers = async()=>{
+    const getDrivers = async()=>{//FETCH added drivers
         try {
             let response = await axios.get(`http://localhost:3001/getDrivers`)
             // console.log('GET DRIVERS RESPONSE', response)
@@ -151,9 +164,16 @@ const BoardAdmin  = () =>{
         } catch (err) {
             console.log(err)
         }
-    }//FETCH added drivers
-
-//// FIX THIS IF NETLIFY DOES NOT SUPPORT SERVER PUSHED UPDATES
+    }
+    const getUsers = async()=>{
+        try {
+            const response = await axios.get(`http://localhost:3001/getUsers`)
+            setCurrentUsers(response.data.users)
+        } catch (err) {
+            console.log(err)
+        }
+    }
+/// SSE DEPENDANT UPDATES HAVE BEEN UPDATED FORR A TIMER BASED PULL  CONFIGURATION REMAINS IN COMMENTS
 
     //COMPANY CRUD CONTRLS 
     const onCompanySubmit = async(e) =>{//ADDS A COMPANY
@@ -772,8 +792,19 @@ const BoardAdmin  = () =>{
         }
         navigate('/')
     }
-    
-    console.log('BoardAdmin rendered')
+    const onUserDelete = async(username)=>{//deletes a system user  
+        try {
+            console.log(username)
+            const response = await axios.delete(`http://localhost:3001/deleteUser/${username}`)
+            console.log(response)
+            toast.success("User deleted successfully");
+
+        } catch (err) {
+            console.log(err)
+        }
+    }
+    console.log(currentClients, currentDrivers, currentUsers)
+
     return (
         <div className="mainContent-boardAdmin">
                 <div>
@@ -1153,7 +1184,24 @@ const BoardAdmin  = () =>{
 
             <div className='companyBoard-systemUserAdmin'>
                 <h2>Current System users</h2>
-                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {Array.from(currentUsers).map((user, index) => (
+                            <tr key={index}>
+                                <td>{user.username}</td>
+                                <td>
+                                    <button type='button' onClick={() => onUserDelete(user.username)}>Delete</button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+
             </div>
         </div>
     )
