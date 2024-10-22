@@ -7,6 +7,8 @@ import './ConfirmationModal.css'; // Import the CSS file for styling
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
+import AddCompanyModal from './addCompanyModal';
+import AddDriverModal from './addDriverModal'
 
 
 
@@ -37,6 +39,10 @@ const BoardAdmin  = () =>{
     const [currentClients, setCurrentClients] = useState('');
     const [editingCompanyIndex, setEditingCompanyIndex] = useState(null);
     const [currentUsers, setCurrentUsers] = useState('')
+
+    //MODAL VARIABLES
+    const [isaddCompanyModalOpen, SetIsAddCompanyModalOpen] = useState(false);
+    const [isaddDriverModalOpen, setIsAddDriverModalOpen] = useState(false)
 
     //TRAILER TYPE STATE
     const [fb48Checked, setFb48Checked] = useState(false);
@@ -176,46 +182,80 @@ const BoardAdmin  = () =>{
 /// SSE DEPENDANT UPDATES HAVE BEEN UPDATED FORR A TIMER BASED PULL  CONFIGURATION REMAINS IN COMMENTS
 
     //COMPANY CRUD CONTRLS 
-    const onCompanySubmit = async(e) =>{//ADDS A COMPANY
-        e.preventDefault()
-        // console.log('COMPANY ADD')
-
-        try{
+    const onCompanySubmit = async(companyData) =>{//ADDS A COMPANY
+        // e.preventDefault()
+        console.log('COMPANY ADD', companyData)
+        try {
             const newCompany = {
-                companyName: companyName,
-                ownerName: ownerName,
-                ownerPhoneNumber: ownerPhoneNumber,
-                companyPhoneNumber: companyPhoneNumber,
-                address: address,
-                mcNumber: mcNumber,
-                dotNumber: dotNumber,
-                einNumber: einNumber,
-            
-            }
-
+              companyName: companyData.companyName,
+              ownerName: companyData.ownerName,
+              ownerPhoneNumber: companyData.ownerPhoneNumber,
+              companyPhoneNumber: companyData.companyPhoneNumber,
+              address: companyData.address,
+              mcNumber: companyData.mcNumber,
+              dotNumber: companyData.dotNumber,
+              einNumber: companyData.einNumber,
+            };
+      
             const existingCompany = currentClients.find(company => company.companyName === newCompany.companyName);
             if (existingCompany) {
-                alert('There is already a company with the same name');
-                return; // Exit the function if the company already exists
+              alert('There is already a company with the same name');
+              return; // Exit the function if the company already exists
             }
-
-            const addition = await axios.post('http://localhost:3001/newCompany', newCompany)
+      
+            const addition = await axios.post('http://localhost:3001/newCompany', newCompany);
             if (addition) {
-               const companyToast=  toast.success("New company added successfully", {
-                    autoClose: 500, // Duration in milliseconds (5000ms = 5 seconds)
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                });              
-
+              toast.success("New company added successfully", {
+                autoClose: 500, // Duration in milliseconds (500ms = 0.5 seconds)
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+              });
+              // Update the currentClients state with the new company
+              setCurrentClients([...currentClients, newCompany]);
             }
+          } catch (err) {
+            console.log(err);
+          }
+      
+        // try{
+        //     const newCompany = {
+        //         companyName: companyName,
+        //         ownerName: ownerName,
+        //         ownerPhoneNumber: ownerPhoneNumber,
+        //         companyPhoneNumber: companyPhoneNumber,
+        //         address: address,
+        //         mcNumber: mcNumber,
+        //         dotNumber: dotNumber,
+        //         einNumber: einNumber,
+            
+        //     }
 
-        }catch(err){
-            console.log(err)
-        }
-        e.target.reset()
+        //     const existingCompany = currentClients.find(company => company.companyName === newCompany.companyName);
+        //     if (existingCompany) {
+        //         alert('There is already a company with the same name');
+        //         return; // Exit the function if the company already exists
+        //     }
+
+        //     const addition = await axios.post('http://localhost:3001/newCompany', newCompany)
+        //     if (addition) {
+        //        const companyToast=  toast.success("New company added successfully", {
+        //             autoClose: 500, // Duration in milliseconds (5000ms = 5 seconds)
+        //             hideProgressBar: false,
+        //             closeOnClick: true,
+        //             pauseOnHover: true,
+        //             draggable: true,
+        //             progress: undefined,
+        //         });              
+
+        //     }
+
+        // }catch(err){
+        //     console.log(err)
+        // }
+        // e.target.reset()
     }
     const onCompanyDelete = async(index)=>{//DELETES A COMPANY
         console.log('DELETING COMPANY',index)
@@ -289,7 +329,8 @@ const BoardAdmin  = () =>{
     }
 
     //DRIVER CRUD CONTROLS
-    const onDriverAdd = async(e) =>{ //ADDS A DRIVER, includes: Company Info, Driver info and Equipment info
+    const onDriverAdd = async(e, driverInfo) =>{ //ADDS A DRIVER, includes: Company Info, Driver info and Equipment info
+        console.log('ON DRIVER ADD', driverInfo)
         try {
         
 
@@ -703,6 +744,8 @@ const BoardAdmin  = () =>{
 
     //OTHER TYPE TRAILER LOCAL CRUD CONTROLS
     const onSaveOtherTypeTrailer = async(e)=>{//TOGGLE control for other Type trailer && otherTypeTrailer array ADDITION
+        console.log('OTHER TYPE TRAILERS FROM BOARD ADMIN')
+        
         try {
             let amount = amountRef.current.value
             let type = typeRef.current.value
@@ -774,6 +817,30 @@ const BoardAdmin  = () =>{
     const onCancelOtherTrailers = async(e,index)=>{//TOGGLE control for cancel action
         setOtherTypeOfTrailerSelected(false)
     }
+
+
+    //FORM MODAL CONTROL
+    const handleAddCompanyOpen = () => {
+        SetIsAddCompanyModalOpen(true);
+      };
+    
+      const handleAddCompanyClose = () => {
+        SetIsAddCompanyModalOpen(false);
+      };
+
+      const handleAddDriverModalOpen = () => {
+        setIsAddDriverModalOpen(true);
+      };
+    
+      const handleAddDriverModalClose = () => {
+        setIsAddDriverModalOpen(false);
+      };
+   
+   
+    
+
+
+    ///
     //MISC FUNCTIONS
     const formatDate = (date) => { //this standarizes the date format for the whole program
         const year = date.getFullYear();
@@ -803,7 +870,7 @@ const BoardAdmin  = () =>{
             console.log(err)
         }
     }
-    console.log(currentClients, currentDrivers, currentUsers)
+    // console.log(currentClients, currentDrivers, currentUsers)
 
     return (
         <div className="mainContent-boardAdmin">
@@ -819,7 +886,7 @@ const BoardAdmin  = () =>{
                     </Link>
 
                 </div>
-            <div className="newCompanyForm-boardAdmin">
+            {/* <div className="newCompanyForm-boardAdmin">
                 <form onSubmit={(e)=>onCompanySubmit(e)}>
                 <h1>01: Add a new copany:</h1>
 
@@ -883,8 +950,15 @@ const BoardAdmin  = () =>{
                     <button type="submit">Add</button>
                     
                 </form>
-                {/* <ToastContainer  REFACTORING NEEDED IF MORE THAN ONE TOAST IS USED/> */} 
 
+            </div> */} 
+            <div className="mainContent-boardAdmin">
+                <button type="button" onClick={handleAddCompanyOpen}>Add New Company</button>
+                <AddCompanyModal
+                    isOpen={isaddCompanyModalOpen}
+                    onRequestClose={handleAddCompanyClose}
+                    onSubmit={onCompanySubmit}
+                />
             </div>
 
             <div className='newDriverForm-boardAdmin'>
@@ -1092,175 +1166,27 @@ const BoardAdmin  = () =>{
                             {/* <button type='button' onClick={(e)=>onAddAnotherDriver(e)} disabled={addAnotherDriver === false}> Add another Driver</button> */}
 
                         </div> 
-                        {/* <div className='newDriverForm-equipmentForm'>
-                                <div className='equipmentForm-trailerType'>
-                                <strong>Trailer Type:</strong>
-
-                                <div className='trailerType-fb'>
-                                    <input type="text" className='equipmentOption-trailerType' name='fb48-ammount' onChange={e => setFb48Amount(e.target.value)} value={fb48Amount} />
-                                    <label htmlFor="fb48-ammount">xFB48 default?</label>
-                                    <input type="checkbox" id='fb48' name='default-fb48' checked={checkedTrailer === 'default-fb48'} onChange={() => handleCheckboxChange('default-fb48') } />
-
-                                    <input type="text" className='equipmentOption-trailerType' name='fb53-ammount' onChange={e => setFb53Amount(e.target.value)} value={fb53Amount} />
-                                    <label htmlFor="fb53-ammount">xFB53 default?</label>
-                                    <input type="checkbox" id='fb53' name='default-fb53' checked={checkedTrailer === 'default-fb53'} onChange={() => handleCheckboxChange('default-fb53')} />
-                                </div>
-
-                                <div className='trailerType-van'>
-                                    <input type="text" className='equipmentOption-trailerType' name='van48-ammount' onChange={e => setVan48Amount(e.target.value)} value={van48Amount}/>
-                                    <label htmlFor="van48-ammount">xV48 default?</label>
-                                    <input type="checkbox" id='van48' name='default-van48' checked={checkedTrailer === 'default-van48'} onChange={() => handleCheckboxChange('default-van48')} />
-
-                                    <input type="text" className='equipmentOption-trailerType' name='van53-ammount' onChange={e => setVan53Amount(e.target.value)}  value={van53Amount}/>
-                                    <label htmlFor="van53-ammount">xV53 default?</label>
-                                    <input type="checkbox" id='van53' name='default-van53' checked={checkedTrailer === 'default-van53'} onChange={() => handleCheckboxChange('default-van53')} />
-                                </div>
-
-                                <div className='trailerType-reefer'>
-                                    <input type="text" className='equipmentOption-trailerType' name='reefer48-ammount' onChange={e => setReefer48Amount(e.target.value)} value={reefer48Amount} />
-                                    <label htmlFor="reefer48-ammount">xR48 default?</label>
-                                    <input type="checkbox" id='reefer48' name='default-reefer48' checked={checkedTrailer === 'default-reefer48'} onChange={() => handleCheckboxChange('default-reefer48')} />
-
-                                    <input type="text" className='equipmentOption-trailerType' name='reefer53-ammount' onChange={e => setReefer53Amount(e.target.value)}  value={reefer53Amount}/>
-                                    <label htmlFor="reefer53-ammount">xR53 default?</label>
-                                    <input type="checkbox" id='reefer53' name='default-reefer53' checked={checkedTrailer === 'default-reefer53'} onChange={() => handleCheckboxChange('default-reefer53')} />
-                                </div>
-
-                                <div className='trailerType-other'>
-                                    <button type='button' onClick={() => setOtherTypeOfTrailerSelected(true)} disabled={otherTypeOfTrailerSelected === true}>+Other Type Trailer</button>
-
-                                    <div className='trailerType-other-form'>
-                                    {otherTypeOfTrailerSelected === true &&
-                                        <div className='other-trailerType'>
-                                        <h5>Add a new Other-Type trailer:</h5>
-
-                                        <input type="text" name='amount' className='other-trailerType-amount' ref={amountRef}  required/>
-                                        <label htmlFor="amount">x</label>
-
-                                        <label htmlFor="type">Type</label>
-                                        <input type="text" name='type' className='other-trailerType-type' ref={typeRef}  required/>
-                                        <br />
-
-                                        <label htmlFor="length">Length</label>
-                                        <input type="text" name='length' className='other-trailerType-length' ref={lengthRef}  required/>
-                                        <span>ft</span>
-
-                                        <label htmlFor="default">Default?</label>
-                                        <input type="checkbox" name='default' className='other-trailerType' ref={defaultRef} checked={checkedTrailer === 'default-other'} onChange={() => handleCheckboxChange('default-other')} />
-
-                                        <button type='button' onClick={(e) => onSaveOtherTypeTrailer(e)}>Save Trailers</button>
-                                        <button type='button' onClick={(e) => onCancelOtherTrailers(e)}>Cancel</button>
-                                        </div>
-                                    }
-                                    </div>
-
-                                    <div className='trailerType-other-grid'>
-                                    <h3>Other-Type Trailers added:</h3>
-                                    <table>
-                                        <thead>
-                                        <tr>
-                                            <th>Amount</th>
-                                            <th>Trailer Type</th>
-                                            <th>Trailer Length</th>
-                                            <th>Default?</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {otherTypeTrailerArray.map((item, index) => (
-                                            editingIndex === index ? ( // EDITING MODE
-                                            <tr key={index}>
-                                                <td>
-                                                <label htmlFor="editedAmount"></label>
-                                                <input type="text" name='editedAmount' value={ottEditingAmount} onChange={(e) => setOttEditingAmount(e.target.value)} />
-                                                </td>
-                                                <td>
-                                                <label htmlFor="editedType"></label>
-                                                <input type="text" name='editedType' value={ottEditingType} onChange={(e) => setOttEditingType(e.target.value)} />
-                                                </td>
-                                                <td>
-                                                <label htmlFor="editedLength"></label>
-                                                <input type="text" name='editedLength' value={ottEditingLenght} onChange={(e) => setOttEditingLenght(e.target.value)} />
-                                                </td>
-                                                <td>
-                                                <input type="checkbox" name='editedDefault' checked={ottEditingDefault && checkedTrailer === 'editedDefault'  } onChange={(e) => (setOttEditingDefault(e.target.checked ), handleCheckboxChange('editedDefault'))} />
-                                                </td>
-                                                <td>
-                                                <button type='button' onClick={(e) => onOtherTrailerEditSave(e, index)}>Save</button>
-                                                <button type='button'>Cancel</button>
-                                                </td>
-                                            </tr>
-                                            ) : (
-                                            <tr key={index}>
-                                                <td>{item.amount}</td>
-                                                <td>{item.type}</td>
-                                                <td>{item.length}</td>
-                                                <td>
-                                                <label htmlFor="defaultTrailer"></label>
-                                                <input type="checkbox" name='defaultTrailer' checked={item.def} readOnly />
-                                                </td>
-                                                <td>
-                                                <button type='button' onClick={(e) => onOtherTrailerDelete(e, index)}>Delete</button>
-                                                <button type='button' onClick={(e) => onOtherTrailerEdit(e, index)}>Edit</button>
-                                                </td>
-                                            </tr>
-                                            )
-                                        ))}
-                                        </tbody>
-                                        <tfoot>
-                                        </tfoot>
-                                    </table>
-                                    </div>
-                                </div>
-                                </div>
-
-
-                            <div className='equipmentForm-equipment'>
-                                <div className='equipment-tarps'>
-                                <span>Equipment:</span>
-                                    <br />
-                                    <span>Tarps:   </span>
-                                            <br />
-                                            <input type="text" className='equipment-tarps8ft' name='equipment-tarps8ft' onChange={e => setTarps8ft(e.target.value)} />
-                                            <label htmlFor="equipment-tarps8ft">x 8FT Tarps</label>
-
-                                            <br />
-                                            <input type="text" className='equipment-tarps6ft' name='equipment-tarps6ft'  onChange={e => setTarps6ft(e.target.value)} />
-                                            <label htmlFor="equipment-tarps6ft">x 6FT Tarps</label>
-
-                                            <br />
-                                            <input type="text" className='equipment-tarps4ft' name='equipment-tarps4ft'  onChange={e => setTarps4ft(e.target.value)} />
-                                            <label htmlFor="equipment-tarps4ft">x 4FT Tarps</label>
-
-
-                                </div>
-
-                                <div className='equipment-sec'>
-                                <span>Securing:   </span>
-                                            <br />
-                                            <input type="text" className='equipment-chains' name='equipment-chains'  onChange={e => setChains(e.target.value)} />
-                                            <label htmlFor="equipment-chains">x Chains</label>
-
-                                            <br />
-                                            <input type="text" className='equipment-binders' name='equipment-binders'  onChange={e => setBinders(e.target.value)} />
-                                            <label htmlFor="equipment-binders">x Binders</label>
-
-                                            <br />
-                                            <input type="text" className='equipment-pipeStakes' name='equipment-pipeStakes'  onChange={e => setPipeStakes(e.target.value)} />
-                                            <label htmlFor="equipment-pipeStakes">x PipeStakes</label>
-
-                                            <br />
-                                            <input type="text" className='equipment-dunnage' name='equipment-dunnage'  onChange={e => setDunnage(e.target.value)} />
-                                            <label htmlFor="equipment-dunnage">x Dunnage</label>
-
-                                </div>    
-                                
-                            </div>
-                        </div>     */}
+                     
                                 
                    </form>
                    <ToastContainer />
 
+            </div>
+
+            <div className='mainContent-boardAdmin'>
+            <button type="button" onClick={handleAddDriverModalOpen}>Add New Driver</button>
+               <AddDriverModal
+                 isOpen={isaddDriverModalOpen}
+                 onRequestClose={handleAddDriverModalClose}
+                 onSubmit={onDriverAdd}
+                 currentClients={currentClients}
+                 onSaveOtherTypeTrailer = {onSaveOtherTypeTrailer}
+                 onOtherTrailerDelete = {onOtherTrailerDelete}
+                 onOtherTrailerEdit = {onOtherTrailerEdit}
+                 onOtherTrailerEditSave = {onOtherTrailerEditSave}
+                 onCancelOtherTrailers = {onCancelOtherTrailers}
+                 handleCheckboxChange = {handleCheckboxChange}
+               />                          
             </div>
 
             <div className='companyBoard-boardAdmin'>

@@ -45,6 +45,7 @@ const AddTrailerModal = ({ isOpen, onRequestClose, onSubmit, currentDriverId, cu
   }
 
 
+
   return (
     <Modal isOpen={isOpen} onRequestClose={onRequestClose}>
       <h2>DriverID#: {currentDriverId}</h2>
