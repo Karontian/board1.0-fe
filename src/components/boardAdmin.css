@@ -1,12 +1,14 @@
-/* General Styles */
-.mainContent-boardAdmin {
-    padding: 20px;
-    font-family: Arial, sans-serif;
+.mainContent-boardAdmin-container {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
 }
 
-#userSpan {
-    font-weight: bold;
-    margin-right: 10px;
+.mainContent-boardAdmin {
+    padding: 10px; /* Reduced padding */
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0 10px; /* Add some margin between the elements */
 }
 
 button {
@@ -15,31 +17,23 @@ button {
     cursor: pointer;
 }
 
-button[type='submit'] {
+button[type='button'] {
     background-color: #4CAF50;
     color: white;
     border: none;
     border-radius: 5px;
 }
 
-button[type='button'] {
-    background-color: #f44336;
-    color: white;
-    border: none;
-    border-radius: 5px;
-}
-
 button[type='button']:hover {
-    background-color: #d32f2f;
+    background-color: #45a049;
 }
 
 /* Form Styles */
 .newCompanyForm-boardAdmin,
 .newDriverForm-boardAdmin {
-    margin-bottom: 20px;
+    margin-bottom: 10px; /* Reduced margin */
     max-width: 600px; /* Set a maximum width */
     margin: 0 auto; /* Center the form */
-    
 }
 
 .newCompanyForm-boardAdmin form,
@@ -47,32 +41,34 @@ button[type='button']:hover {
     display: flex;
     flex-direction: column;
     border: solid black;
-    padding: 20px;
-    margin-bottom: 20px;
-
+    padding: 10px; /* Reduced padding */
+    margin-bottom: 10px; /* Reduced margin */
 }
 
 .newCompanyForm-boardAdmin label,
 .newDriverForm-boardAdmin label {
-    margin-top: 10px;
+    margin-top: 5px; /* Reduced margin */
 }
 
 .newCompanyForm-boardAdmin input,
 .newDriverForm-boardAdmin input,
 .newDriverForm-boardAdmin select {
-    padding: 5px;
-    margin-top: 5px;
+    padding: 3px; /* Reduced padding */
+    margin-top: 3px; /* Reduced margin */
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 3px; /* Reduced border radius */
     width: 100%; /* Make inputs take full width of the form */
     box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
 
 /* Table Styles */
+.companyBoard-boardAdmin {
+    width: 100%; /* Make the container take full width */
+    overflow-x: auto; /* Enable horizontal scrolling if needed */
+}
+
 table {
-    width: 100%;
-    max-width: 800px; /* Set a maximum width */
-    margin: 20px auto; /* Center the table */
+    width: 100%; /* Make the table take full width */
     border-collapse: collapse;
 }
 
@@ -81,7 +77,7 @@ table, th, td {
 }
 
 th, td {
-    padding: 10px;
+    padding: 5px; /* Reduced padding */
     text-align: left;
 }
 
@@ -96,35 +92,71 @@ tbody tr:nth-child(even) {
 /* Specific Sections */
 .companyBoard-boardAdmin h1,
 .companyBoard-systemUserAdmin h2 {
-    margin-bottom: 10px;
+    margin-bottom: 5px; /* Reduced margin */
     text-align: center; /* Center the headings */
 }
 
 .companyBoard-boardAdmin .actions button,
 .companyBoard-systemUserAdmin .actions button {
-    margin-right: 5px;
+    margin-right: 3px; /* Reduced margin */
 }
 
-    .equipmentForm-trailerType,
-    .equipmentForm-equipment {
-        margin-top: 20px;
-    }
+.equipmentForm-trailerType,
+.equipmentForm-equipment {
+    margin-top: 10px; /* Reduced margin */
+}
 
-    .equipmentForm-trailerType strong,
-    .equipmentForm-equipment span {
-        display: block;
-        margin-bottom: 10px;
-    }
+.equipmentForm-trailerType strong,
+.equipmentForm-equipment span {
+    display: block;
+    margin-bottom: 5px; /* Reduced margin */
+}
 
-    .equipmentOption-trailerType {
-        width: 50px;
-        margin-right: 5px;
-    }
+.equipmentOption-trailerType {
+    width: 50px;
+    margin-right: 3px; /* Reduced margin */
+}
 
-    .trailerType-other-form {
-        margin-top: 10px;
-    }
+.trailerType-other-form {
+    margin-top: 5px; /* Reduced margin */
+}
 
-    .trailerType-other-grid table {
-        margin-top: 10px;
-    }
+.trailerType-other-grid table {
+    margin-top: 5px; /* Reduced margin */
+}
+
+/* New Styles for Company and Driver Rows */
+.company-row {
+    background-color: #a5d6a7; /* Stronger green background for company rows */
+    border-bottom: 2px solid #388e3c; /* Dark green border to separate companies */
+    font-weight: bold; /* Make company rows bold */
+}
+
+.driver-row {
+    background-color: #e0f7e6; /* Light green background for driver rows */
+    border-bottom: 1px solid #00bfa5; /* Green border to separate drivers */
+    font-style: italic; /* Make driver rows italic */
+    color: #00695c; /* Darker green color for driver rows */
+}
+
+.driver-row td {
+    padding-left: 10px; /* Reduced padding */
+    max-width: 150px; /* Limit content width */
+    overflow: hidden; /* Hide overflow */
+    text-overflow: ellipsis; /* Add ellipsis for overflow text */
+    white-space: nowrap; /* Prevent text wrapping */
+    font-size: small;
+}
+
+.driver-row td:hover {
+    overflow: visible; /* Show overflow on hover */
+    white-space: normal; /* Allow text wrapping on hover */
+}
+
+.driver-row td .content {
+    max-height: 50px; /* Limit content height */
+    overflow-y: auto; /* Add vertical scrollbar */
+}
+.driverRendering-tr {
+    font-style: italic;
+}

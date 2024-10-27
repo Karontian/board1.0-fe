@@ -1,3 +1,49 @@
+body {
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+/* Container for centering the table */
+#boardGrid-container {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    width: 100%;
+    overflow-x: auto; /* Enable horizontal scrolling if needed */
+    padding: 10px; /* Reduced padding */
+}
+
+/* Table Styles */
+#boardGrid-table {
+    width: 100%;
+    max-width: 100%; /* Ensure the table fits within the container */
+    margin: 10px auto; /* Reduced margin */
+    border-collapse: collapse;
+}
+
+#boardGrid-table th, #boardGrid-table td {
+    border: 1px solid #ddd;
+    padding: 4px; /* Reduced padding */
+    text-align: left;
+    font-size: 14px; /* Reduced font size */
+}
+
+#boardGrid-table th {
+    background-color: #4CAF50; /* Green background for headers */
+    color: white;
+    cursor: pointer; /* Indicate that headers are clickable for sorting */
+    padding: 6px; /* Slightly larger padding for headers */
+}
+
+#boardGrid-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+#boardGrid-table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Row Styles */
 .disabled-row {
     opacity: 0.5;
     pointer-events: none;
@@ -7,28 +53,46 @@
     pointer-events: auto;
     border: 1px;
 }
+
 .available-row-urgent {
-    background-color: red;
-}
-.available-row-not-urgent {
-    background-color: yellow;
-}
-.available-row-other-date{
-    background-color: green;
+    background-color: red !important;
 }
 
-/* boardGrid.css */
+.available-row-not-urgent {
+    background-color: yellow !important;
+}
+
+.available-row-other-date {
+    background-color: green !important;
+}
+
+/* Driver Log Styles */
 .driver-log-container {
     max-height: 100px; /* Adjust the height as needed */
     max-width: 300px;
     overflow-y: auto;
 }
 
-.driver-log-scroll {
-    max-height: 100px; /* Adjust the height as needed */
-    overflow-y: auto;
-}
 .driver-log-entry {
     font-weight: bold;
-    margin-bottom: 10px; /* Adjust the distance as needed */
+    margin-bottom: 5px; /* Reduced margin */
+}
+
+/* Button Styles */
+#boardGrid-table button {
+    padding: 3px 5px; /* Reduced padding */
+    margin: 3px; /* Reduced margin */
+    cursor: pointer;
+    font-size: 12px; /* Reduced font size */
+}
+
+#boardGrid-table button[type='button'] {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 3px; /* Reduced border radius */
+}
+
+#boardGrid-table button[type='button']:hover {
+    background-color: #45a049;
 }

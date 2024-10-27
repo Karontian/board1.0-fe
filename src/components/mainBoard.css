@@ -1,0 +1,93 @@
+body {
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+/* Main Content Styles */
+.mainContent-mainBoard {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Ensure the main content takes full height */
+    background-color: #f4f4f4; /* Light background color */
+}
+
+/* Header Styles */
+.header-mainBoard {
+    background-color: #4CAF50; /* Green background for header */
+    color: white;
+    padding: 10px;
+    text-align: center;
+    
+}
+
+.header-mainBoard div {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+}
+
+#userSpan {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.mainContent-mainBoard button {
+    padding: 5px 10px;
+    margin: 5px;
+    cursor: pointer;
+}
+
+.mainContent-mainBoard button[type='button'] {
+    background-color: #f44336; /* Red background for logout button */
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+.mainContent-mainBoard button[type='button']:hover {
+    background-color: #d32f2f;
+}
+
+.mainContent-mainBoard a {
+    margin-left: 10px;
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+}
+
+.mainContent-mainBoard a:hover {
+    color: #d32f2f;
+}
+
+/* Body Styles */
+.body-mainBoard {
+    flex: 1; /* Take up remaining space */
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    padding: 20px;
+    overflow-x: auto; /* Enable horizontal scrolling if needed */
+}
+
+.mainBoard-boardGrid {
+    width: 1000%;
+    max-width: 1200px; /* Maximum width for the board grid */
+    background-color: #ffffff; /* White background for board grid */
+    padding: 50px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow for depth */
+}
+
+.mainBoard-boardGrid h1 {
+    margin-bottom: 20px;
+    color: #4CAF50; /* Green color for heading */
+    text-align: center;
+}
+
+/* Footer Styles */
+.footer-mainBoard {
+    background-color: #4CAF50; /* Green background for footer */
+    color: white;
+    padding: 10px;
+    text-align: center;
+}

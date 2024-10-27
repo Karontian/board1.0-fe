@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import Modal from 'react-modal';
+import { ToastContainer, toast } from 'react-toastify';
+import './addCompanyModal.css'
 
 const AddCompanyModal = ({ isOpen, onRequestClose, onSubmit }) => {
   const [companyName, setCompanyName] = useState('');
@@ -23,6 +25,7 @@ const AddCompanyModal = ({ isOpen, onRequestClose, onSubmit }) => {
       ownerPhoneNumber,
       address,
     });
+    toast.success("Company added successfully");
     onRequestClose();
     setCompanyName('');
     setCompanyPhoneNumber('');
@@ -48,10 +51,10 @@ const AddCompanyModal = ({ isOpen, onRequestClose, onSubmit }) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onRequestClose={onRequestClose}>
+    <Modal isOpen={isOpen} onRequestClose={onRequestClose} className="modal-content" >
       <h2>Add a New Company</h2>
       <form onSubmit={handleSubmit}>
-        <label>
+        <label> 
           Company Name:
           <input
             type="text"
@@ -134,6 +137,8 @@ const AddCompanyModal = ({ isOpen, onRequestClose, onSubmit }) => {
         <button type="submit">Add</button>
         <button type="button" onClick={handleCancel}>Cancel</button>
       </form>
+      <ToastContainer/>
+
     </Modal>
   );
 };

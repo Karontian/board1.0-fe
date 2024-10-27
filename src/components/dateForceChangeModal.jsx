@@ -4,10 +4,11 @@ import Modal from 'react-modal';
 const DateForceChangeModal = ({ isOpen, onRequestClose, onConfirm, onCancel }) => {
     const [selectedDate, setSelectedDate] = useState('');
     const [comment, setComment] = useState('');
+    const [newLocation, setNewLocation] = useState('')
 
 
     const handleConfirm = () => {
-        onConfirm(selectedDate, comment);
+        onConfirm(selectedDate, comment, newLocation);
     };
 
     return (
@@ -28,6 +29,13 @@ const DateForceChangeModal = ({ isOpen, onRequestClose, onConfirm, onCancel }) =
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
             />
+            <br />
+            <label htmlFor="forceDateChangeLocation"> New location:
+                <input type="text"
+                        name='forceDateChangeLocation'
+                        value={newLocation}
+                        onChange={(e)=> setNewLocation(e.target.value)}  />
+            </label>
             <button onClick={handleConfirm}>Confirm</button>
             <button onClick={onCancel}>Cancel</button>
         </Modal>

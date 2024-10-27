@@ -1,8 +1,11 @@
+import React from 'react';
+import './header.css'; // Make sure to create and import the CSS file
+
+
 const Header = () =>{
 
     return (
         <div>
-        <h1>HEADER</h1>
         <nav className="navbar navbar-expand-lg bg-body-tertiary">
             <div className="container-fluid">
                 <div className="collapse navbar-collapse" id="navbarText">

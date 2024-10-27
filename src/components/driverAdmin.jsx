@@ -2,6 +2,8 @@ import React, {useState} from 'react';
 import AddTrailerModal from './addTrailerModal';
 import AddEquipmentModal from './addEquipmentModal';
 import ConfirmationModal from './confirmationModal';
+import './boardAdmin.css'
+
 
 import axios  from 'axios'
 
@@ -91,7 +93,7 @@ const handleAddEquipmentSubmit = (driverId, type, qty) => { // Function to handl
 
 
 
-
+  console.log('DRIVER ADMIN CURRENT DRIVERS', currentDrivers)
 
   return (
     <>
@@ -99,8 +101,8 @@ const handleAddEquipmentSubmit = (driverId, type, qty) => { // Function to handl
       <td colSpan="9">
         <table>
           <thead>
-            <tr><th colSpan="6">Drivers:</th></tr>
-            <tr>
+            <tr className='driverRendering-tr'><th colSpan="6">Drivers:</th></tr>
+            <tr className='driverRendering-tr' >
               <th>Driver Name</th>
               <th>Driver Phone Number</th>
               <th>Current Location</th>
@@ -112,7 +114,7 @@ const handleAddEquipmentSubmit = (driverId, type, qty) => { // Function to handl
           </thead>
           <tbody>
             {currentDrivers.filter(driver => driver.driverCompany === client._id).map((driver, driverIndex) => ( //displays  drivers when their company id matches a company id
-              <tr key={`driver-${driverIndex}`}>
+              <tr key={`driver-${driverIndex}`} className="driver-row">
                 {editingDriverIndex.includes(driverIndex) && editingDriverCompany === client._id ? ( //DRIVER EDIT  MODE ON
                   <>
                     <td><input type="text" value={driver.driverName} onChange={(e) => onHandleDriverChange(driver._id, 'driverName', e.target.value)} /></td>

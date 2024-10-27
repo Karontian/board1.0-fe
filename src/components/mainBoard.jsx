@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react'
 import { useLocation , useNavigate, Link} from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import './mainBoard.css'
 
 import Header from "./header"
 import Footer from "./footer"
@@ -83,9 +84,6 @@ const MainBoard = () =>{
 
     // console.log('CURRENT CLIENTS', currentClients, 'CURRENT DRIVERS', currentDrivers)
     console.log('MainBoard rendered', username);
-
-
-
 
     return (
         <div className="mainContent-mainBoard">
