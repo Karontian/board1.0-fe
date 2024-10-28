@@ -5,6 +5,7 @@ import NotFound from './components/notFound';
 import BoardAdmin from './components/boardAdmin';
 import Login from './components/login';
 
+console.log('HELLO FROM INDEX.JS')
 
 
 function App() {
