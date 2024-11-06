@@ -234,7 +234,7 @@ const AddDriverModal = ({ isOpen, onRequestClose, onSubmit, currentClients,
         };
     
         console.log('PRE SERVER POST', dataToSend)
-        const additionCall = await axios.post('http://localhost:3001/driverAdd', dataToSend, {
+        const additionCall = await axios.post('https://illustrious-dusk-6a3872.netlify.app/.netlify/functions/app/driverAdd', dataToSend, {
             headers: {
                 'Content-Type': 'application/json'
             }

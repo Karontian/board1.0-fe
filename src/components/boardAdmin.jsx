@@ -120,7 +120,7 @@ const BoardAdmin  = () =>{
         getUsers()
 
         //SSE UPDATE ENGINGE NOT SUPPORTED BY NETLIFLY
-        // const driverEventSource = new EventSource('http://localhost:3001/driverUpdates');
+        // const driverEventSource = new EventSource('https://illustrious-dusk-6a3872.netlify.app/.netlify/functions/app/driverUpdates');
         // const clientEventSource = new EventSource('http://localhost:3001/clientUpdates');
             
         // driverEventSource.onmessage = (event) => {
@@ -156,7 +156,7 @@ const BoardAdmin  = () =>{
 
     const getClients = async()=>{//FETCH added clients
         try {
-            let response =  await axios.get('http://localhost:3001/getClients')
+            let response =  await axios.get('https://illustrious-dusk-6a3872.netlify.app/.netlify/functions/app/getClients')
             let clients = response.data.clients
             // console.log('GET CLIENTS RESPONSE', clients)
             setCurrentClients(clients)
@@ -166,7 +166,7 @@ const BoardAdmin  = () =>{
     }
     const getDrivers = async()=>{//FETCH added drivers
         try {
-            let response = await axios.get(`http://localhost:3001/getDrivers`)
+            let response = await axios.get(`https://illustrious-dusk-6a3872.netlify.app/.netlify/functions/app/getDrivers`)
             // console.log('GET DRIVERS RESPONSE', response)
             setCurrentDrivers(response.data.drivers)
         } catch (err) {
@@ -175,7 +175,7 @@ const BoardAdmin  = () =>{
     }
     const getUsers = async()=>{
         try {
-            const response = await axios.get(`http://localhost:3001/getUsers`)
+            const response = await axios.get(`https://illustrious-dusk-6a3872.netlify.app/.netlify/functions/app/getUsers`)
             setCurrentUsers(response.data.users)
         } catch (err) {
             console.log(err)
@@ -205,7 +205,7 @@ const BoardAdmin  = () =>{
               return; // Exit the function if the company already exists
             }
       
-            const addition = await axios.post('http://localhost:3001/newCompany', newCompany);
+            const addition = await axios.post('https://illustrious-dusk-6a3872.netlify.app/.netlify/functions/app/newCompany', newCompany);
             if (addition) {
               toast.success("New company added successfully", {
                 autoClose: 500, // Duration in milliseconds (500ms = 0.5 seconds)
@@ -241,7 +241,7 @@ const BoardAdmin  = () =>{
         //         return; // Exit the function if the company already exists
         //     }
 
-        //     const addition = await axios.post('http://localhost:3001/newCompany', newCompany)
+        //     const addition = await axios.post('https://illustrious-dusk-6a3872.netlify.app/.netlify/functions/app/newCompany', newCompany)
         //     if (addition) {
         //        const companyToast=  toast.success("New company added successfully", {
         //             autoClose: 500, // Duration in milliseconds (5000ms = 5 seconds)
@@ -262,7 +262,7 @@ const BoardAdmin  = () =>{
     const onCompanyDelete = async(index)=>{//DELETES A COMPANY
         console.log('DELETING COMPANY',index)
         try {
-            const req = await axios.delete(`http://localhost:3001/deleteCompany/${index}`)
+            const req = await axios.delete(`https://illustrious-dusk-6a3872.netlify.app/.netlify/functions/app/deleteCompany/${index}`)
             console.log(req)
         } catch (err) {
             console.log(err)
@@ -318,7 +318,7 @@ const BoardAdmin  = () =>{
             einNumber: clientToSave.einNumber
         };
 
-        const edition = await axios.put(`http://localhost:3001/companyEdit/${companyId}`, updatedInformation);
+        const edition = await axios.put(`https://illustrious-dusk-6a3872.netlify.app/.netlify/functions/app/companyEdit/${companyId}`, updatedInformation);
         console.log(edition);
         setEditingCompanyIndex('');
     } catch (err) {
@@ -437,7 +437,7 @@ const BoardAdmin  = () =>{
             };
         
             console.log('PRE SERVER POST', dataToSend)
-            const additionCall = await axios.post('http://localhost:3001/driverAdd', dataToSend, {
+            const additionCall = await axios.post('https://illustrious-dusk-6a3872.netlify.app/.netlify/functions/app/driverAdd', dataToSend, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -557,7 +557,7 @@ const BoardAdmin  = () =>{
                 availableDate: driverToSave.availableDate
             };
     
-            const edition = await axios.put(`http://localhost:3001/driverEditSave/${driverId}`, updatedDriverInformation);
+            const edition = await axios.put(`https://illustrious-dusk-6a3872.netlify.app/.netlify/functions/app/driverEditSave/${driverId}`, updatedDriverInformation);
             console.log(edition);
     
 
@@ -585,7 +585,7 @@ const BoardAdmin  = () =>{
         console.log('ON DRIVER DELETE', _id)
         try {
             const driverToDelete = _id
-            const deletion = await axios.delete(`http://localhost:3001/driverDelete/${driverToDelete}`)
+            const deletion = await axios.delete(`https://illustrious-dusk-6a3872.netlify.app/.netlify/functions/app/driverDelete/${driverToDelete}`)
             console.log(deletion)
         } catch (err) {
             console.log(err)
@@ -674,7 +674,7 @@ const BoardAdmin  = () =>{
                 type,
                 len
             };
-            const edition = await axios.put(`http://localhost:3001/driverTrailerDelete/${driverToEdit._id}`, trailerToDelete);
+            const edition = await axios.put(`https://illustrious-dusk-6a3872.netlify.app/.netlify/functions/app/driverTrailerDelete/${driverToEdit._id}`, trailerToDelete);
             console.log('Edition response:', edition);
 
 
@@ -695,7 +695,7 @@ const BoardAdmin  = () =>{
                 def
             }
 
-            const update = await axios.put(`http://localhost:3001/driverTrailerAdd/${driverId}`, updateInfo)
+            const update = await axios.put(`https://illustrious-dusk-6a3872.netlify.app/.netlify/functions/app/driverTrailerAdd/${driverId}`, updateInfo)
             console.log(update)
 
         } catch (err) {
@@ -715,7 +715,7 @@ const BoardAdmin  = () =>{
                 type,
                 qty
             }   
-            const edition = await axios.put(`http://localhost:3001/driverEquipmentDelete/${driverToEdit._id}`, eqToDelete);
+            const edition = await axios.put(`https://illustrious-dusk-6a3872.netlify.app/.netlify/functions/app/driverEquipmentDelete/${driverToEdit._id}`, eqToDelete);
 
 
         } catch (err) {
@@ -729,7 +729,7 @@ const BoardAdmin  = () =>{
                 type,
                 qty
             }
-            const update = await axios.put(`http://localhost:3001/driverEquipmentAdd/${driverId}`, eqInfo)  
+            const update = await axios.put(`https://illustrious-dusk-6a3872.netlify.app/.netlify/functions/app/driverEquipmentAdd/${driverId}`, eqInfo)  
             console.log('UUPDATED DRIVER',update) 
         } catch (err) {
             
@@ -854,7 +854,7 @@ const BoardAdmin  = () =>{
     const onLogout = async()=>{//logs the user out
         console.log('LOGOUT')
         try {
-            const req = await axios.put(`http://localhost:3001/logout`, { username})
+            const req = await axios.put(`https://illustrious-dusk-6a3872.netlify.app/.netlify/functions/app/logout`, { username})
             console.log(req)
         } catch (err) {
             console.log(err)            
@@ -864,7 +864,7 @@ const BoardAdmin  = () =>{
     const onUserDelete = async(username)=>{//deletes a system user  
         try {
             console.log(username)
-            const response = await axios.delete(`http://localhost:3001/deleteUser/${username}`)
+            const response = await axios.delete(`https://illustrious-dusk-6a3872.netlify.app/.netlify/functions/app/deleteUser/${username}`)
             console.log(response)
             toast.success("User deleted successfully");
 

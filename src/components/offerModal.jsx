@@ -26,7 +26,7 @@ const OfferModal = ({ isOpen, onRequestClose, offeredDriver }) => {
             try {
                 const comment = `*${offeredDriver} accepts load offer to ${data.location} on ${data.date} @ ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}.`
                 console.log('ACCEPTED', data.location, data.date, comment)
-                const updateCall = await axios.put(`http://localhost:3001/driverOfferAccepted/${offeredDriver}`, {
+                const updateCall = await axios.put(`https://illustrious-dusk-6a3872.netlify.app/.netlify/functions/app/driverOfferAccepted/${offeredDriver}`, {
                     location: data.location,
                     date: data.date,
                     comment: comment
@@ -40,7 +40,7 @@ const OfferModal = ({ isOpen, onRequestClose, offeredDriver }) => {
             try {
                 console.log('REJECTED', data)
                 const systemComment = `* ${offeredDriver} rejects load offer  @ ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-                const  updateCall = await axios.put(`http://localhost:3001/driverOfferRejected/${offeredDriver}`, {
+                const  updateCall = await axios.put(`https://illustrious-dusk-6a3872.netlify.app/.netlify/functions/app/driverOfferRejected/${offeredDriver}`, {
                     comment: 'Comment: '+ data.comment,
                     sysComment: systemComment
                 })

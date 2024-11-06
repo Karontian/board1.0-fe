@@ -13,7 +13,7 @@ const MainBoard = () =>{
 
     // **** USE THIS IF NETLIFY SUPPORTS SPE  ****// 
     // useEffect(() => {
-    //     const eventSource = new EventSource('http://localhost:3001/');
+    //     const eventSource = new EventSource('https://illustrious-dusk-6a3872.netlify.app/.netlify/functions/app/');
     
     //     eventSource.onmessage = (event) => {
     //         const clients = JSON.parse(event.data);
@@ -42,7 +42,7 @@ const MainBoard = () =>{
     const fetchCurrentClients = async()=>{ //fetches companies
         // console.log('FETCHING CLIENTS')
         try {
-            const req = await axios.get(`http://localhost:3001/getClients`)
+            const req = await axios.get(`https://illustrious-dusk-6a3872.netlify.app/.netlify/functions/app/getClients`)
             setCurrentClients(req.data.clients)
         } catch (err) {
             console.log(err)
@@ -52,7 +52,7 @@ const MainBoard = () =>{
     const fetchCurrentDrivers = async()=>{//fetches drivers
         // console.log('FETCHING DRIVERS MAIN BOARD')
         try {
-            const req = await axios.get(`http://localhost:3001/getDrivers`)
+            const req = await axios.get(`https://illustrious-dusk-6a3872.netlify.app/.netlify/functions/app/getDrivers`)
             setCurrentDrivers(req.data.drivers)
             // console.log('FETRCHED DRIVERS', req.data.drivers)
         } catch (error) {
@@ -72,7 +72,7 @@ const MainBoard = () =>{
     const onLogout = async()=>{//controls logout process
         console.log('LOGOUT')
         try {
-            const req = await axios.put(`http://localhost:3001/logout`, { username})
+            const req = await axios.put(`https://illustrious-dusk-6a3872.netlify.app/.netlify/functions/app/logout`, { username})
             console.log(req)
         } catch (err) {
             console.log(err)            
