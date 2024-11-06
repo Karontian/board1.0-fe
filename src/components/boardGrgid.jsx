@@ -83,7 +83,7 @@ const BoardGrid = ({
         console.log('ACTIVE STATUS  CHANGE', driver, status)
         if (status === 'urgent' || status === 'not-urgent' || status === 'other-date') {
             try {
-                const edition = await axios.put(`http://localhost:3001/driverActiveStateOff/${driver}`, {driverLog: `*Driver '${driver}' set to INACTIVE by: ${username}`})//
+                const edition = await axios.put(`https://illustrious-dusk-6a3872.netlify.app/.netlify/functions/app/driverActiveStateOff/${driver}`, {driverLog: `*Driver '${driver}' set to INACTIVE by: ${username}`})//
                 console.log('ACTIVE - INACTIVE', edition)
 
             } catch (err) {
@@ -93,7 +93,7 @@ const BoardGrid = ({
         } else {
             try {
                 
-                const edition = await axios.put(`http://localhost:3001/driverActiveStateOn/${driver}`,{driverLog: `*Driver '${driver}' set to ACTIVE by: ${username}`})// {driverLog: `*Driver '${driver}', set to Active by: USER`}
+                const edition = await axios.put(`https://illustrious-dusk-6a3872.netlify.app/.netlify/functions/app/driverActiveStateOn/${driver}`,{driverLog: `*Driver '${driver}' set to ACTIVE by: ${username}`})// {driverLog: `*Driver '${driver}', set to Active by: USER`}
                 console.log('INACTIVE - ACTIVE', edition)
             } catch (err) {
                 console.log(err)
@@ -108,7 +108,7 @@ const BoardGrid = ({
     const handleDispatcherConfirm = async(dispatcher)=>{
         console.log('DISPATCHER CHANGE CONFIRMED', dispatcher)
         try {
-            const edition = await axios.put(`http://localhost:3001/dispatcherReassign/${selectedDriver}`, {dispatcher, driverLog: `*${dispatcher} has been assigned to ${selectedDriver} by ${username}`})
+            const edition = await axios.put(`https://illustrious-dusk-6a3872.netlify.app/.netlify/functions/app/dispatcherReassign/${selectedDriver}`, {dispatcher, driverLog: `*${dispatcher} has been assigned to ${selectedDriver} by ${username}`})
             console.log(edition)
         } catch (err) {
             console.log(err)
@@ -126,7 +126,7 @@ const BoardGrid = ({
     const onForceDateChangeConfirm = async(date, comment, newLocation)=>{
         console.log('FORCE DATE CHANGE CONFIRM', date, comment, newLocation)
         try {
-            const edition = await axios.put(`http://localhost:3001/dateForceChange/${selectedDriver}`, {
+            const edition = await axios.put(`https://illustrious-dusk-6a3872.netlify.app/.netlify/functions/app/dateForceChange/${selectedDriver}`, {
                 date,
                 logComment: `*${selectedDriver}'s available date has changed to ${date} and current location to ${newLocation} by ${username}`,
                 comment,
