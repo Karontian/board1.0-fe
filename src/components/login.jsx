@@ -22,7 +22,7 @@ const Login = () => {
         try {
             if (newUser) {
                 // Handle sign-up logic
-                const req = await axios.post(`http://localhost:3001/newUser`, { newUserName, newPassword });
+                const req = await axios.post(`https://illustrious-dusk-6a3872.netlify.app/.netlify/functions/app/newUser`, { newUserName, newPassword });
                 if(req){
                     
                     console.log('SignUp successful', req);
@@ -34,8 +34,8 @@ const Login = () => {
 
                 }
             } else {
-              
-                    const req = await axios.put(`http://localhost:3001/login`, { username, password });
+                        ///http://localhost:3001http://localhost:3001
+                    const req = await axios.put(`https://illustrious-dusk-6a3872.netlify.app/.netlify/functions/app/login`, { username, password });
                     console.log('Login successful', req);
                             // Check if the user is authenticated
                             if (req.data.user.isAuthenticated) {
